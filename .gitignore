@@ -1,0 +1,7 @@
+output
+tsconfig.json
+*.log
+*.icmod
+/.gradle
+/.idea
+/java/.gradle

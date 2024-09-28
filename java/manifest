@@ -1,0 +1,9 @@
+{
+	"source-dirs": [
+		"src"
+	],
+	"library-dirs": [],
+	"boot-classes": [
+		"ru.koshakmine.icstd.ICSTD"
+	]
+}

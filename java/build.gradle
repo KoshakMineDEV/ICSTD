@@ -1,0 +1,21 @@
+plugins {
+	id "com.github.johnrengelman.shadow" version "5.2.0"
+	id "java"
+}
+
+dependencies {
+	
+}
+
+sourceSets {
+	main {
+		java {
+			srcDirs = ["src"]
+			buildDir = "C:\\Users\\server\\Downloads\\toolchain-java-fix\\toolchain-java-fix\\toolchain\\toolchain\\build\\test-mod-f18e5\\gradle\\classes\\${project.name}"
+		}
+		resources {
+			srcDirs = []
+		}
+		compileClasspath += files("C:\\Users\\server\\Downloads\\toolchain-java-fix\\toolchain-java-fix\\toolchain\\toolchain\\classpath\\android-support-multidex.jar", "C:\\Users\\server\\Downloads\\toolchain-java-fix\\toolchain-java-fix\\toolchain\\toolchain\\classpath\\android-support-v4.jar", "C:\\Users\\server\\Downloads\\toolchain-java-fix\\toolchain-java-fix\\toolchain\\toolchain\\classpath\\android-support-v7-recyclerview.jar", "C:\\Users\\server\\Downloads\\toolchain-java-fix\\toolchain-java-fix\\toolchain\\toolchain\\classpath\\android.jar", "C:\\Users\\server\\Downloads\\toolchain-java-fix\\toolchain-java-fix\\toolchain\\toolchain\\classpath\\horizon-classes.jar", "C:\\Users\\server\\Downloads\\toolchain-java-fix\\toolchain-java-fix\\toolchain\\toolchain\\classpath\\inner.jar", "C:\\Users\\server\\Downloads\\toolchain-java-fix\\toolchain-java-fix\\toolchain\\toolchain\\classpath\\json-io.jar", "C:\\Users\\server\\Downloads\\toolchain-java-fix\\toolchain-java-fix\\toolchain\\toolchain\\classpath\\rhino.jar", "C:\\Users\\server\\Downloads\\toolchain-java-fix\\toolchain-java-fix\\toolchain\\test-mod\\classpath\\android-support-multidex.jar", "C:\\Users\\server\\Downloads\\toolchain-java-fix\\toolchain-java-fix\\toolchain\\test-mod\\classpath\\android-support-v4.jar", "C:\\Users\\server\\Downloads\\toolchain-java-fix\\toolchain-java-fix\\toolchain\\test-mod\\classpath\\android-support-v7-recyclerview.jar", "C:\\Users\\server\\Downloads\\toolchain-java-fix\\toolchain-java-fix\\toolchain\\test-mod\\classpath\\android.jar", "C:\\Users\\server\\Downloads\\toolchain-java-fix\\toolchain-java-fix\\toolchain\\test-mod\\classpath\\horizon-classes.jar", "C:\\Users\\server\\Downloads\\toolchain-java-fix\\toolchain-java-fix\\toolchain\\test-mod\\classpath\\inner.jar", "C:\\Users\\server\\Downloads\\toolchain-java-fix\\toolchain-java-fix\\toolchain\\test-mod\\classpath\\json-io.jar", "C:\\Users\\server\\Downloads\\toolchain-java-fix\\toolchain-java-fix\\toolchain\\test-mod\\classpath\\rhino.jar")
+	}
+}
