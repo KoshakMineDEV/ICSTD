@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.util.HashMap;
 
 import com.zhekasmirnov.innercore.api.runtime.other.PrintStacking;
-import ru.koshakmine.icstd.block.TestBlock;
+import ru.koshakmine.icstd.impl.TestBlock;
 import ru.koshakmine.icstd.event.Event;
 
 public class ICSTD {

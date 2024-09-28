@@ -1,6 +1,8 @@
-package ru.koshakmine.icstd.block;
+package ru.koshakmine.icstd.impl;
 
-public class TestBlock extends Block  {
+import ru.koshakmine.icstd.block.Block;
+
+public class TestBlock extends Block {
     @Override
     public String getId() {
         return "testik";
