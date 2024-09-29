@@ -75,6 +75,7 @@ public class Events {
     public static final String LevelPreLoaded = "LevelPreLoaded";
     public static final String LevelLoaded = "LevelLoaded";
     public static final String LocalLevelLoaded = "LocalLevelLoaded";
+    public static final String LocalPlayerTick = "LocalPlayerTick";
     public static final String LocalTick = "LocalTick";
     public static final String AppSuspended = "AppSuspended";
     public static final String EntityPickUpDrop = "EntityPickUpDrop";
