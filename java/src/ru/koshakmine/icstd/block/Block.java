@@ -1,5 +1,6 @@
 package ru.koshakmine.icstd.block;
 
+import com.zhekasmirnov.apparatus.mcpe.NativeBlockSource;
 import com.zhekasmirnov.apparatus.minecraft.enums.GameEnums;
 import com.zhekasmirnov.innercore.api.NativeBlock;
 import com.zhekasmirnov.innercore.api.NativeItem;
@@ -7,6 +8,9 @@ import com.zhekasmirnov.innercore.api.NativeItemModel;
 import com.zhekasmirnov.innercore.api.unlimited.BlockRegistry;
 import com.zhekasmirnov.innercore.api.unlimited.BlockVariant;
 import com.zhekasmirnov.innercore.api.unlimited.IDRegistry;
+import ru.koshakmine.icstd.block.blockentity.BlockEntity;
+import ru.koshakmine.icstd.block.blockentity.IBlockEntityHolder;
+import ru.koshakmine.icstd.event.Event;
 
 public abstract class Block {
     private NativeBlock block;
@@ -114,6 +118,17 @@ public abstract class Block {
                 variant.shape = shapedBlock.getShape();
                 NativeItemModel.getFor(block.getId(), 0).updateForBlockVariant(variant);
             }
+        }
+
+        if(this instanceof IBlockEntityHolder) {
+            final IBlockEntityHolder holder = (IBlockEntityHolder) this;
+            BlockEntity.registerBlockEntity(getId(), holder);
+
+            Event.onItemUse(((position, itemStack, blockData, player) -> {
+                if(itemStack.id == block.getId()){
+                    BlockEntity.addBlockEntity(holder.createBlockEntity(position.relative, NativeBlockSource.getDefaultForActor(player)));
+                }
+            }));
         }
 
         if(addToCreativeInventory()) {

@@ -3,11 +3,9 @@ package ru.koshakmine.icstd;
 import java.io.IOException;
 import java.util.HashMap;
 
-import ru.koshakmine.icstd.impl.TestBlock;
+
+import ru.koshakmine.icstd.impl.*;
 import ru.koshakmine.icstd.event.Event;
-import ru.koshakmine.icstd.impl.TestClientPacket;
-import ru.koshakmine.icstd.impl.TestServerPacket;
-import ru.koshakmine.icstd.impl.TestUpdatable;
 import ru.koshakmine.icstd.network.Network;
 import ru.koshakmine.icstd.network.NetworkSide;
 import ru.koshakmine.icstd.runtime.Updatable;
