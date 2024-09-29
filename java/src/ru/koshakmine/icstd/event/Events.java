@@ -14,6 +14,7 @@ public class Events {
     public static final String LevelSelected = "LevelSelected";
     public static final String DimensionLoaded = "DimensionLoaded";
     public static final String DestroyBlock = "DestroyBlock";
+    public static final String BreakBlock = "BreakBlock";
     public static final String DestroyBlockStart = "DestroyBlockStart";
     public static final String DestroyBlockContinue = "DestroyBlockContinue";
     public static final String BuildBlock = "BuildBlock";
