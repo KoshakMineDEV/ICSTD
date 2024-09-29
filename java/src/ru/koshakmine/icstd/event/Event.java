@@ -1,15 +1,16 @@
 package ru.koshakmine.icstd.event;
 
 import com.zhekasmirnov.apparatus.adapter.innercore.game.block.BlockState;
+import com.zhekasmirnov.apparatus.mcpe.NativeBlockSource;
 import com.zhekasmirnov.innercore.api.commontypes.Coords;
+import com.zhekasmirnov.innercore.api.commontypes.FullBlock;
 import com.zhekasmirnov.innercore.api.mod.util.ScriptableFunctionImpl;
 import com.zhekasmirnov.innercore.api.runtime.Callback;
 import org.mozilla.javascript.Context;
 import org.mozilla.javascript.Scriptable;
-import ru.koshakmine.icstd.commontypes.Position;
-import ru.koshakmine.icstd.event.function.BuildBlockFunction;
-import ru.koshakmine.icstd.event.function.DestroyBlockFunction;
-import ru.koshakmine.icstd.event.function.EventFunction;
+import ru.koshakmine.icstd.type.common.BlockData;
+import ru.koshakmine.icstd.type.common.Position;
+import ru.koshakmine.icstd.event.function.*;
 
 public class Event {
     public static void onCall(String name, EventFunction function, int priority) {
@@ -36,6 +37,26 @@ public class Event {
         }, 0);
     }
 
+    public static void onDestroyBlockStart(DestroyBlockFunction function) {
+        Callback.addCallback(Events.DestroyBlockStart, new ScriptableFunctionImpl() {
+            @Override
+            public Object call(Context context, Scriptable scriptable, Scriptable scriptable1, Object[] objects) {
+                function.call(new Position((Coords) objects[0]), (BlockState) objects[1], (long) objects[2]);
+                return null;
+            }
+        }, 0);
+    }
+
+    public static void onDestroyBlockContinue(DestroyBlockContinueFunction function) {
+        Callback.addCallback(Events.DestroyBlockContinue, new ScriptableFunctionImpl() {
+            @Override
+            public Object call(Context context, Scriptable scriptable, Scriptable scriptable1, Object[] objects) {
+                function.call(new Position((Coords) objects[0]), (BlockState) objects[1], (long) objects[2]);
+                return null;
+            }
+        }, 0);
+    }
+
     public static void onBuildBlock(BuildBlockFunction function) {
         Callback.addCallback(Events.BuildBlock, new ScriptableFunctionImpl() {
             @Override
@@ -45,5 +66,16 @@ public class Event {
             }
         }, 0);
     }
+
+    public static void onBlockChanged(BlockChangedFunction function) {
+        Callback.addCallback(Events.BlockChanged, new ScriptableFunctionImpl() {
+            @Override
+            public Object call(Context context, Scriptable scriptable, Scriptable scriptable1, Object[] objects) {
+                function.call(new Position((Coords) objects[0]), new BlockData((FullBlock) objects[1]), new BlockData((FullBlock) objects[2]), (NativeBlockSource) objects[3]);
+                return null;
+            }
+        }, 0);
+    }
+
 
 }

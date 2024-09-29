@@ -1,6 +1,6 @@
 package ru.koshakmine.icstd.network;
 
-import ru.koshakmine.icstd.commontypes.Position;
+import ru.koshakmine.icstd.type.common.Position;
 
 import java.nio.ByteBuffer;
 import java.util.ArrayList;

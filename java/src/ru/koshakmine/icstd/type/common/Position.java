@@ -1,4 +1,4 @@
-package ru.koshakmine.icstd.commontypes;
+package ru.koshakmine.icstd.type.common;
 
 import com.zhekasmirnov.apparatus.adapter.innercore.game.common.Vector3;
 import com.zhekasmirnov.innercore.api.commontypes.Coords;

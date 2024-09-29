@@ -1,6 +1,6 @@
 package ru.koshakmine.icstd.impl;
 
-import ru.koshakmine.icstd.commontypes.Position;
+import ru.koshakmine.icstd.type.common.Position;
 import ru.koshakmine.icstd.level.Level;
 import ru.koshakmine.icstd.runtime.IUpdate;
 
