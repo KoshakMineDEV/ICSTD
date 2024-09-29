@@ -24,12 +24,18 @@ public class Events {
     public static final String ItemUseServer = "ItemUseServer";
     public static final String Explosion = "Explosion";
     public static final String FoodEaten = "FoodEaten";
+    public static final String EnchantPostAttack = "EnchantPostAttack";
+    public static final String EnchantPostHurt = "EnchantPostHurt";
+    public static final String EnchantGetDamageBonus = "EnchantGetDamageBonus";
+    public static final String EnchantGetProtectionBonus = "EnchantGetProtectionBonus";
     public static final String ExpAdd = "ExpAdd";
     public static final String ExpLevelAdd = "ExpLevelAdd";
     public static final String NativeCommand = "NativeCommand";
     public static final String PlayerAttack = "PlayerAttack";
     public static final String EntityAdded = "EntityAdded";
+    public static final String EntityAddedLocal = "EntityAddedLocal";
     public static final String EntityRemoved = "EntityRemoved";
+    public static final String EntityRemovedLocal = "EntityRemovedLocal";
     public static final String EntityDeath = "EntityDeath";
     public static final String EntityHurt = "EntityHurt";
     public static final String EntityInteract = "EntityInteract";
@@ -76,4 +82,5 @@ public class Events {
     public static final String ServerPlayerLeft = "ServerPlayerLeft";
     public static final String GenerateCustomDimensionChunk = "GenerateCustomDimensionChunk";
     public static final String tick = "tick";
+    public static final String WorkbenchCraft = "WorkbenchCraft";
 }

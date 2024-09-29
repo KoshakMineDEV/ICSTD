@@ -90,4 +90,24 @@ public class Event {
         }, 0);
     }
 
+    public static void onExpAdd(ExpAddFunction function) {
+        Callback.addCallback(Events.ExpAdd, new ScriptableFunctionImpl() {
+            @Override
+            public Object call(Context context, Scriptable scriptable, Scriptable scriptable1, Object[] objects) {
+                function.call((int) objects[0], (long) objects[1]);
+                return null;
+            }
+        }, 0);
+    }
+
+    public static void onExpLevelAdd(ExpLevelAddFunction function) {
+        Callback.addCallback(Events.ExpLevelAdd, new ScriptableFunctionImpl() {
+            @Override
+            public Object call(Context context, Scriptable scriptable, Scriptable scriptable1, Object[] objects) {
+                function.call((int) objects[0], (long) objects[1]);
+                return null;
+            }
+        }, 0);
+    }
+
 }
