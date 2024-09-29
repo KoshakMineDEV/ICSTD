@@ -1,8 +1,8 @@
 package ru.koshakmine.icstd.event.function;
 
 import com.zhekasmirnov.apparatus.adapter.innercore.game.block.BlockState;
-import com.zhekasmirnov.innercore.api.commontypes.Coords;
+import ru.koshakmine.icstd.commontypes.Position;
 
 public interface DestroyBlockFunction {
-    void call(Coords coords, BlockState state, long playerId);
+    void call(Position position, BlockState state, long playerId);
 }

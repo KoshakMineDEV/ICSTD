@@ -1,7 +1,3 @@
 ConfigureMultiplayer({
-	name: "TestMod",
-	version: "1.0",
-	isClientOnly: false
+	isClientOnly: true
 });
-
-Launch();
