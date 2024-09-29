@@ -4,11 +4,14 @@ import com.zhekasmirnov.apparatus.adapter.innercore.game.block.BlockState;
 import com.zhekasmirnov.apparatus.mcpe.NativeBlockSource;
 import com.zhekasmirnov.innercore.api.commontypes.Coords;
 import com.zhekasmirnov.innercore.api.commontypes.FullBlock;
+import com.zhekasmirnov.innercore.api.commontypes.ItemInstance;
 import com.zhekasmirnov.innercore.api.mod.util.ScriptableFunctionImpl;
 import com.zhekasmirnov.innercore.api.runtime.Callback;
 import org.mozilla.javascript.Context;
 import org.mozilla.javascript.Scriptable;
 import ru.koshakmine.icstd.type.common.BlockData;
+import ru.koshakmine.icstd.type.common.BlockPosition;
+import ru.koshakmine.icstd.type.common.ItemStack;
 import ru.koshakmine.icstd.type.common.Position;
 import ru.koshakmine.icstd.event.function.*;
 
@@ -77,5 +80,14 @@ public class Event {
         }, 0);
     }
 
+    public static void onItemUse(ItemUseFunction function) {
+        Callback.addCallback(Events.ItemUse, new ScriptableFunctionImpl() {
+            @Override
+            public Object call(Context context, Scriptable scriptable, Scriptable scriptable1, Object[] objects) {
+                function.call(new BlockPosition((Coords) objects[0]), new ItemStack((ItemInstance) objects[1]), new BlockData((FullBlock) objects[2]), (long) objects[3]);
+                return null;
+            }
+        }, 0);
+    }
 
 }

@@ -20,6 +20,7 @@ public class Events {
     public static final String BlockChanged = "BlockChanged";
     public static final String ItemUse = "ItemUse";
     public static final String ItemUseLocalServer = "ItemUseLocalServer";
+    public static final String ItemUseServer = "ItemUseServer";
     public static final String Explosion = "Explosion";
     public static final String FoodEaten = "FoodEaten";
     public static final String ExpAdd = "ExpAdd";
