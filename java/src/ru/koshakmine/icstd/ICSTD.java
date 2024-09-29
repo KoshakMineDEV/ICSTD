@@ -3,17 +3,13 @@ package ru.koshakmine.icstd;
 import java.io.IOException;
 import java.util.HashMap;
 
-import com.zhekasmirnov.apparatus.multiplayer.Network;
-import com.zhekasmirnov.apparatus.multiplayer.client.ModdedClient;
-import com.zhekasmirnov.apparatus.multiplayer.server.ConnectedClient;
-import com.zhekasmirnov.innercore.api.mod.ui.window.UIWindow;
-import com.zhekasmirnov.innercore.api.runtime.other.PrintStacking;
-import org.json.JSONException;
-import org.json.JSONObject;
 import ru.koshakmine.icstd.impl.TestBlock;
 import ru.koshakmine.icstd.event.Event;
+import ru.koshakmine.icstd.impl.TestClientPacket;
+import ru.koshakmine.icstd.impl.TestServerPacket;
 import ru.koshakmine.icstd.impl.TestUpdatable;
-import ru.koshakmine.icstd.level.Level;
+import ru.koshakmine.icstd.network.Network;
+import ru.koshakmine.icstd.network.NetworkSide;
 import ru.koshakmine.icstd.runtime.Updatable;
 
 public class ICSTD {
@@ -24,29 +20,12 @@ public class ICSTD {
             TestBlock block = new TestBlock();
         });
 
-        Network.getSingleton().addClientPacket("aboba", (JSONObject json, String meta) -> {
-            try {
-                Level.clientMessage(json.getString("message"));
-            } catch (JSONException e) {
-                throw new RuntimeException(e);
-            }
-        });
+        Network.registerPacket(NetworkSide.LOCAL, TestClientPacket::new);
+        Network.registerPacket(NetworkSide.SERVER, TestServerPacket::new);
 
         Event.onDestroyBlock((position, block, player) -> {
-            // PrintStacking.print("Position: " + position + ", Block: " + block + ", Player: " + player);
-
             Updatable.addUpdatable(new TestUpdatable(position));
-
-            final ConnectedClient client = Network.getSingleton().getServer().getConnectedClientForPlayer(player);
-            if(client != null){
-                final JSONObject data = new JSONObject();
-                try {
-                    data.put("message", position.toString());
-                } catch (JSONException e) {
-                    throw new RuntimeException(e);
-                }
-                client.send("aboba", data);
-            }
+            Network.sendToClient(player, new TestClientPacket((byte) 100, (short) 666, 1000, 2000L, 2.3f, 1.5d, position.toString()));
         });
     }
 

@@ -18,6 +18,10 @@ public class Position extends Vector3 {
         super(getCoord(coords, "x"), getCoord(coords, "y"), getCoord(coords, "z"));
     }
 
+    public Position(float x, float y, float z){
+        super(x, y, z);
+    }
+
     public Position(float[] coords){
         super(coords);
     }
