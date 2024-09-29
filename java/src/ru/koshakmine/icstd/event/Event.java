@@ -6,6 +6,7 @@ import com.zhekasmirnov.innercore.api.mod.util.ScriptableFunctionImpl;
 import com.zhekasmirnov.innercore.api.runtime.Callback;
 import org.mozilla.javascript.Context;
 import org.mozilla.javascript.Scriptable;
+import ru.koshakmine.icstd.commontypes.Position;
 import ru.koshakmine.icstd.event.function.BuildBlockFunction;
 import ru.koshakmine.icstd.event.function.DestroyBlockFunction;
 import ru.koshakmine.icstd.event.function.EventFunction;
@@ -29,7 +30,7 @@ public class Event {
         Callback.addCallback(Events.DestroyBlock, new ScriptableFunctionImpl() {
             @Override
             public Object call(Context context, Scriptable scriptable, Scriptable scriptable1, Object[] objects) {
-                function.call((Coords) objects[0], (BlockState) objects[1], (long) objects[2]);
+                function.call(new Position((Coords) objects[0]), (BlockState) objects[1], (long) objects[2]);
                 return null;
             }
         }, 0);
@@ -39,7 +40,7 @@ public class Event {
         Callback.addCallback(Events.BuildBlock, new ScriptableFunctionImpl() {
             @Override
             public Object call(Context context, Scriptable scriptable, Scriptable scriptable1, Object[] objects) {
-                function.call((Coords) objects[0], (BlockState) objects[1], (long) objects[2]);
+                function.call(new Position((Coords) objects[0]), (BlockState) objects[1], (long) objects[2]);
                 return null;
             }
         }, 0);
