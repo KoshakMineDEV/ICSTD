@@ -41,9 +41,11 @@ public class Saver {
                         final JSONArray json = new JSONArray();
 
                         json.put(saveObject.getName());
-                        json.put(saveObject.save());
-
-                        map.put(uuid.toString(), json);
+                        final JSONObject saveObj = saveObject.save();
+                        if(saveObj != null){
+                            json.put(saveObj);
+                            map.put(uuid.toString(), json);
+                        }
                     } catch (JSONException e) {
                         Logger.error(ICLog.getStackTrace(e));
                     }

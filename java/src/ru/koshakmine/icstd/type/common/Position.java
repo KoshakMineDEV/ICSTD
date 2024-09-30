@@ -6,6 +6,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.mozilla.javascript.ScriptableObject;
 
+import java.util.Objects;
+
 public class Position extends Vector3 {
     private static float getCoord(ScriptableObject coords, String name){
         final Object value = coords.get(name);
@@ -39,6 +41,11 @@ public class Position extends Vector3 {
         json.put("y", y);
         json.put("z", z);
         return json;
+    }
+
+    public boolean equalsPosition(Object o) {
+        Position position = (Position) o;
+        return x == position.x && y == position.y && z == position.z;
     }
 
     @Override
