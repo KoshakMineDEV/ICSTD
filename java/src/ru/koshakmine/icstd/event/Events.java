@@ -39,6 +39,7 @@ public class Events {
     public static final String EntityDeath = "EntityDeath";
     public static final String EntityHurt = "EntityHurt";
     public static final String EntityInteract = "EntityInteract";
+    public static final String EntityPickUpDrop = "EntityPickUpDrop";
     public static final String ProjectileHit = "ProjectileHit";
     public static final String RedstoneSignal = "RedstoneSignal";
     public static final String PopBlockResources = "PopBlockResources";
@@ -78,7 +79,6 @@ public class Events {
     public static final String LocalPlayerTick = "LocalPlayerTick";
     public static final String LocalTick = "LocalTick";
     public static final String AppSuspended = "AppSuspended";
-    public static final String EntityPickUpDrop = "EntityPickUpDrop";
     public static final String ServerPlayerLoaded = "ServerPlayerLoaded";
     public static final String ServerPlayerLeft = "ServerPlayerLeft";
     public static final String GenerateCustomDimensionChunk = "GenerateCustomDimensionChunk";

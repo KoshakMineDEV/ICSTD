@@ -1,5 +1,7 @@
 package ru.koshakmine.icstd.event.function;
 
+import ru.koshakmine.icstd.entity.Player;
+
 public interface PlayerTickFunction {
-    void call(long player, boolean isDead);
+    void call(Player player, boolean isDead);
 }
