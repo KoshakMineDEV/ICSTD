@@ -42,7 +42,12 @@ public class Level {
     }
 
     public static Level getForDimension(int dimension){
-        return Java8BackComp.computeIfAbsent(levels, dimension, (Function<Integer, Level>) id -> new Level(NativeBlockSource.getDefaultForDimension(id)));
+        return Java8BackComp.computeIfAbsent(levels, dimension, (Function<Integer, Level>) id -> {
+            final NativeBlockSource region = NativeBlockSource.getDefaultForDimension(id);
+            if(region != null)
+                return new Level(region);
+            return null;
+        });
     }
 
     public static Level getForActor(long entity){
@@ -63,5 +68,9 @@ public class Level {
 
     public EntityItem spawnDroppedItem(float x, float y, float z, ItemStack stack) {
         return new EntityItem(region.spawnDroppedItem(x, y, z, stack.id, stack.count, stack.data, stack.extra));
+    }
+
+    public boolean isChunkLoaded(int x, int z) {
+        return region.isChunkLoaded(x, z);
     }
 }

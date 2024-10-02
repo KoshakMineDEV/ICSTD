@@ -29,7 +29,7 @@ public class LocalBlockEntity extends BlockEntityBase {
         return canRemove();
     }
 
-    private static final BlockEntityManager LOCAL_MANAGER = new BlockEntityManager(Events.LocalTick, entity -> {});
+    private static final BlockEntityManager LOCAL_MANAGER = new BlockEntityManager(Events.LocalTick, entity -> {}, NetworkSide.LOCAL);
     private static final BlockEntityRegistry<ILocalBlockEntityHolder> LOCAL_REGISTRY = new BlockEntityRegistry<>();
     public static final NetworkEntityType TYPE;
 

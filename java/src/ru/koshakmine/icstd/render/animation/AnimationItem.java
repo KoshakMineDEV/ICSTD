@@ -33,7 +33,7 @@ public class AnimationItem extends AnimationStaticItem {
 
             @Override
             public boolean update() {
-                transform.lock();
+                transform.lock();// Спаси и сохрани
                 transform.rotate(0, speed, 0);
                 transform.unlock();
 

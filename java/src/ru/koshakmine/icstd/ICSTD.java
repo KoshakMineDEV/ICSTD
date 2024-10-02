@@ -8,6 +8,7 @@ import ru.koshakmine.icstd.impl.*;
 import ru.koshakmine.icstd.event.Event;
 import ru.koshakmine.icstd.network.Network;
 import ru.koshakmine.icstd.network.NetworkSide;
+import ru.koshakmine.icstd.runtime.PostLevelLoaded;
 import ru.koshakmine.icstd.runtime.Updatable;
 
 public class ICSTD {
@@ -28,6 +29,6 @@ public class ICSTD {
     }
 
     public static void boot(HashMap<?, ?> args) throws IOException {
-
+        PostLevelLoaded.boot();
     }
 }

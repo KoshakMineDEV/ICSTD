@@ -60,7 +60,7 @@ public abstract class BlockEntityBase extends Updatable {
     }
 
     public boolean canDestroyBlockEntity() {
-        return level.getBlockId(x, y, z) != id || canRemove();
+        return (level.isChunkLoaded(x / 16, z / 16) && level.getBlockId(x, y, z) != id) || canRemove();
     }
 
     public String getType() {
@@ -69,7 +69,9 @@ public abstract class BlockEntityBase extends Updatable {
 
     public boolean removeBlockEntity(){
         if(!canRemove()) {
-            onRemove();
+            if(canInitialization()) {
+                onRemove();
+            }
 
             removed = true;
             return true;

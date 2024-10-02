@@ -1,8 +1,11 @@
 package ru.koshakmine.icstd.block.blockentity;
 
+import com.zhekasmirnov.innercore.api.runtime.other.PrintStacking;
 import ru.koshakmine.icstd.event.Event;
 import ru.koshakmine.icstd.event.Events;
 import ru.koshakmine.icstd.level.Level;
+import ru.koshakmine.icstd.network.NetworkSide;
+import ru.koshakmine.icstd.runtime.PostLevelLoaded;
 import ru.koshakmine.icstd.runtime.Updatable;
 import ru.koshakmine.icstd.runtime.saver.IRuntimeSaveObject;
 import ru.koshakmine.icstd.runtime.saver.Saver;
@@ -18,7 +21,11 @@ public class BlockEntityManager {
         void apply(BlockEntityBase entity);
     }
 
-    public BlockEntityManager(String callbackName, IUpdateBlockEntity aboba){
+    private final NetworkSide side;
+
+    public BlockEntityManager(String callbackName, IUpdateBlockEntity aboba, NetworkSide side){
+        this.side = side;
+
         Event.onCall(Events.LevelLeft, args -> {
             allEntity.clear();
         }, -5);
@@ -43,10 +50,25 @@ public class BlockEntityManager {
 
         if(coordsEnitty == null) {
             allEntity.add(entity);
-            if (entity instanceof ITickingBlockEntity) Updatable.addUpdatable(entity);
+
+            if(entity instanceof ITickingBlockEntity) Updatable.addUpdatable(entity);
             if(entity instanceof IRuntimeSaveObject) Saver.addSaver((IRuntimeSaveObject) entity);
-            entity.onInit();
-            entity.fullInit = true;
+
+            if(this.side == NetworkSide.LOCAL) {
+                PostLevelLoaded.LOCAL.run(() -> {
+                    if(!entity.canRemove()) {
+                        entity.onInit();
+                        entity.fullInit = true;
+                    }
+                });
+            }else{
+                PostLevelLoaded.SERVER.run(() -> {
+                    if(!entity.canRemove()) {
+                        entity.onInit();
+                        entity.fullInit = true;
+                    }
+                });
+            }
 
             return true;
         }
