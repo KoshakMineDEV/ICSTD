@@ -18,12 +18,16 @@ public class ItemStack {
         this(id, count, data, null);
     }
 
-    public ItemStack(int id, int data){
+    public ItemStack(int id, int data) {
         this(id, 1, data);
     }
 
     public ItemStack(ItemInstance instance) {
         this(instance.getId(), instance.getCount(), instance.getData(), instance.getExtra());
+    }
+
+    public boolean isEmpty() {
+        return count == 0;
     }
 
     @Override

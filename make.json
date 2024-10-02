@@ -25,6 +25,10 @@
 		{
 			"source": "config.json",
 			"targetDir": "."
+		},
+		{
+			"source": "dependency-config.json",
+			"targetDir": "."
 		}
 	]
 }

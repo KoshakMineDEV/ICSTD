@@ -20,6 +20,7 @@ public class TestBlockEntity extends BlockEntity implements ITickingBlockEntity 
     @Override
     public void onInit() {
         Level.clientMessage("Init block entity");
+        super.onInit();
     }
 
     @Override

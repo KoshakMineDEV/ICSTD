@@ -9,7 +9,7 @@ import ru.koshakmine.icstd.render.animation.AnimationItem;
 import ru.koshakmine.icstd.type.common.ItemStack;
 import ru.koshakmine.icstd.type.common.Position;
 
-public class TestLocalBlockEntity extends LocalBlockEntity  {
+public class TestLocalBlockEntity extends LocalBlockEntity {
     private AnimationItem animation;
 
     public TestLocalBlockEntity(String type, int id, Position position, NetworkEntity network, JSONObject data) throws JSONException {
