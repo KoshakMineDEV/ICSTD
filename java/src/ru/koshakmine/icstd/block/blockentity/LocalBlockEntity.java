@@ -5,6 +5,7 @@ import com.zhekasmirnov.apparatus.multiplayer.util.entity.NetworkEntity;
 import com.zhekasmirnov.apparatus.multiplayer.util.entity.NetworkEntityType;
 import org.json.JSONException;
 import org.json.JSONObject;
+import ru.koshakmine.icstd.block.ILocalBlockEntityHolder;
 import ru.koshakmine.icstd.event.Events;
 import ru.koshakmine.icstd.level.Level;
 import ru.koshakmine.icstd.network.NetworkSide;
