@@ -11,6 +11,15 @@ public class ItemStack {
         this.id = id;
         this.count = count;
         this.data = data;
+        this.extra = extra;
+    }
+
+    public ItemStack(int id, int count, int data) {
+        this(id, count, data, null);
+    }
+
+    public ItemStack(int id, int data){
+        this(id, 1, data);
     }
 
     public ItemStack(ItemInstance instance) {

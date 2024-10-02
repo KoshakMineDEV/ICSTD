@@ -9,11 +9,13 @@ import com.zhekasmirnov.innercore.api.mod.util.ScriptableFunctionImpl;
 import com.zhekasmirnov.innercore.api.runtime.Callback;
 import org.mozilla.javascript.Context;
 import org.mozilla.javascript.Scriptable;
+import ru.koshakmine.icstd.level.Level;
 import ru.koshakmine.icstd.type.common.BlockData;
 import ru.koshakmine.icstd.type.common.BlockPosition;
 import ru.koshakmine.icstd.type.common.ItemStack;
 import ru.koshakmine.icstd.type.common.Position;
 import ru.koshakmine.icstd.event.function.*;
+import ru.koshakmine.icstd.entity.Player;
 
 public class Event {
     public static void onCall(String name, EventFunction function, int priority) {
@@ -74,7 +76,7 @@ public class Event {
         Callback.addCallback(Events.BlockChanged, new ScriptableFunctionImpl() {
             @Override
             public Object call(Context context, Scriptable scriptable, Scriptable scriptable1, Object[] objects) {
-                function.call(new Position((Coords) objects[0]), new BlockData((FullBlock) objects[1]), new BlockData((FullBlock) objects[2]), (NativeBlockSource) objects[3]);
+                function.call(new Position((Coords) objects[0]), new BlockData((FullBlock) objects[1]), new BlockData((FullBlock) objects[2]), Level.getForRegion((NativeBlockSource) objects[3]));
                 return null;
             }
         }, 0);
@@ -84,7 +86,7 @@ public class Event {
         Callback.addCallback(Events.ItemUse, new ScriptableFunctionImpl() {
             @Override
             public Object call(Context context, Scriptable scriptable, Scriptable scriptable1, Object[] objects) {
-                function.call(new BlockPosition((Coords) objects[0]), new ItemStack((ItemInstance) objects[1]), new BlockData((FullBlock) objects[2]), (long) objects[3]);
+                function.call(new BlockPosition((Coords) objects[0]), new ItemStack((ItemInstance) objects[1]), new BlockData((FullBlock) objects[2]), new Player((long) objects[4]));
                 return null;
             }
         }, 0);
