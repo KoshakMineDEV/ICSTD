@@ -84,4 +84,5 @@ public class Events {
     public static final String GenerateCustomDimensionChunk = "GenerateCustomDimensionChunk";
     public static final String tick = "tick";
     public static final String WorkbenchCraft = "WorkbenchCraft";
+    public static final String ModsLoaded = "ModsLoaded";
 }
