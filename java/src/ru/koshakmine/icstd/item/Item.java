@@ -15,7 +15,7 @@ import ru.koshakmine.icstd.type.common.Texture;
 import java.util.HashMap;
 
 public abstract class Item implements IBaseRegister {
-    private static final HashMap<Integer, IUsingItem> using = new HashMap<>();
+    private static final HashMap<Integer, IUsableItem> using = new HashMap<>();
     private static final HashMap<Integer, IClickableItem> clickable = new HashMap<>();
 
     static {
@@ -28,7 +28,7 @@ public abstract class Item implements IBaseRegister {
 
         Event.onCall(Events.ItemUsingComplete, (args) -> {
             final ItemStack item = new ItemStack((ItemInstance) args[0]);
-            final IUsingItem usingItem = using.get(item.id);
+            final IUsableItem usingItem = using.get(item.id);
 
             if (usingItem != null) {
                 usingItem.onItemUsingComplete(item, new Player((long) args[1]));
@@ -103,8 +103,8 @@ public abstract class Item implements IBaseRegister {
             this.item = NativeItem.createItem(id, getId(), getName(), texture.texture, texture.meta);
         }
 
-        if(this instanceof IUsingItem){
-            final IUsingItem usingItem = (IUsingItem) this;
+        if(this instanceof IUsableItem){
+            final IUsableItem usingItem = (IUsableItem) this;
 
             item.setMaxUseDuration(usingItem.getUsingDuration());
             item.setUseAnimation(usingItem.getType().ordinal());

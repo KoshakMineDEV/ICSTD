@@ -4,7 +4,7 @@ import com.zhekasmirnov.innercore.api.constants.ChatColor;
 import ru.koshakmine.icstd.entity.Player;
 import ru.koshakmine.icstd.item.IArmorItem;
 import ru.koshakmine.icstd.item.IClickableItem;
-import ru.koshakmine.icstd.item.IUsingItem;
+import ru.koshakmine.icstd.item.IUsableItem;
 import ru.koshakmine.icstd.item.Item;
 import ru.koshakmine.icstd.type.AnimationType;
 import ru.koshakmine.icstd.type.ArmorSlot;
@@ -14,7 +14,7 @@ import ru.koshakmine.icstd.type.common.BlockPosition;
 import ru.koshakmine.icstd.type.common.ItemStack;
 import ru.koshakmine.icstd.type.common.Texture;
 
-public class TestItem extends Item implements IArmorItem, IUsingItem, IClickableItem {
+public class TestItem extends Item implements IArmorItem, IUsableItem, IClickableItem {
     @Override
     public String getArmorPlayerTexture() {
         return "";

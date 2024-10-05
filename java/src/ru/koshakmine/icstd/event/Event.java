@@ -114,7 +114,7 @@ public class Event {
         }, 0);
     }
 
-    public static void ItemUsingComplete(ItemUsingCompleteFunction function) {
+    public static void onItemUsingComplete(ItemUsingCompleteFunction function) {
         Callback.addCallback(Events.ItemUsingComplete, new ScriptableFunctionImpl() {
             @Override
             public Object call(Context context, Scriptable scriptable, Scriptable scriptable1, Object[] objects) {
@@ -289,6 +289,16 @@ public class Event {
             @Override
             public Object call(Context context, Scriptable scriptable, Scriptable scriptable1, Object[] objects) {
                 function.call(new Player((long) objects[0]), (boolean) objects[1]);
+                return null;
+            }
+        }, 0);
+    }
+
+    public static void onLevelSelected(LevelSelectedFunction function) {
+        Callback.addCallback(Events.LevelSelected, new ScriptableFunctionImpl() {
+            @Override
+            public Object call(Context context, Scriptable scriptable, Scriptable scriptable1, Object[] objects) {
+                function.call((String) objects[0], (String) objects[1]);
                 return null;
             }
         }, 0);
