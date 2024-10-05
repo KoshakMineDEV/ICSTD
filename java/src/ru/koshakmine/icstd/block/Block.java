@@ -9,12 +9,16 @@ import com.zhekasmirnov.innercore.api.unlimited.BlockVariant;
 import com.zhekasmirnov.innercore.api.unlimited.IDRegistry;
 import ru.koshakmine.icstd.block.blockentity.BlockEntity;
 import ru.koshakmine.icstd.block.blockentity.LocalBlockEntity;
+import ru.koshakmine.icstd.type.common.IBaseRegister;
 
-public abstract class Block {
+public abstract class Block implements IBaseRegister {
     private NativeBlock block;
 
-    public abstract String getId();
-    public abstract String getName();
+    @Override
+    public int getNumId() {
+        return block.getId();
+    }
+
     public abstract String[] getTextures();
 
     public int getMaterial() {
@@ -120,12 +124,12 @@ public abstract class Block {
 
         if(this instanceof ILocalBlockEntityHolder){
             LocalBlockEntity.getRegistry().registerBlockEntity(getId(), (ILocalBlockEntityHolder) this);
-            LocalBlockEntity.getRegistry().registerBlockEntity(getId(), block.getId());
+            LocalBlockEntity.getRegistry().registerBlockEntity(getId(), getNumId());
         }
 
         if(this instanceof IBlockEntityHolder) {
             BlockEntity.getRegistry().registerBlockEntity(getId(), (IBlockEntityHolder) this);
-            BlockEntity.getRegistry().registerBlockEntity(getId(), block.getId());
+            BlockEntity.getRegistry().registerBlockEntity(getId(), getNumId());
         }
 
         if(addToCreativeInventory()) {
