@@ -1,4 +1,4 @@
-package ru.koshakmine.icstd.type.common;
+package ru.koshakmine.icstd.modloader;
 
 public interface IBaseRegister {
     int getNumId();

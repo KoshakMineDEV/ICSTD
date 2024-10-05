@@ -5,17 +5,16 @@ import com.zhekasmirnov.apparatus.mcpe.NativeBlockSource;
 import com.zhekasmirnov.innercore.api.commontypes.Coords;
 import com.zhekasmirnov.innercore.api.commontypes.FullBlock;
 import com.zhekasmirnov.innercore.api.commontypes.ItemInstance;
+import com.zhekasmirnov.innercore.api.commontypes.ScriptableParams;
 import com.zhekasmirnov.innercore.api.mod.util.ScriptableFunctionImpl;
 import com.zhekasmirnov.innercore.api.runtime.Callback;
 import org.mozilla.javascript.Context;
 import org.mozilla.javascript.Scriptable;
 import ru.koshakmine.icstd.entity.Entity;
 import ru.koshakmine.icstd.entity.EntityItem;
+import ru.koshakmine.icstd.entity.EntityProjectile;
 import ru.koshakmine.icstd.level.Level;
-import ru.koshakmine.icstd.type.common.BlockData;
-import ru.koshakmine.icstd.type.common.BlockPosition;
-import ru.koshakmine.icstd.type.common.ItemStack;
-import ru.koshakmine.icstd.type.common.Position;
+import ru.koshakmine.icstd.type.common.*;
 import ru.koshakmine.icstd.event.function.*;
 import ru.koshakmine.icstd.entity.Player;
 
@@ -239,6 +238,16 @@ public class Event {
             @Override
             public Object call(Context context, Scriptable scriptable, Scriptable scriptable1, Object[] objects) {
                 function.call(new Entity((long) objects[0]), new EntityItem((long) objects[1]), new ItemStack((ItemInstance) objects[2]), (int) objects[3]);
+                return null;
+            }
+        }, 0);
+    }
+
+    public static void onProjectileHit(ProjectileHitFunction function) {
+        Callback.addCallback(Events.ProjectileHit, new ScriptableFunctionImpl() {
+            @Override
+            public Object call(Context context, Scriptable scriptable, Scriptable scriptable1, Object[] objects) {
+                function.call(new EntityProjectile((long) objects[0]), new ItemStack((ItemInstance) objects[1]), new ProjectileHitTarget((ScriptableParams) objects[2]));
                 return null;
             }
         }, 0);

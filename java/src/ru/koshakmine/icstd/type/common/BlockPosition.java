@@ -15,4 +15,16 @@ public class BlockPosition extends Position {
         this.vec = new Position((ScriptableObject) coords.get("vec", coords));
         this.relative = new Position((ScriptableObject) coords.get("relative", coords));
     }
+
+    @Override
+    public String toString() {
+        return "BlockPosition{" +
+                "side=" + side +
+                ", vec=" + vec +
+                ", relative=" + relative +
+                ", x=" + x +
+                ", z=" + z +
+                ", y=" + y +
+                '}';
+    }
 }

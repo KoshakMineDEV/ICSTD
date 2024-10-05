@@ -9,7 +9,7 @@ import com.zhekasmirnov.innercore.api.unlimited.BlockVariant;
 import com.zhekasmirnov.innercore.api.unlimited.IDRegistry;
 import ru.koshakmine.icstd.block.blockentity.BlockEntity;
 import ru.koshakmine.icstd.block.blockentity.LocalBlockEntity;
-import ru.koshakmine.icstd.type.common.IBaseRegister;
+import ru.koshakmine.icstd.modloader.IBaseRegister;
 
 public abstract class Block implements IBaseRegister {
     private NativeBlock block;

@@ -8,7 +8,7 @@ import ru.koshakmine.icstd.entity.Player;
 import ru.koshakmine.icstd.event.Event;
 import ru.koshakmine.icstd.event.Events;
 import ru.koshakmine.icstd.type.CreativeCategory;
-import ru.koshakmine.icstd.type.common.IBaseRegister;
+import ru.koshakmine.icstd.modloader.IBaseRegister;
 import ru.koshakmine.icstd.type.common.ItemStack;
 import ru.koshakmine.icstd.type.common.Texture;
 
