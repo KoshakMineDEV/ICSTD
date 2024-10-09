@@ -11,7 +11,6 @@ import ru.koshakmine.icstd.runtime.PostLevelLoaded;
 
 /**
  * TODO LIST
- * инструменты
  * частицы
  * тик BlockEntity
  * Прослойка совместимости для ванильных TileEntity
@@ -20,7 +19,6 @@ import ru.koshakmine.icstd.runtime.PostLevelLoaded;
  * Кеширование Player для более высокой производительности и экономии памяти
  * api для интерфейсов блоков
  * api для работы с StorageInterface
- * api для переводов
  * api для кастумных измерений
  * api для кастумных биомов
  * api для кастумных зачарований

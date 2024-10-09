@@ -10,6 +10,7 @@ import ru.koshakmine.icstd.block.ILocalBlockEntityHolder;
 import ru.koshakmine.icstd.block.blockentity.LocalBlockEntity;
 import ru.koshakmine.icstd.level.Level;
 import ru.koshakmine.icstd.type.common.Position;
+import ru.koshakmine.icstd.type.tools.BlockMaterials;
 
 public class TestBlock extends Block implements IBlockEntityHolder, ILocalBlockEntityHolder {
     @Override
@@ -30,6 +31,11 @@ public class TestBlock extends Block implements IBlockEntityHolder, ILocalBlockE
     @Override
     public int getLightLevel() {
         return 15;
+    }
+
+    @Override
+    public String getBlockMaterial() {
+        return BlockMaterials.DIRT;
     }
 
     @Override

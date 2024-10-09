@@ -47,7 +47,7 @@ public abstract class Item implements IBaseRegister {
         return false;
     }
 
-    public int getDamage(){
+    public int getDurability(){
         return 0;
     }
 
@@ -83,6 +83,9 @@ public abstract class Item implements IBaseRegister {
         return false;
     }
 
+    @Override
+    public void onInit() {}
+
     public abstract Texture getTexture();
 
     public Item(){
@@ -117,7 +120,7 @@ public abstract class Item implements IBaseRegister {
         }
 
         item.setGlint(isGlint());
-        item.setMaxDamage(getDamage());
+        item.setMaxDamage(getDurability());
         item.setMaxStackSize(getMaxStack());
         item.setLiquidClip(isLiquidClip());
 
@@ -131,6 +134,8 @@ public abstract class Item implements IBaseRegister {
         if(category != null){
             item.setCreativeCategory(category.ordinal());
         }
+
+        onInit();
     }
 
     public NativeItem getItem() {
