@@ -9,7 +9,9 @@ import com.zhekasmirnov.innercore.api.unlimited.BlockVariant;
 import com.zhekasmirnov.innercore.api.unlimited.IDRegistry;
 import ru.koshakmine.icstd.block.blockentity.BlockEntity;
 import ru.koshakmine.icstd.block.blockentity.LocalBlockEntity;
+import ru.koshakmine.icstd.js.ToolAPI;
 import ru.koshakmine.icstd.modloader.IBaseRegister;
+import ru.koshakmine.icstd.type.tools.BlockMaterials;
 
 public abstract class Block implements IBaseRegister {
     private NativeBlock block;
@@ -20,6 +22,21 @@ public abstract class Block implements IBaseRegister {
     }
 
     public abstract String[] getTextures();
+
+    @Override
+    public void onInit() {}
+
+    /**
+     * Sets the block breaking tool
+     * @return ru.koshakmine.icstd.type.tools.BlockMaterials
+     */
+    public String getBlockMaterial(){
+        return BlockMaterials.STONE;
+    }
+
+    public int getToolLevel(){
+        return 0;
+    }
 
     public int getMaterial() {
         return 3;
@@ -109,12 +126,13 @@ public abstract class Block implements IBaseRegister {
         NativeBlock.setDestroyTime(block.getId(), getDestroyTime());
         NativeBlock.setTranslucency(block.getId(), getTranslucency());
         NativeBlock.setMapColor(block.getId(), getMapColor());
+        ToolAPI.registerBlockMaterial(block.getId(), getBlockMaterial(), getToolLevel());
 
         if(this instanceof IShapedBlock) {
             IShapedBlock shapedBlock = (IShapedBlock) this;
             shapedBlock.getShape().setToBlock(block.getId(), 0);
 
-            BlockVariant variant = BlockRegistry.getBlockVariant(block.getId(), 0);
+            final BlockVariant variant = BlockRegistry.getBlockVariant(block.getId(), 0);
 
             if (variant != null) {
                 variant.shape = shapedBlock.getShape();
@@ -136,6 +154,7 @@ public abstract class Block implements IBaseRegister {
             NativeItem.addToCreative(block.getId(), 1, 0, null);
         }
 
+        onInit();
     }
 
     public NativeBlock getNativeBlock() {
