@@ -1,6 +1,7 @@
 package ru.koshakmine.icstd.block;
 
 import com.zhekasmirnov.apparatus.minecraft.enums.GameEnums;
+import com.zhekasmirnov.innercore.api.NativeAPI;
 import com.zhekasmirnov.innercore.api.NativeBlock;
 import com.zhekasmirnov.innercore.api.NativeItem;
 import com.zhekasmirnov.innercore.api.NativeItemModel;
@@ -9,11 +10,132 @@ import com.zhekasmirnov.innercore.api.unlimited.BlockVariant;
 import com.zhekasmirnov.innercore.api.unlimited.IDRegistry;
 import ru.koshakmine.icstd.block.blockentity.BlockEntity;
 import ru.koshakmine.icstd.block.blockentity.LocalBlockEntity;
+import ru.koshakmine.icstd.event.Event;
 import ru.koshakmine.icstd.js.ToolAPI;
+import ru.koshakmine.icstd.level.Level;
 import ru.koshakmine.icstd.modloader.IBaseRegister;
+import ru.koshakmine.icstd.type.common.BlockData;
+import ru.koshakmine.icstd.type.common.ItemStack;
+import ru.koshakmine.icstd.type.common.Position;
 import ru.koshakmine.icstd.type.tools.BlockMaterials;
 
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+
 public abstract class Block implements IBaseRegister {
+    private static final List<Integer> CONSTANT_VANILLA_UI_TILES = new LinkedList<>(), CONSTANT_REPLACEABLE_TILE = new LinkedList<>();
+
+    private static final HashMap<Integer, IPlaceBlock> placed = new HashMap<>();
+
+    static {
+        CONSTANT_VANILLA_UI_TILES.add(23);
+        CONSTANT_VANILLA_UI_TILES.add(25);
+        CONSTANT_VANILLA_UI_TILES.add(26);
+        CONSTANT_VANILLA_UI_TILES.add(54);
+        CONSTANT_VANILLA_UI_TILES.add(58);
+        CONSTANT_VANILLA_UI_TILES.add(61);
+        CONSTANT_VANILLA_UI_TILES.add(62);
+        CONSTANT_VANILLA_UI_TILES.add(64);
+        CONSTANT_VANILLA_UI_TILES.add(69);
+        CONSTANT_VANILLA_UI_TILES.add(77);
+        CONSTANT_VANILLA_UI_TILES.add(84);
+        CONSTANT_VANILLA_UI_TILES.add(92);
+        CONSTANT_VANILLA_UI_TILES.add(93);
+        CONSTANT_VANILLA_UI_TILES.add(94);
+        CONSTANT_VANILLA_UI_TILES.add(96);
+        CONSTANT_VANILLA_UI_TILES.add(107);
+        CONSTANT_VANILLA_UI_TILES.add(116);
+        CONSTANT_VANILLA_UI_TILES.add(117);
+        CONSTANT_VANILLA_UI_TILES.add(122);
+        CONSTANT_VANILLA_UI_TILES.add(125);
+        CONSTANT_VANILLA_UI_TILES.add(130);
+        CONSTANT_VANILLA_UI_TILES.add(138);
+        CONSTANT_VANILLA_UI_TILES.add(143);
+        CONSTANT_VANILLA_UI_TILES.add(145);
+        CONSTANT_VANILLA_UI_TILES.add(146);
+        CONSTANT_VANILLA_UI_TILES.add(149);
+        CONSTANT_VANILLA_UI_TILES.add(150);
+        CONSTANT_VANILLA_UI_TILES.add(151);
+        CONSTANT_VANILLA_UI_TILES.add(178);
+        CONSTANT_VANILLA_UI_TILES.add(154);
+        CONSTANT_VANILLA_UI_TILES.add(183);
+        CONSTANT_VANILLA_UI_TILES.add(184);
+        CONSTANT_VANILLA_UI_TILES.add(185);
+        CONSTANT_VANILLA_UI_TILES.add(186);
+        CONSTANT_VANILLA_UI_TILES.add(187);
+        CONSTANT_VANILLA_UI_TILES.add(193);
+        CONSTANT_VANILLA_UI_TILES.add(194);
+        CONSTANT_VANILLA_UI_TILES.add(195);
+        CONSTANT_VANILLA_UI_TILES.add(196);
+        CONSTANT_VANILLA_UI_TILES.add(197);
+        CONSTANT_VANILLA_UI_TILES.add(205);
+        CONSTANT_VANILLA_UI_TILES.add(218);
+        CONSTANT_VANILLA_UI_TILES.add(395);
+        CONSTANT_VANILLA_UI_TILES.add(396);
+        CONSTANT_VANILLA_UI_TILES.add(397);
+        CONSTANT_VANILLA_UI_TILES.add(398);
+        CONSTANT_VANILLA_UI_TILES.add(399);
+        CONSTANT_VANILLA_UI_TILES.add(400);
+        CONSTANT_VANILLA_UI_TILES.add(401);
+        CONSTANT_VANILLA_UI_TILES.add(402);
+        CONSTANT_VANILLA_UI_TILES.add(403);
+        CONSTANT_VANILLA_UI_TILES.add(404);
+        CONSTANT_VANILLA_UI_TILES.add(449);
+        CONSTANT_VANILLA_UI_TILES.add(450);
+        CONSTANT_VANILLA_UI_TILES.add(451);
+        CONSTANT_VANILLA_UI_TILES.add(496);
+        CONSTANT_VANILLA_UI_TILES.add(452);
+        CONSTANT_VANILLA_UI_TILES.add(453);
+        CONSTANT_VANILLA_UI_TILES.add(454);
+        CONSTANT_VANILLA_UI_TILES.add(455);
+        CONSTANT_VANILLA_UI_TILES.add(457);
+        CONSTANT_VANILLA_UI_TILES.add(458);
+        CONSTANT_VANILLA_UI_TILES.add(459);
+        CONSTANT_VANILLA_UI_TILES.add(461);
+        CONSTANT_VANILLA_UI_TILES.add(499);
+        CONSTANT_VANILLA_UI_TILES.add(500);
+        CONSTANT_VANILLA_UI_TILES.add(501);
+        CONSTANT_VANILLA_UI_TILES.add(502);
+        CONSTANT_VANILLA_UI_TILES.add(513);
+        CONSTANT_VANILLA_UI_TILES.add(514);
+        CONSTANT_VANILLA_UI_TILES.add(515);
+        CONSTANT_VANILLA_UI_TILES.add(516);
+        CONSTANT_VANILLA_UI_TILES.add(551);
+
+        CONSTANT_REPLACEABLE_TILE.add(0);
+        CONSTANT_REPLACEABLE_TILE.add(8);
+        CONSTANT_REPLACEABLE_TILE.add(9);
+        CONSTANT_REPLACEABLE_TILE.add(10);
+        CONSTANT_REPLACEABLE_TILE.add(11);
+        CONSTANT_REPLACEABLE_TILE.add(31);
+        CONSTANT_REPLACEABLE_TILE.add(51);
+        CONSTANT_REPLACEABLE_TILE.add(78);
+        CONSTANT_REPLACEABLE_TILE.add(106);
+
+        Event.onItemUse(((position, item, block, player) -> {
+            final IPlaceBlock place = placed.get(item.id);
+
+            if(place != null && !NativeAPI.isDefaultPrevented()){
+                final Level level = player.getRegion();
+
+                place.onPlace(position, item, block, player, level);
+                player.setCarriedItem(item.decrease(1));
+                level.playSound(position, "dig.stone", 1, 0.8f);
+                NativeAPI.preventDefault();
+            }
+        }), -1);
+    }
+
+    public static boolean canTileBeReplaced(int id, int data){
+        if(id == 175 && (data % 8 == 2 || data % 8 == 3)) return true;
+        return CONSTANT_REPLACEABLE_TILE.contains(id);
+    }
+
+    public static boolean canTileBeReplaced(int id){
+        return id == 175 || CONSTANT_REPLACEABLE_TILE.contains(id);
+    }
+
     private NativeBlock block;
 
     @Override
@@ -148,6 +270,14 @@ public abstract class Block implements IBaseRegister {
         if(this instanceof IBlockEntityHolder) {
             BlockEntity.getRegistry().registerBlockEntity(getId(), (IBlockEntityHolder) this);
             BlockEntity.getRegistry().registerBlockEntity(getId(), getNumId());
+        }
+
+        if(this instanceof IDropBlock){
+            ToolAPI.registerDropFunction(block.getId(), (IDropBlock) this, getToolLevel());
+        }
+
+        if(this instanceof IPlaceBlock){
+            placed.put(getNumId(), (IPlaceBlock) this);
         }
 
         if(addToCreativeInventory()) {

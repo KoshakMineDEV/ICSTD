@@ -6,11 +6,12 @@ import org.json.JSONObject;
 import ru.koshakmine.icstd.block.blockentity.LocalBlockEntity;
 import ru.koshakmine.icstd.level.Level;
 import ru.koshakmine.icstd.render.animation.AnimationItem;
+import ru.koshakmine.icstd.render.animation.AnimationStaticItem;
 import ru.koshakmine.icstd.type.common.ItemStack;
 import ru.koshakmine.icstd.type.common.Position;
 
 public class TestLocalBlockEntity extends LocalBlockEntity {
-    private AnimationItem animation;
+    private AnimationStaticItem animation;
 
     public TestLocalBlockEntity(String type, int id, Position position, NetworkEntity network, JSONObject data) throws JSONException {
         super(type, id, position, network, data);
@@ -20,7 +21,7 @@ public class TestLocalBlockEntity extends LocalBlockEntity {
     public void onInit() {
         Level.clientMessage("Init client block entity");
 
-        animation = new AnimationItem(x + .5f, y + 1.5f, z + .5f);
+        animation = new AnimationStaticItem(x + .5f, y + 1.5f, z + .5f);
         animation.setItem(new ItemStack(264, 1));
         animation.load();
     }

@@ -10,6 +10,11 @@ public class BlockData {
         this.data = block.data;
     }
 
+    public BlockData(int id, int data){
+        this.id = id;
+        this.data = data;
+    }
+
     @Override
     public String toString() {
         return "BlockData{id=" + id + ", data=" + data + "}";

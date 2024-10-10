@@ -44,6 +44,9 @@ WRAP_JAVA("ru.koshakmine.icstd.js.ToolAPI").init({
 	},
 	registerBlockMaterial(id, material, level){
 		ToolAPI.registerBlockMaterial(Number(id), String(material), Number(level));
+	},
+	registerDropFunction(id, func, level){
+	    Block.registerDropFunction(id, func, level);
 	}
 });
 

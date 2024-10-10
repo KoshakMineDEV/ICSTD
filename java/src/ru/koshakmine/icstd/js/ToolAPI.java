@@ -1,10 +1,21 @@
 package ru.koshakmine.icstd.js;
 
+import com.zhekasmirnov.apparatus.mcpe.NativeBlockSource;
+import com.zhekasmirnov.innercore.api.commontypes.Coords;
+import com.zhekasmirnov.innercore.api.commontypes.ItemInstance;
 import com.zhekasmirnov.innercore.api.mod.ScriptableObjectHelper;
+import com.zhekasmirnov.innercore.api.mod.util.ScriptableFunctionImpl;
+import org.mozilla.javascript.Context;
 import org.mozilla.javascript.NativeArray;
 import org.mozilla.javascript.Scriptable;
 import org.mozilla.javascript.ScriptableObject;
+import ru.koshakmine.icstd.block.IDropBlock;
 import ru.koshakmine.icstd.item.tools.ToolMaterial;
+import ru.koshakmine.icstd.level.Level;
+import ru.koshakmine.icstd.type.common.BlockData;
+import ru.koshakmine.icstd.type.common.EnchantData;
+import ru.koshakmine.icstd.type.common.ItemStack;
+import ru.koshakmine.icstd.type.common.Position;
 
 public class ToolAPI {
     private static Scriptable scriptable;
@@ -89,5 +100,27 @@ public class ToolAPI {
 
     public static void registerBlockMaterial(int id, String blockMaterial, int level){
         JsHelp.callFunction(scriptable, "registerBlockMaterial", id, blockMaterial, level);
+    }
+
+    public static void registerDropFunction(int id, IDropBlock dropFunc, int level){
+        JsHelp.callFunction(scriptable, "registerDropFunction", id, new ScriptableFunctionImpl() {
+            @Override
+            public Object call(Context ctx, Scriptable self, Scriptable parent, Object[] args) {
+                final ItemStack[] items = dropFunc.getDrop(
+                        new Position((Coords) args[0]), new BlockData(((Number) args[1]).intValue(), ((Number) args[2]).intValue()),
+                        Level.getForRegion((NativeBlockSource) args[6]),
+                        ((Number) args[3]).intValue(),
+                        new EnchantData((Scriptable) args[4]),
+                        new ItemStack((ItemInstance) args[5])
+                );
+
+                final NativeArray array = ScriptableObjectHelper.createEmptyArray();
+                for (int i = 0;i < items.length;i++) {
+                    array.put(i, array, items[i].toDrop());
+                }
+
+                return array;
+            }
+        }, level);
     }
 }
