@@ -1,13 +1,21 @@
 package ru.koshakmine.icstd.level;
 
+import com.zhekasmirnov.apparatus.adapter.innercore.game.common.Vector3;
 import com.zhekasmirnov.apparatus.adapter.innercore.game.entity.StaticEntity;
 import com.zhekasmirnov.apparatus.mcpe.NativeBlockSource;
 import com.zhekasmirnov.apparatus.util.Java8BackComp;
 import com.zhekasmirnov.innercore.api.NativeAPI;
+import com.zhekasmirnov.innercore.api.commontypes.Coords;
 import com.zhekasmirnov.innercore.api.mod.adaptedscript.AdaptedScriptAPI;
+import ru.koshakmine.icstd.entity.Entity;
 import ru.koshakmine.icstd.entity.EntityItem;
+import ru.koshakmine.icstd.entity.Player;
 import ru.koshakmine.icstd.event.Event;
 import ru.koshakmine.icstd.event.Events;
+import ru.koshakmine.icstd.network.Network;
+import ru.koshakmine.icstd.network.NetworkSide;
+import ru.koshakmine.icstd.network.packets.PlaySoundPacket;
+import ru.koshakmine.icstd.type.common.BlockPosition;
 import ru.koshakmine.icstd.type.common.ItemStack;
 
 import java.util.HashMap;
@@ -66,11 +74,41 @@ public class Level {
         return region.getBlockId(x, y, z);
     }
 
+    public int getBlockId(Vector3 pos) {
+        return getBlockId((int) pos.x, (int) pos.y, (int) pos.z);
+    }
+
     public EntityItem spawnDroppedItem(float x, float y, float z, ItemStack stack) {
         return new EntityItem(region.spawnDroppedItem(x, y, z, stack.id, stack.count, stack.data, stack.extra));
     }
 
     public boolean isChunkLoaded(int x, int z) {
         return region.isChunkLoaded(x, z);
+    }
+
+    public void setBlock(Vector3 coords, int id, int data) {
+        region.setBlock((int) coords.x, (int) coords.y, (int) coords.z, id, data);
+    }
+
+    public Player[] getPlayersForRadius(Vector3 pos, float radius){
+        final long[] entitys = region.fetchEntitiesInAABB(
+                pos.x - radius, pos.y - radius, pos.z - radius,
+                pos.x + radius, pos.y + radius, pos.z + radius,
+                63, false);
+        final Player[] players = new Player[entitys.length];
+        for (int i = 0;i < players.length;i++) {
+            players[i] = new Player(entitys[i]);
+        }
+        return players;
+    }
+
+    static {
+        Network.registerPacket(NetworkSide.LOCAL, PlaySoundPacket::new);
+    }
+
+    public void playSound(Vector3 pos, String sound, float volume, float pitch){
+        final Player[] players = getPlayersForRadius(pos,volume * 2);
+        final PlaySoundPacket packet = new PlaySoundPacket(pos.x, pos.y, pos.z, sound, volume, pitch);
+        for (Player player : players) player.sendPacket(packet);
     }
 }

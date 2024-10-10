@@ -1,5 +1,6 @@
 package ru.koshakmine.icstd.type.common;
 
+import com.zhekasmirnov.innercore.api.NativeItem;
 import com.zhekasmirnov.innercore.api.NativeItemInstanceExtra;
 import com.zhekasmirnov.innercore.api.commontypes.ItemInstance;
 
@@ -28,6 +29,20 @@ public class ItemStack {
 
     public boolean isEmpty() {
         return count == 0;
+    }
+
+    public void reset(){
+        id = 0;
+        data = 0;
+        count = 0;
+        extra = null;
+    }
+
+    public void applyDamage(int damage){
+        data += damage;
+        if(data >= NativeItem.getMaxDamageForId(id, 0)){
+            reset();
+        }
     }
 
     @Override

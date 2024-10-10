@@ -6,7 +6,6 @@ import ru.koshakmine.icstd.event.Event;
 import ru.koshakmine.icstd.event.Events;
 import ru.koshakmine.icstd.impl.TestBlock;
 import ru.koshakmine.icstd.impl.TestItem;
-import ru.koshakmine.icstd.modloader.Mod;
 import ru.koshakmine.icstd.runtime.PostLevelLoaded;
 
 /**
@@ -33,6 +32,7 @@ public class ICSTD {
             new TestBlock();
             new TestItem();
         });
+
         PostLevelLoaded.boot();
     }
 }
