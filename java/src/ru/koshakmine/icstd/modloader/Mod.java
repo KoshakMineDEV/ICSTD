@@ -3,17 +3,23 @@ package ru.koshakmine.icstd.modloader;
 import com.zhekasmirnov.apparatus.modloader.ApparatusMod;
 import com.zhekasmirnov.apparatus.modloader.ApparatusModLoader;
 import com.zhekasmirnov.apparatus.modloader.LegacyInnerCoreMod;
-import com.zhekasmirnov.horizon.runtime.logger.Logger;
-import com.zhekasmirnov.innercore.api.log.ICLog;
 import com.zhekasmirnov.innercore.utils.FileTools;
 import org.json.JSONArray;
-import ru.koshakmine.icstd.event.Event;
-import ru.koshakmine.icstd.event.Events;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public abstract class Mod {
+    private final String dir;
+
+    public Mod(String dir){
+        this.dir = dir;
+    }
+
+    public final String getDir() {
+        return dir;
+    }
+
     public abstract void runMod();
 
     private static final ArrayList<Mod> mods = new ArrayList<>();
@@ -32,7 +38,7 @@ public abstract class Mod {
                     try{
                         final String classPath = json.getString(i);
                         Class<? extends Mod> clazz = (Class<? extends Mod>) Class.forName(classPath);
-                        Mod.mods.add(clazz.newInstance());
+                        Mod.mods.add(clazz.getConstructor(String.class).newInstance(path));
                     }catch (Exception ignore){}
                 }
             }catch (Exception ignore){}

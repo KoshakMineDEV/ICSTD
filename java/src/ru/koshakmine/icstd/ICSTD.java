@@ -6,12 +6,10 @@ import ru.koshakmine.icstd.event.Event;
 import ru.koshakmine.icstd.event.Events;
 import ru.koshakmine.icstd.impl.TestBlock;
 import ru.koshakmine.icstd.impl.TestItem;
-import ru.koshakmine.icstd.modloader.Mod;
 import ru.koshakmine.icstd.runtime.PostLevelLoaded;
 
 /**
  * TODO LIST
- * инструменты
  * частицы
  * тик BlockEntity
  * Прослойка совместимости для ванильных TileEntity
@@ -20,7 +18,6 @@ import ru.koshakmine.icstd.runtime.PostLevelLoaded;
  * Кеширование Player для более высокой производительности и экономии памяти
  * api для интерфейсов блоков
  * api для работы с StorageInterface
- * api для переводов
  * api для кастумных измерений
  * api для кастумных биомов
  * api для кастумных зачарований
@@ -35,6 +32,7 @@ public class ICSTD {
             new TestBlock();
             new TestItem();
         });
+
         PostLevelLoaded.boot();
     }
 }

@@ -3,6 +3,7 @@ package ru.koshakmine.icstd.entity;
 import com.zhekasmirnov.apparatus.mcpe.NativePlayer;
 import ru.koshakmine.icstd.network.Network;
 import ru.koshakmine.icstd.network.NetworkClient;
+import ru.koshakmine.icstd.network.NetworkPacket;
 import ru.koshakmine.icstd.network.NetworkSide;
 import ru.koshakmine.icstd.network.packets.ClientMessagePacket;
 
@@ -23,6 +24,14 @@ public class Player extends Entity {
 
     public NetworkClient getClient() {
         return client;
+    }
+
+    public <T extends NetworkPacket>boolean sendPacket(T packet){
+        if(client != null){
+            client.send(packet);
+            return true;
+        }
+        return false;
     }
 
     public boolean message(String message){

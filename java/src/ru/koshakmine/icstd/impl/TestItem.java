@@ -1,55 +1,10 @@
 package ru.koshakmine.icstd.impl;
 
-import com.zhekasmirnov.innercore.api.constants.ChatColor;
-import ru.koshakmine.icstd.entity.Player;
-import ru.koshakmine.icstd.item.IArmorItem;
-import ru.koshakmine.icstd.item.IClickableItem;
-import ru.koshakmine.icstd.item.IUsableItem;
-import ru.koshakmine.icstd.item.Item;
-import ru.koshakmine.icstd.type.AnimationType;
-import ru.koshakmine.icstd.type.ArmorSlot;
+import ru.koshakmine.icstd.item.tools.ItemHoe;
 import ru.koshakmine.icstd.type.CreativeCategory;
-import ru.koshakmine.icstd.type.common.BlockData;
-import ru.koshakmine.icstd.type.common.BlockPosition;
-import ru.koshakmine.icstd.type.common.ItemStack;
 import ru.koshakmine.icstd.type.common.Texture;
 
-public class TestItem extends Item implements IArmorItem, IUsableItem, IClickableItem {
-    @Override
-    public String getArmorPlayerTexture() {
-        return "";
-    }
-
-    @Override
-    public ArmorSlot getSlot() {
-        return ArmorSlot.CHESTPLATE;
-    }
-
-    @Override
-    public int getDefense() {
-        return 1;
-    }
-
-    @Override
-    public int getDuration() {
-        return 16;
-    }
-
-    @Override
-    public double getKnockbackResist() {
-        return 1.0;
-    }
-
-    @Override
-    public AnimationType getType() {
-        return AnimationType.TRIDENT;
-    }
-
-    @Override
-    public int getUsingDuration() {
-        return 20;
-    }
-
+public class TestItem extends ItemHoe {
     @Override
     public Texture getTexture() {
         return new Texture("stick");
@@ -71,12 +26,17 @@ public class TestItem extends Item implements IArmorItem, IUsableItem, IClickabl
     }
 
     @Override
-    public void onItemUsingComplete(ItemStack item, Player player) {
-        player.message(ChatColor.GOLD + "End using test item");
+    public int getToolDurability() {
+        return 16;
     }
 
     @Override
-    public void onClick(BlockPosition position, ItemStack itemStack, BlockData blockData, Player player) {
-        player.message(ChatColor.GREEN + "Click item");
+    public int getToolLevel() {
+        return 4;
+    }
+
+    @Override
+    public int getToolEfficiency() {
+        return 15;
     }
 }

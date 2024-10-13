@@ -1,8 +1,9 @@
 package ru.koshakmine.icstd.entity;
 
-import com.zhekasmirnov.apparatus.mcpe.NativeBlockSource;
 import com.zhekasmirnov.innercore.api.NativeAPI;
+import com.zhekasmirnov.innercore.api.NativeItemInstanceExtra;
 import ru.koshakmine.icstd.level.Level;
+import ru.koshakmine.icstd.type.common.ItemStack;
 import ru.koshakmine.icstd.type.entity.Effect;
 
 public class Entity {
@@ -42,5 +43,25 @@ public class Entity {
 
     public int getEffectDuration(Effect effect){
         return NativeAPI.getEffectDuration(uid, effect.ordinal());
+    }
+
+    public void setCarriedItem(ItemStack item){
+        NativeAPI.setEntityCarriedItem(uid, item.id, item.count, item.data, NativeItemInstanceExtra.unwrapValue(item.extra));
+    }
+
+    public boolean isSneaking(){
+        return NativeAPI.isSneaking(uid);
+    }
+
+    public double getYaw(){
+        final float[] rotation = new float[2];
+        NativeAPI.getRotation(uid, rotation);
+        return rotation[0];
+    }
+
+    public double getPitch(){
+        final float[] rotation = new float[2];
+        NativeAPI.getRotation(uid, rotation);
+        return rotation[1];
     }
 }

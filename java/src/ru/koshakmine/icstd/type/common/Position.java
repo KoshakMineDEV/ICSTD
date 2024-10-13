@@ -35,6 +35,10 @@ public class Position extends Vector3 {
         this(json.getInt("x"), json.getInt("y"), json.getInt("z"));
     }
 
+    public Position add(float x, float y, float z){
+        return new Position(this.x + x, this.y + y, this.z + z);
+    }
+
     public JSONObject toJson() throws JSONException {
         final JSONObject json = new JSONObject();
         json.put("x", x);
