@@ -28,4 +28,8 @@ public class NetworkClient {
     public void disconnect(){
         client.disconnect();
     }
+
+    public ConnectedClient getClient() {
+        return client;
+    }
 }

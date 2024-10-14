@@ -2,6 +2,7 @@ package ru.koshakmine.icstd.entity;
 
 import com.zhekasmirnov.innercore.api.NativeAPI;
 import com.zhekasmirnov.innercore.api.NativeItemInstanceExtra;
+import com.zhekasmirnov.innercore.api.commontypes.ItemInstance;
 import ru.koshakmine.icstd.level.Level;
 import ru.koshakmine.icstd.type.common.ItemStack;
 import ru.koshakmine.icstd.type.entity.Effect;
@@ -43,6 +44,10 @@ public class Entity {
 
     public int getEffectDuration(Effect effect){
         return NativeAPI.getEffectDuration(uid, effect.ordinal());
+    }
+
+    public ItemStack getCarriedItem(){
+        return new ItemStack(new ItemInstance(NativeAPI.getEntityCarriedItem(uid)));
     }
 
     public void setCarriedItem(ItemStack item){

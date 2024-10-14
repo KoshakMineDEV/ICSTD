@@ -1,6 +1,7 @@
 package ru.koshakmine.icstd.entity;
 
 import com.zhekasmirnov.apparatus.mcpe.NativePlayer;
+import com.zhekasmirnov.innercore.api.NativeAPI;
 import ru.koshakmine.icstd.network.Network;
 import ru.koshakmine.icstd.network.NetworkClient;
 import ru.koshakmine.icstd.network.NetworkPacket;
@@ -13,6 +14,10 @@ public class Player extends Entity {
 
     static {
         Network.registerPacket(NetworkSide.LOCAL, ClientMessagePacket::new);
+    }
+
+    public static Player getLocal() {
+        return new Player(NativeAPI.getLocalPlayer());
     }
 
     public Player(long uid) {

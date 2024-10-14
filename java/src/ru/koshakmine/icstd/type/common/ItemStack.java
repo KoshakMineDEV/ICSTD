@@ -66,6 +66,10 @@ public class ItemStack {
         return drop;
     }
 
+    public ItemInstance getItemInstance(){
+        return new ItemInstance(id, count, data, extra);
+    }
+
     @Override
     public String toString() {
         return "ItemStack{" +

@@ -41,11 +41,11 @@ public class TestBlock extends BlockRotate implements IBlockEntityHolder, ILocal
 
     @Override
     public BlockEntity createBlockEntity(Position position, Level level) {
-        return new TestBlockEntity(getId(), getNativeBlock().getId(), position, level);
+        return new TestBlockEntity(getBlockEntityType(), getNativeBlock().getId(), position, level);
     }
 
     @Override
     public LocalBlockEntity createLocalBlockEntity(Position position, NetworkEntity entity, JSONObject data) throws JSONException {
-        return new TestLocalBlockEntity(getId(), getNativeBlock().getId(), position, entity, data);
+        return new TestLocalBlockEntity(getBlockEntityType(), getNativeBlock().getId(), position, entity, data);
     }
 }

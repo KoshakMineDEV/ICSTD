@@ -136,6 +136,10 @@ public abstract class Block implements IBaseRegister {
         return id == 175 || CONSTANT_REPLACEABLE_TILE.contains(id);
     }
 
+    public static boolean doesVanillaTileHasUI(int id){
+        return CONSTANT_VANILLA_UI_TILES.contains(id);
+    }
+
     private NativeBlock block;
 
     @Override
@@ -228,9 +232,18 @@ public abstract class Block implements IBaseRegister {
         return true;
     }
 
+    public NativeBlock createBlock(){
+        final NativeBlock block = NativeBlock.createBlock(IDRegistry.genBlockID(getId()), getId(), "blank", 0);
+        block.addVariant(getName(), getTextures(), new int[getTextures().length]);
+        return block;
+    }
+
+    public String getBlockEntityType(){
+        return getId();
+    }
+
     public Block() {
-        this.block = NativeBlock.createBlock(IDRegistry.genBlockID(getId()), getId(), "blank", 0);
-        this.block.addVariant(getName(), getTextures(), new int[getTextures().length]);
+        this.block = createBlock();
 
         NativeBlock.setMaterial(block.getId(), getMaterial());
         NativeBlock.setMaterialBase(block.getId(), getMaterialBase());
@@ -263,13 +276,13 @@ public abstract class Block implements IBaseRegister {
         }
 
         if(this instanceof ILocalBlockEntityHolder){
-            LocalBlockEntity.getRegistry().registerBlockEntity(getId(), (ILocalBlockEntityHolder) this);
-            LocalBlockEntity.getRegistry().registerBlockEntity(getId(), getNumId());
+            LocalBlockEntity.getRegistry().registerBlockEntity(getBlockEntityType(), (ILocalBlockEntityHolder) this);
+            LocalBlockEntity.getRegistry().registerBlockEntity(getBlockEntityType(), getNumId());
         }
 
         if(this instanceof IBlockEntityHolder) {
-            BlockEntity.getRegistry().registerBlockEntity(getId(), (IBlockEntityHolder) this);
-            BlockEntity.getRegistry().registerBlockEntity(getId(), getNumId());
+            BlockEntity.getRegistry().registerBlockEntity(getBlockEntityType(), (IBlockEntityHolder) this);
+            BlockEntity.getRegistry().registerBlockEntity(getBlockEntityType(), getNumId());
         }
 
         if(this instanceof IDropBlock){

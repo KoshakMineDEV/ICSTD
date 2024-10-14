@@ -106,7 +106,7 @@ public class BlockEntity extends BlockEntityBase implements IRuntimeSaveObject {
         }else network = null;
     }
 
-    public void onLoad(JSONObject jsonObject) throws JSONException {}
+    public void onLoad(JSONObject json) throws JSONException {}
     public void onSave(JSONObject json) throws JSONException {}
 
     // Minecraft events

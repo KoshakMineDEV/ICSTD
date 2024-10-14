@@ -32,6 +32,10 @@ public class Level {
         this.region = region;
     }
 
+    public NativeBlockSource getRegion() {
+        return region;
+    }
+
     private static final HashMap<Integer, Level> levels = new HashMap<>();
     private static Level localLevel;
 
