@@ -11,6 +11,7 @@ import com.zhekasmirnov.innercore.api.unlimited.IDRegistry;
 import ru.koshakmine.icstd.block.blockentity.BlockEntity;
 import ru.koshakmine.icstd.block.blockentity.LocalBlockEntity;
 import ru.koshakmine.icstd.event.Event;
+import ru.koshakmine.icstd.item.IClickable;
 import ru.koshakmine.icstd.js.ToolAPI;
 import ru.koshakmine.icstd.level.Level;
 import ru.koshakmine.icstd.modloader.IBaseRegister;
@@ -27,6 +28,7 @@ public abstract class Block implements IBaseRegister {
     private static final List<Integer> CONSTANT_VANILLA_UI_TILES = new LinkedList<>(), CONSTANT_REPLACEABLE_TILE = new LinkedList<>();
 
     private static final HashMap<Integer, IPlaceBlock> placed = new HashMap<>();
+    private static final HashMap<Integer, IClickable> clickable = new HashMap<>();
 
     static {
         CONSTANT_VANILLA_UI_TILES.add(23);
@@ -124,6 +126,11 @@ public abstract class Block implements IBaseRegister {
                 level.playSound(position, "dig.stone", 1, 0.8f);
                 NativeAPI.preventDefault();
             }
+
+            final IClickable click = clickable.get(block.id);
+            if(click != null){
+                click.onClick(position, item, block, player);
+            }
         }), -1);
     }
 
@@ -140,7 +147,7 @@ public abstract class Block implements IBaseRegister {
         return CONSTANT_VANILLA_UI_TILES.contains(id);
     }
 
-    private NativeBlock block;
+    protected NativeBlock block;
 
     @Override
     public int getNumId() {
@@ -148,6 +155,9 @@ public abstract class Block implements IBaseRegister {
     }
 
     public abstract String[] getTextures();
+
+    @Override
+    public void onPreInit() {}
 
     @Override
     public void onInit() {}
@@ -242,62 +252,74 @@ public abstract class Block implements IBaseRegister {
         return getId();
     }
 
-    public Block() {
+    protected void buildBlock(){
         this.block = createBlock();
 
-        NativeBlock.setMaterial(block.getId(), getMaterial());
-        NativeBlock.setMaterialBase(block.getId(), getMaterialBase());
-        NativeBlock.setSoundType(block.getId(), getSoundType());
-        NativeBlock.setSolid(block.getId(), isSolid());
-        NativeBlock.setCanContainLiquid(block.getId(), canContainLiquid());
-        NativeBlock.setCanBeExtraBlock(block.getId(), canBeExtraBlock());
-        NativeBlock.setRenderAllFaces(block.getId(), renderAllFaces());
-        NativeBlock.setRenderType(block.getId(), getRenderType());
-        NativeBlock.setRenderLayer(block.getId(), getRenderLayer());
-        NativeBlock.setLightLevel(block.getId(), getLightLevel());
-        NativeBlock.setLightOpacity(block.getId(), getLightOpacity());
-        NativeBlock.setExplosionResistance(block.getId(), getExplosionResistance());
-        NativeBlock.setFriction(block.getId(), getFriction());
-        NativeBlock.setDestroyTime(block.getId(), getDestroyTime());
-        NativeBlock.setTranslucency(block.getId(), getTranslucency());
-        NativeBlock.setMapColor(block.getId(), getMapColor());
-        ToolAPI.registerBlockMaterial(block.getId(), getBlockMaterial(), getToolLevel());
+        if(block != null) {
+            onPreInit();
 
-        if(this instanceof IShapedBlock) {
-            IShapedBlock shapedBlock = (IShapedBlock) this;
-            shapedBlock.getShape().setToBlock(block.getId(), 0);
+            NativeBlock.setMaterial(block.getId(), getMaterial());
+            NativeBlock.setMaterialBase(block.getId(), getMaterialBase());
+            NativeBlock.setSoundType(block.getId(), getSoundType());
+            NativeBlock.setSolid(block.getId(), isSolid());
+            NativeBlock.setCanContainLiquid(block.getId(), canContainLiquid());
+            NativeBlock.setCanBeExtraBlock(block.getId(), canBeExtraBlock());
+            NativeBlock.setRenderAllFaces(block.getId(), renderAllFaces());
+            NativeBlock.setRenderType(block.getId(), getRenderType());
+            NativeBlock.setRenderLayer(block.getId(), getRenderLayer());
+            NativeBlock.setLightLevel(block.getId(), getLightLevel());
+            NativeBlock.setLightOpacity(block.getId(), getLightOpacity());
+            NativeBlock.setExplosionResistance(block.getId(), getExplosionResistance());
+            NativeBlock.setFriction(block.getId(), getFriction());
+            NativeBlock.setDestroyTime(block.getId(), getDestroyTime());
+            NativeBlock.setTranslucency(block.getId(), getTranslucency());
+            NativeBlock.setMapColor(block.getId(), getMapColor());
+            ToolAPI.registerBlockMaterial(block.getId(), getBlockMaterial(), getToolLevel());
 
-            final BlockVariant variant = BlockRegistry.getBlockVariant(block.getId(), 0);
+            if (this instanceof IShapedBlock) {
+                IShapedBlock shapedBlock = (IShapedBlock) this;
+                shapedBlock.getShape().setToBlock(block.getId(), 0);
 
-            if (variant != null) {
-                variant.shape = shapedBlock.getShape();
-                NativeItemModel.getFor(block.getId(), 0).updateForBlockVariant(variant);
+                final BlockVariant variant = BlockRegistry.getBlockVariant(block.getId(), 0);
+
+                if (variant != null) {
+                    variant.shape = shapedBlock.getShape();
+                    NativeItemModel.getFor(block.getId(), 0).updateForBlockVariant(variant);
+                }
             }
-        }
 
-        if(this instanceof ILocalBlockEntityHolder){
-            LocalBlockEntity.getRegistry().registerBlockEntity(getBlockEntityType(), (ILocalBlockEntityHolder) this);
-            LocalBlockEntity.getRegistry().registerBlockEntity(getBlockEntityType(), getNumId());
-        }
+            if (this instanceof ILocalBlockEntityHolder) {
+                LocalBlockEntity.getRegistry().registerBlockEntity(getBlockEntityType(), (ILocalBlockEntityHolder) this);
+                LocalBlockEntity.getRegistry().registerBlockEntity(getBlockEntityType(), getNumId());
+            }
 
-        if(this instanceof IBlockEntityHolder) {
-            BlockEntity.getRegistry().registerBlockEntity(getBlockEntityType(), (IBlockEntityHolder) this);
-            BlockEntity.getRegistry().registerBlockEntity(getBlockEntityType(), getNumId());
-        }
+            if (this instanceof IBlockEntityHolder) {
+                BlockEntity.getRegistry().registerBlockEntity(getBlockEntityType(), (IBlockEntityHolder) this);
+                BlockEntity.getRegistry().registerBlockEntity(getBlockEntityType(), getNumId());
+            }
 
-        if(this instanceof IDropBlock){
-            ToolAPI.registerDropFunction(block.getId(), (IDropBlock) this, getToolLevel());
-        }
+            if (this instanceof IDropBlock) {
+                ToolAPI.registerDropFunction(block.getId(), (IDropBlock) this, getToolLevel());
+            }
 
-        if(this instanceof IPlaceBlock){
-            placed.put(getNumId(), (IPlaceBlock) this);
-        }
+            if (this instanceof IPlaceBlock) {
+                placed.put(getNumId(), (IPlaceBlock) this);
+            }
 
-        if(addToCreativeInventory()) {
-            NativeItem.addToCreative(block.getId(), 1, 0, null);
-        }
+            if(this instanceof IClickable){
+                clickable.put(getNumId(), (IClickable) this);
+            }
 
-        onInit();
+            if (addToCreativeInventory()) {
+                NativeItem.addToCreative(block.getId(), 1, 0, null);
+            }
+
+            onInit();
+        }
+    }
+
+    public Block() {
+        buildBlock();
     }
 
     public NativeBlock getNativeBlock() {

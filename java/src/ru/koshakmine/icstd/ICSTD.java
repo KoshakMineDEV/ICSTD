@@ -8,6 +8,7 @@ import ru.koshakmine.icstd.entity.Player;
 import ru.koshakmine.icstd.event.Event;
 import ru.koshakmine.icstd.event.Events;
 import ru.koshakmine.icstd.impl.TestBlock;
+import ru.koshakmine.icstd.impl.TestBlockLiquid;
 import ru.koshakmine.icstd.impl.TestItem;
 import ru.koshakmine.icstd.runtime.PostLevelLoaded;
 import ru.koshakmine.icstd.type.BlockID;
@@ -39,6 +40,7 @@ public class ICSTD {
         Event.onCall(Events.ModsLoaded, arg -> {
             new TestBlock();
             new TestItem();
+            new TestBlockLiquid();
         });
 
         final Window testWindow = new Window();

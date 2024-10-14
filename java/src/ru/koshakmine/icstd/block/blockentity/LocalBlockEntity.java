@@ -10,6 +10,7 @@ import ru.koshakmine.icstd.event.Events;
 import ru.koshakmine.icstd.level.Level;
 import ru.koshakmine.icstd.network.NetworkSide;
 import ru.koshakmine.icstd.type.common.Position;
+import ru.koshakmine.icstd.ui.IWindow;
 
 public class LocalBlockEntity extends BlockEntityBase {
     protected final NetworkEntity network;
@@ -28,6 +29,10 @@ public class LocalBlockEntity extends BlockEntityBase {
     @Override
     public boolean canDestroyBlockEntity() {
         return canRemove();
+    }
+
+    public IWindow getScreenByName(String name){
+        return null;
     }
 
     private static final BlockEntityManager LOCAL_MANAGER = new BlockEntityManager(Events.LocalTick, entity -> {}, NetworkSide.LOCAL);

@@ -49,6 +49,6 @@ WRAP_JAVA("ru.koshakmine.icstd.js.ToolAPI").init({
 	    Block.registerDropFunction(id, func, level);
 	}
 });
-
+WRAP_JAVA("ru.koshakmine.icstd.js.LiquidRegistry").init(LiquidRegistry);
 
 Launch();

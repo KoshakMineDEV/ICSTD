@@ -1,10 +1,12 @@
 package ru.koshakmine.icstd.level;
 
+import com.zhekasmirnov.apparatus.adapter.innercore.game.block.BlockState;
 import com.zhekasmirnov.apparatus.adapter.innercore.game.common.Vector3;
 import com.zhekasmirnov.apparatus.adapter.innercore.game.entity.StaticEntity;
 import com.zhekasmirnov.apparatus.mcpe.NativeBlockSource;
 import com.zhekasmirnov.apparatus.util.Java8BackComp;
 import com.zhekasmirnov.innercore.api.NativeAPI;
+import com.zhekasmirnov.innercore.api.NativeTileEntity;
 import com.zhekasmirnov.innercore.api.commontypes.Coords;
 import com.zhekasmirnov.innercore.api.mod.adaptedscript.AdaptedScriptAPI;
 import ru.koshakmine.icstd.entity.Entity;
@@ -15,8 +17,10 @@ import ru.koshakmine.icstd.event.Events;
 import ru.koshakmine.icstd.network.Network;
 import ru.koshakmine.icstd.network.NetworkSide;
 import ru.koshakmine.icstd.network.packets.PlaySoundPacket;
+import ru.koshakmine.icstd.type.common.BlockData;
 import ru.koshakmine.icstd.type.common.BlockPosition;
 import ru.koshakmine.icstd.type.common.ItemStack;
+import ru.koshakmine.icstd.type.common.Position;
 
 import java.util.HashMap;
 import java.util.function.Function;
@@ -114,5 +118,25 @@ public class Level {
         final Player[] players = getPlayersForRadius(pos,volume * 2);
         final PlaySoundPacket packet = new PlaySoundPacket(pos.x, pos.y, pos.z, sound, volume, pitch);
         for (Player player : players) player.sendPacket(packet);
+    }
+
+    public void playSoundAtEntity(Player player, String sound, float volume, float pitch) {
+        playSound(player.getPosition(), sound, volume, pitch);
+    }
+
+    public BlockState getBlock(int x, int y, int z) {
+        return region.getBlock(x, y, z);
+    }
+
+    public BlockState getBlock(Position position) {
+        return getBlock((int) position.x, (int) position.y, (int) position.z);
+    }
+
+    public NativeTileEntity getNativeBlockEntity(int x, int y, int z){
+        return region.getBlockEntity(x, y, z);
+    }
+
+    public NativeTileEntity getNativeBlockEntity(Position position){
+        return getNativeBlockEntity((int) position.x, (int) position.y, (int) position.z);
     }
 }

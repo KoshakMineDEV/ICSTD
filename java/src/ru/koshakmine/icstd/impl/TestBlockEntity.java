@@ -20,11 +20,6 @@ public class TestBlockEntity extends BlockEntityContainer implements ITickingBlo
     }
 
     @Override
-    public String getScreenName(Position position, ItemStack stack, Player player) {
-        return "main";
-    }
-
-    @Override
     public void onInit() {
         Level.clientMessage("Init block entity");
         super.onInit();
@@ -60,6 +55,11 @@ public class TestBlockEntity extends BlockEntityContainer implements ITickingBlo
         }
 
         super.onClick(position, stack, player);
+    }
+
+    @Override
+    public String getScreenName(Position position, ItemStack stack, Player player) {
+        return "main";
     }
 
     @Override

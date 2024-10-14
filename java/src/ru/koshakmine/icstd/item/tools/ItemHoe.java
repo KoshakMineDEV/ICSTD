@@ -1,14 +1,14 @@
 package ru.koshakmine.icstd.item.tools;
 
 import ru.koshakmine.icstd.entity.Player;
-import ru.koshakmine.icstd.item.IClickableItem;
+import ru.koshakmine.icstd.item.IClickable;
 import ru.koshakmine.icstd.level.Level;
 import ru.koshakmine.icstd.type.common.BlockData;
 import ru.koshakmine.icstd.type.common.BlockPosition;
 import ru.koshakmine.icstd.type.common.ItemStack;
 import ru.koshakmine.icstd.type.tools.BlockMaterials;
 
-public abstract class ItemHoe extends ItemTool implements IClickableItem {
+public abstract class ItemHoe extends ItemTool implements IClickable {
     @Override
     public String[] getBlockMaterials() {
         return new String[] {BlockMaterials.PLANT};

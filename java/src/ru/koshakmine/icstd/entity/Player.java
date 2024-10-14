@@ -7,6 +7,7 @@ import ru.koshakmine.icstd.network.NetworkClient;
 import ru.koshakmine.icstd.network.NetworkPacket;
 import ru.koshakmine.icstd.network.NetworkSide;
 import ru.koshakmine.icstd.network.packets.ClientMessagePacket;
+import ru.koshakmine.icstd.type.common.ItemStack;
 
 public class Player extends Entity {
     private final NativePlayer player;
@@ -53,5 +54,14 @@ public class Player extends Entity {
             return true;
         }
         return false;
+    }
+
+    @Override
+    public boolean isItemSpendingAllowed() {
+        return player.getGameMode() != 1;
+    }
+
+    public void addItemToInventory(ItemStack item, boolean dropItem) {
+        player.addItemToInventory(item.id, item.count, item.data, item.extra, dropItem);
     }
 }
