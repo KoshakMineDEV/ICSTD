@@ -3,6 +3,7 @@ package ru.koshakmine.icstd.modloader;
 import com.zhekasmirnov.apparatus.modloader.ApparatusMod;
 import com.zhekasmirnov.apparatus.modloader.ApparatusModLoader;
 import com.zhekasmirnov.apparatus.modloader.LegacyInnerCoreMod;
+import com.zhekasmirnov.innercore.mod.build.Config;
 import com.zhekasmirnov.innercore.utils.FileTools;
 import org.json.JSONArray;
 
@@ -11,13 +12,19 @@ import java.util.List;
 
 public abstract class Mod {
     private final String dir;
+    private final LegacyInnerCoreMod mod;
 
-    public Mod(String dir){
+    public Mod(String dir, LegacyInnerCoreMod mod){
         this.dir = dir;
+        this.mod = mod;
     }
 
     public final String getDir() {
         return dir;
+    }
+
+    public final Config getConfig(){
+        return mod.getLegacyModInstance().getConfig();
     }
 
     public abstract void runMod();
@@ -38,7 +45,7 @@ public abstract class Mod {
                     try{
                         final String classPath = json.getString(i);
                         Class<? extends Mod> clazz = (Class<? extends Mod>) Class.forName(classPath);
-                        Mod.mods.add(clazz.getConstructor(String.class).newInstance(path));
+                        Mod.mods.add(clazz.getConstructor(String.class).newInstance(path, (LegacyInnerCoreMod) mod));
                     }catch (Exception ignore){}
                 }
             }catch (Exception ignore){}

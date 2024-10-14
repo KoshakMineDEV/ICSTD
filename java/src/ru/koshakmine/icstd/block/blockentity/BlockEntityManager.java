@@ -1,47 +1,82 @@
 package ru.koshakmine.icstd.block.blockentity;
 
-import com.zhekasmirnov.innercore.api.runtime.other.PrintStacking;
+import ru.koshakmine.icstd.ICSTD;
+import ru.koshakmine.icstd.block.blockentity.ticking.ITickingBlockEntity;
+import ru.koshakmine.icstd.block.blockentity.ticking.TickingSystemBlockEntity;
 import ru.koshakmine.icstd.event.Event;
 import ru.koshakmine.icstd.event.Events;
 import ru.koshakmine.icstd.level.Level;
 import ru.koshakmine.icstd.network.NetworkSide;
 import ru.koshakmine.icstd.runtime.PostLevelLoaded;
-import ru.koshakmine.icstd.runtime.Updatable;
 import ru.koshakmine.icstd.runtime.saver.IRuntimeSaveObject;
 import ru.koshakmine.icstd.runtime.saver.Saver;
 import ru.koshakmine.icstd.type.common.Position;
 
 import java.util.Iterator;
-import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.*;
 
 public class BlockEntityManager {
-    private final ConcurrentLinkedQueue<BlockEntityBase> allEntity = new ConcurrentLinkedQueue<>();
-
-    interface IUpdateBlockEntity {
+    public interface IUpdateBlockEntity {
         void apply(BlockEntityBase entity);
     }
 
+    private final ConcurrentLinkedQueue<BlockEntityBase> allEntity = new ConcurrentLinkedQueue<>();
     private final NetworkSide side;
+    private final TickingSystemBlockEntity SYSTEM;
+    private final ExecutorService executor = Executors.newFixedThreadPool(1);
+    boolean isEnd = false;
 
-    public BlockEntityManager(String callbackName, IUpdateBlockEntity aboba, NetworkSide side){
+    public BlockEntityManager(IUpdateBlockEntity aboba, NetworkSide side){
         this.side = side;
+        SYSTEM = new TickingSystemBlockEntity(side == NetworkSide.SERVER);
 
         Event.onCall(Events.LevelLeft, args -> {
             allEntity.clear();
         }, -5);
 
-        if(callbackName != null) {
-            Event.onCall(callbackName, args -> {
+        final String name = side == NetworkSide.SERVER ? Events.tick : Events.LocalTick;
+
+        Event.onCall(name, args -> {
+            isEnd = false;
+            ICSTD.onMultiThreadRun(executor, () -> {
                 final Iterator<BlockEntityBase> it = allEntity.iterator();
+
                 while (it.hasNext()) {
                     final BlockEntityBase entity = it.next();
                     aboba.apply(entity);
                     if (entity.canDestroyBlockEntity()) {
+                        if(entity instanceof ITickingBlockEntity) SYSTEM.removeBlockEntity(entity);
                         entity.removeBlockEntity();
                         it.remove();
                     }
                 }
+
+                isEnd = true;
             });
+
+        }, 10);
+
+
+        Event.onCall(name, (args) -> {
+            try {
+                while (ICSTD.MULTI_THREAD && !isEnd){
+                    Thread.sleep(1L);
+                }
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+
+        }, -10);
+    }
+
+    public void removeBlockEntity(BlockEntityBase entity){
+        final Iterator<BlockEntityBase> it = allEntity.iterator();
+        while (it.hasNext()) {
+            final BlockEntityBase base = it.next();
+            if(entity == base){
+                entity.removeBlockEntity();
+                it.remove();
+            }
         }
     }
 
@@ -51,7 +86,7 @@ public class BlockEntityManager {
         if(coordsEnitty == null) {
             allEntity.add(entity);
 
-            if(entity instanceof ITickingBlockEntity) Updatable.addUpdatable(entity);
+            if(entity instanceof ITickingBlockEntity) SYSTEM.addBlockEntity(entity);
             if(entity instanceof IRuntimeSaveObject) Saver.addSaver((IRuntimeSaveObject) entity);
 
             if(this.side == NetworkSide.LOCAL) {

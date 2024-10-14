@@ -16,7 +16,7 @@ public class Position extends Vector3 {
             return ((Number) value).floatValue();
         }
 
-        throw new RuntimeException("Not coords!");
+        return 0;
     }
 
     public Position(ScriptableObject coords){

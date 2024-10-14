@@ -1,9 +1,12 @@
 package ru.koshakmine.icstd.entity;
 
+import com.zhekasmirnov.apparatus.adapter.innercore.game.common.Vector3;
 import com.zhekasmirnov.innercore.api.NativeAPI;
 import com.zhekasmirnov.innercore.api.NativeItemInstanceExtra;
+import com.zhekasmirnov.innercore.api.commontypes.ItemInstance;
 import ru.koshakmine.icstd.level.Level;
 import ru.koshakmine.icstd.type.common.ItemStack;
+import ru.koshakmine.icstd.type.common.Position;
 import ru.koshakmine.icstd.type.entity.Effect;
 
 public class Entity {
@@ -45,6 +48,10 @@ public class Entity {
         return NativeAPI.getEffectDuration(uid, effect.ordinal());
     }
 
+    public ItemStack getCarriedItem(){
+        return new ItemStack(new ItemInstance(NativeAPI.getEntityCarriedItem(uid)));
+    }
+
     public void setCarriedItem(ItemStack item){
         NativeAPI.setEntityCarriedItem(uid, item.id, item.count, item.data, NativeItemInstanceExtra.unwrapValue(item.extra));
     }
@@ -63,5 +70,15 @@ public class Entity {
         final float[] rotation = new float[2];
         NativeAPI.getRotation(uid, rotation);
         return rotation[1];
+    }
+
+    public boolean isItemSpendingAllowed(){
+        return true;
+    }
+
+    public Position getPosition() {
+        final float[] pos = new float[3];
+        NativeAPI.getPosition(uid, pos);
+        return new Position(pos[0], pos[1], pos[2]);
     }
 }

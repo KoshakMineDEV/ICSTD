@@ -1,11 +1,13 @@
 package ru.koshakmine.icstd.entity;
 
 import com.zhekasmirnov.apparatus.mcpe.NativePlayer;
+import com.zhekasmirnov.innercore.api.NativeAPI;
 import ru.koshakmine.icstd.network.Network;
 import ru.koshakmine.icstd.network.NetworkClient;
 import ru.koshakmine.icstd.network.NetworkPacket;
 import ru.koshakmine.icstd.network.NetworkSide;
 import ru.koshakmine.icstd.network.packets.ClientMessagePacket;
+import ru.koshakmine.icstd.type.common.ItemStack;
 
 public class Player extends Entity {
     private final NativePlayer player;
@@ -13,6 +15,10 @@ public class Player extends Entity {
 
     static {
         Network.registerPacket(NetworkSide.LOCAL, ClientMessagePacket::new);
+    }
+
+    public static Player getLocal() {
+        return new Player(NativeAPI.getLocalPlayer());
     }
 
     public Player(long uid) {
@@ -48,5 +54,14 @@ public class Player extends Entity {
             return true;
         }
         return false;
+    }
+
+    @Override
+    public boolean isItemSpendingAllowed() {
+        return player.getGameMode() != 1;
+    }
+
+    public void addItemToInventory(ItemStack item, boolean dropItem) {
+        player.addItemToInventory(item.id, item.count, item.data, item.extra, dropItem);
     }
 }

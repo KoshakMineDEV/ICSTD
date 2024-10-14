@@ -21,7 +21,7 @@ import ru.koshakmine.icstd.entity.Player;
 import java.util.UUID;
 
 public class BlockEntity extends BlockEntityBase implements IRuntimeSaveObject {
-    private static final BlockEntityManager SERVER_MANAGER = new BlockEntityManager(Events.tick, entity -> {
+    private static final BlockEntityManager SERVER_MANAGER = new BlockEntityManager(entity -> {
         final NetworkEntity networkEntity = ((BlockEntity) entity).network;
         if(networkEntity != null)
             networkEntity.refreshClients();
@@ -106,7 +106,7 @@ public class BlockEntity extends BlockEntityBase implements IRuntimeSaveObject {
         }else network = null;
     }
 
-    public void onLoad(JSONObject jsonObject) throws JSONException {}
+    public void onLoad(JSONObject json) throws JSONException {}
     public void onSave(JSONObject json) throws JSONException {}
 
     // Minecraft events

@@ -1,26 +1,45 @@
 package ru.koshakmine.icstd.item;
 
+import com.zhekasmirnov.apparatus.mcpe.NativeBlockSource;
 import com.zhekasmirnov.innercore.api.NativeItem;
+import com.zhekasmirnov.innercore.api.commontypes.Coords;
 import com.zhekasmirnov.innercore.api.commontypes.ItemInstance;
 import com.zhekasmirnov.innercore.api.mod.adaptedscript.AdaptedScriptAPI;
 import com.zhekasmirnov.innercore.api.unlimited.IDRegistry;
 import ru.koshakmine.icstd.entity.Player;
 import ru.koshakmine.icstd.event.Event;
 import ru.koshakmine.icstd.event.Events;
+import ru.koshakmine.icstd.level.Level;
+import ru.koshakmine.icstd.type.AnimationType;
 import ru.koshakmine.icstd.type.CreativeCategory;
 import ru.koshakmine.icstd.modloader.IBaseRegister;
+import ru.koshakmine.icstd.type.common.BlockPosition;
 import ru.koshakmine.icstd.type.common.ItemStack;
+import ru.koshakmine.icstd.type.common.Position;
 import ru.koshakmine.icstd.type.common.Texture;
 
 import java.util.HashMap;
 
 public abstract class Item implements IBaseRegister {
     private static final HashMap<Integer, IUsableItem> using = new HashMap<>();
-    private static final HashMap<Integer, IClickableItem> clickable = new HashMap<>();
+    private static final HashMap<Integer, IClickable> clickable = new HashMap<>();
+    private static final HashMap<Integer, IDispense> dispenses = new HashMap<>();
+
+    public static void registerUsing(int id, IUsableItem usableItem){
+        using.put(id, usableItem);
+    }
+
+    public static void registerClick(int id, IClickable click){
+        clickable.put(id, click);
+    }
+
+    public static void registerDispense(int id, IDispense dispense){
+        dispenses.put(id, dispense);
+    }
 
     static {
         Event.onItemUse((position, item, block, player) -> {
-            final IClickableItem clickableItem = clickable.get(item.id);
+            final IClickable clickableItem = clickable.get(item.id);
             if (clickableItem != null) {
                 clickableItem.onClick(position, item, block, player);
             }
@@ -34,9 +53,18 @@ public abstract class Item implements IBaseRegister {
                 usingItem.onItemUsingComplete(item, new Player((long) args[1]));
             }
         });
+
+        Event.onCall(Events.ItemDispensed, (args) -> {
+            final ItemStack item = new ItemStack((ItemInstance) args[1]);
+            final IDispense dispense = dispenses.get(item.id);
+
+            if(dispense != null){
+                dispense.onDispense(new BlockPosition((Coords) args[0]), item, Level.getForRegion((NativeBlockSource) args[2]), ((Number) args[3]).intValue());
+            }
+        });
     }
 
-    private final NativeItem item;
+    private NativeItem item;
 
     @Override
     public int getNumId() {
@@ -84,15 +112,18 @@ public abstract class Item implements IBaseRegister {
     }
 
     @Override
+    public void onPreInit() {}
+
+    @Override
     public void onInit() {}
 
     public abstract Texture getTexture();
 
-    public Item(){
+    protected void createItem(){
         Texture texture = getTexture();
         if(texture == null) texture = Texture.EMPTY;
         final int id = IDRegistry.genItemID(getId());
-        
+
         if(this instanceof IFoodItem) {
             // Food is created differently on the server core and on the client
             this.item = AdaptedScriptAPI.Item.createFoodItem(id, getId(), getName(), texture.texture, texture.meta, ((IFoodItem) this).getFood());
@@ -105,37 +136,51 @@ public abstract class Item implements IBaseRegister {
         } else {
             this.item = NativeItem.createItem(id, getId(), getName(), texture.texture, texture.meta);
         }
+    }
 
-        if(this instanceof IUsableItem){
-            final IUsableItem usingItem = (IUsableItem) this;
+    protected void buildItem(){
+        onPreInit();
 
-            item.setMaxUseDuration(usingItem.getUsingDuration());
-            item.setUseAnimation(usingItem.getType().ordinal());
+        createItem();
 
-            using.put(id, usingItem);
-        }
+        if(item != null) {
+            final int id = IDRegistry.genItemID(getId());
 
-        if(this instanceof IClickableItem){
-            clickable.put(id, (IClickableItem) this);
-        }
+            if (this instanceof IUsableItem) {
+                final IUsableItem usingItem = (IUsableItem) this;
 
-        item.setGlint(isGlint());
-        item.setMaxDamage(getDurability());
-        item.setMaxStackSize(getMaxStack());
-        item.setLiquidClip(isLiquidClip());
+                item.setMaxUseDuration(usingItem.getUsingDuration());
+                item.setUseAnimation(usingItem.getType().ordinal());
 
-        item.setArmorDamageable(isArmorDamageable());
-        item.setExplodable(isExplodable());
-        item.setShouldDespawn(isShouldDespawn());
-        item.setFireResistant(isFireResistant());
-        item.setHandEquipped(isToolRender());
+                using.put(id, usingItem);
+            }
 
-        final CreativeCategory category = getCreativeCategory();
-        if(category != null){
-            item.setCreativeCategory(category.ordinal());
+            if (this instanceof IClickable) {
+                clickable.put(id, (IClickable) this);
+            }
+
+            item.setGlint(isGlint());
+            item.setMaxDamage(getDurability());
+            item.setMaxStackSize(getMaxStack());
+            item.setLiquidClip(isLiquidClip());
+
+            item.setArmorDamageable(isArmorDamageable());
+            item.setExplodable(isExplodable());
+            item.setShouldDespawn(isShouldDespawn());
+            item.setFireResistant(isFireResistant());
+            item.setHandEquipped(isToolRender());
+
+            final CreativeCategory category = getCreativeCategory();
+            if (category != null) {
+                item.setCreativeCategory(category.ordinal());
+            }
         }
 
         onInit();
+    }
+
+    public Item(){
+        buildItem();
     }
 
     public NativeItem getItem() {
