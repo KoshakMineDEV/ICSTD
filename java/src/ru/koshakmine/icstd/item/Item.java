@@ -10,6 +10,7 @@ import ru.koshakmine.icstd.entity.Player;
 import ru.koshakmine.icstd.event.Event;
 import ru.koshakmine.icstd.event.Events;
 import ru.koshakmine.icstd.level.Level;
+import ru.koshakmine.icstd.type.AnimationType;
 import ru.koshakmine.icstd.type.CreativeCategory;
 import ru.koshakmine.icstd.modloader.IBaseRegister;
 import ru.koshakmine.icstd.type.common.BlockPosition;
@@ -23,6 +24,18 @@ public abstract class Item implements IBaseRegister {
     private static final HashMap<Integer, IUsableItem> using = new HashMap<>();
     private static final HashMap<Integer, IClickable> clickable = new HashMap<>();
     private static final HashMap<Integer, IDispense> dispenses = new HashMap<>();
+
+    public static void registerUsing(int id, IUsableItem usableItem){
+        using.put(id, usableItem);
+    }
+
+    public static void registerClick(int id, IClickable click){
+        clickable.put(id, click);
+    }
+
+    public static void registerDispense(int id, IDispense dispense){
+        dispenses.put(id, dispense);
+    }
 
     static {
         Event.onItemUse((position, item, block, player) -> {

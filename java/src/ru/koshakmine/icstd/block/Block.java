@@ -30,6 +30,14 @@ public abstract class Block implements IBaseRegister {
     private static final HashMap<Integer, IPlaceBlock> placed = new HashMap<>();
     private static final HashMap<Integer, IClickable> clickable = new HashMap<>();
 
+    public static void registerPlace(int id, IPlaceBlock block){
+        placed.put(id, block);
+    }
+
+    public static void registerClick(int id, IClickable block){
+        clickable.put(id, block);
+    }
+
     static {
         CONSTANT_VANILLA_UI_TILES.add(23);
         CONSTANT_VANILLA_UI_TILES.add(25);

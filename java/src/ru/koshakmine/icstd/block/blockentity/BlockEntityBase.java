@@ -1,14 +1,15 @@
 package ru.koshakmine.icstd.block.blockentity;
 
+import ru.koshakmine.icstd.block.blockentity.ticking.ITickingBlockEntity;
 import ru.koshakmine.icstd.level.Level;
 import ru.koshakmine.icstd.network.NetworkSide;
 import ru.koshakmine.icstd.runtime.Updatable;
 import ru.koshakmine.icstd.type.common.Position;
 
-public abstract class BlockEntityBase extends Updatable {
+public abstract class BlockEntityBase {
     protected final Position position;
     protected final String type;
-    protected int x, y, z, id, dimension;
+    public int x, y, z, id, dimension;
     protected final Level level;
 
     // Not use!
@@ -30,13 +31,6 @@ public abstract class BlockEntityBase extends Updatable {
     // Life events
     public void onInit(){}
     public void onRemove(){}
-
-    @Override
-    public final boolean update() {
-        if(!canRemove() && canInitialization())
-            ((ITickingBlockEntity) this).onTick();
-        return canRemove();
-    }
 
     // Methods
     public boolean canInitialization() {

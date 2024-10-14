@@ -27,6 +27,10 @@
 			"targetDir": "."
 		},
 		{
+			"source": "icstd.json",
+			"targetDir": "."
+		},
+		{
 			"source": "dependency-config.json",
 			"targetDir": "."
 		}

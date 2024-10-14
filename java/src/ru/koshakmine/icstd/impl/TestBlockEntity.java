@@ -2,9 +2,8 @@ package ru.koshakmine.icstd.impl;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-import ru.koshakmine.icstd.block.blockentity.BlockEntity;
 import ru.koshakmine.icstd.block.blockentity.BlockEntityContainer;
-import ru.koshakmine.icstd.block.blockentity.ITickingBlockEntity;
+import ru.koshakmine.icstd.block.blockentity.ticking.ITickingBlockEntity;
 import ru.koshakmine.icstd.level.Level;
 import ru.koshakmine.icstd.type.ItemID;
 import ru.koshakmine.icstd.type.common.ItemStack;

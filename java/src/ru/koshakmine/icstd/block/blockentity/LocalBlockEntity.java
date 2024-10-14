@@ -6,6 +6,7 @@ import com.zhekasmirnov.apparatus.multiplayer.util.entity.NetworkEntityType;
 import org.json.JSONException;
 import org.json.JSONObject;
 import ru.koshakmine.icstd.block.ILocalBlockEntityHolder;
+import ru.koshakmine.icstd.block.blockentity.ticking.TickingSystemBlockEntity;
 import ru.koshakmine.icstd.event.Events;
 import ru.koshakmine.icstd.level.Level;
 import ru.koshakmine.icstd.network.NetworkSide;
@@ -35,7 +36,7 @@ public class LocalBlockEntity extends BlockEntityBase {
         return null;
     }
 
-    private static final BlockEntityManager LOCAL_MANAGER = new BlockEntityManager(Events.LocalTick, entity -> {}, NetworkSide.LOCAL);
+    private static final BlockEntityManager LOCAL_MANAGER = new BlockEntityManager(entity -> {}, NetworkSide.LOCAL);
     private static final BlockEntityRegistry<ILocalBlockEntityHolder> LOCAL_REGISTRY = new BlockEntityRegistry<>();
     public static final NetworkEntityType TYPE;
 

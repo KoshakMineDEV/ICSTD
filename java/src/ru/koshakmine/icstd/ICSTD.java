@@ -1,28 +1,29 @@
 package ru.koshakmine.icstd;
 
 import java.util.HashMap;
+import java.util.concurrent.Executor;
 
 import android.graphics.Color;
-import com.zhekasmirnov.apparatus.api.container.ItemContainer;
+import com.zhekasmirnov.apparatus.modloader.LegacyInnerCoreMod;
+import com.zhekasmirnov.innercore.mod.build.Config;
+import org.json.JSONException;
+import org.json.JSONObject;
 import ru.koshakmine.icstd.entity.Player;
 import ru.koshakmine.icstd.event.Event;
 import ru.koshakmine.icstd.event.Events;
 import ru.koshakmine.icstd.impl.TestBlock;
 import ru.koshakmine.icstd.impl.TestBlockLiquid;
 import ru.koshakmine.icstd.impl.TestItem;
+import ru.koshakmine.icstd.modloader.Mod;
 import ru.koshakmine.icstd.runtime.PostLevelLoaded;
-import ru.koshakmine.icstd.type.BlockID;
 import ru.koshakmine.icstd.type.ItemID;
 import ru.koshakmine.icstd.type.common.ItemStack;
 import ru.koshakmine.icstd.ui.Window;
-import ru.koshakmine.icstd.ui.WindowStandard;
 import ru.koshakmine.icstd.ui.elements.SlotElement;
-import ru.koshakmine.icstd.ui.elements.TextElement;
 
 /**
  * TODO LIST
  * частицы
- * тик BlockEntity
  * Прослойка совместимости для ванильных TileEntity
  * различные методы для классов Entity, Player
  * После добавления отправки массива байт в иннере, переписать network под это(более быстрая и экономная отправка)
@@ -35,7 +36,35 @@ import ru.koshakmine.icstd.ui.elements.TextElement;
  * api для комманд
  */
 
-public class ICSTD {
+public class ICSTD extends Mod {
+    // The game client does not work well with a lot of traffic, there may be crashes!
+    public static boolean MULTI_THREAD = false;
+
+    public static void onMultiThreadRun(Executor executor, Runnable runnable){
+        if(MULTI_THREAD) executor.execute(runnable);
+        else runnable.run();
+    }
+
+    public ICSTD(String dir, LegacyInnerCoreMod mod) {
+        super(dir, mod);
+    }
+
+    @Override
+    public void runMod() {
+        final Config config = getConfig();
+        try{
+            final JSONObject json = new JSONObject();
+
+            json.put("enabled", true);
+            json.put("multi_thread", false);
+
+            config.checkAndRestore(json);
+        }catch (JSONException ignore){}
+
+        MULTI_THREAD = config.getBool("multi_thread");
+    }
+
+
     public static void boot(HashMap<?, ?> args) {
         Event.onCall(Events.ModsLoaded, arg -> {
             new TestBlock();
@@ -65,4 +94,6 @@ public class ICSTD {
 
         PostLevelLoaded.boot();
     }
+
+
 }

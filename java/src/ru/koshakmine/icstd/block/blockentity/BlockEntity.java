@@ -21,7 +21,7 @@ import ru.koshakmine.icstd.entity.Player;
 import java.util.UUID;
 
 public class BlockEntity extends BlockEntityBase implements IRuntimeSaveObject {
-    private static final BlockEntityManager SERVER_MANAGER = new BlockEntityManager(Events.tick, entity -> {
+    private static final BlockEntityManager SERVER_MANAGER = new BlockEntityManager(entity -> {
         final NetworkEntity networkEntity = ((BlockEntity) entity).network;
         if(networkEntity != null)
             networkEntity.refreshClients();
