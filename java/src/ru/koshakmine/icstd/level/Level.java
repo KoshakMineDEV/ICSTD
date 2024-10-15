@@ -90,8 +90,12 @@ public class Level {
         return new EntityItem(region.spawnDroppedItem(x, y, z, stack.id, stack.count, stack.data, stack.extra));
     }
 
-    public boolean isChunkLoaded(int x, int z) {
-        return region.isChunkLoaded(x, z);
+    public boolean isChunkLoaded(int chunkX, int chunkZ) {
+        return region.isChunkLoaded(chunkX, chunkZ);
+    }
+
+    public boolean isChunkLoadedAt(int x, int z) {
+        return region.isChunkLoadedAt(x, z);
     }
 
     public void setBlock(Vector3 coords, int id, int data) {

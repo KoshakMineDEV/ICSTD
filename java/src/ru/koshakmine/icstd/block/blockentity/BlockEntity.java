@@ -65,28 +65,9 @@ public class BlockEntity extends BlockEntityBase implements IRuntimeSaveObject {
 
             final BlockEntity entity = (BlockEntity) SERVER_MANAGER.getBlockEntity(position, Level.getForRegion((NativeBlockSource) args[0]));
             if(entity != null){
-                entity.removeBlockEntity();
+                SERVER_MANAGER.removeBlockEntity(entity);
             }
         });
-
-        Event.onItemUse(((position, itemStack, blockData, player) -> {
-            final Level region = player.getRegion();
-            final BlockEntity entity = (BlockEntity) SERVER_MANAGER.getBlockEntity(position, region);
-
-            if(entity != null){
-                entity.onClick(position, itemStack, player);
-            }else{
-                IBlockEntityHolder holder = SERVER_REGISTRY.get(blockData.id);
-                if(holder != null){
-                    SERVER_MANAGER.addBlockEntity(holder.createBlockEntity(position, region));
-                }
-
-                holder = SERVER_REGISTRY.get(itemStack.id);
-                if(holder != null){
-                    SERVER_MANAGER.addBlockEntity(holder.createBlockEntity(position.relative, region));
-                }
-            }
-        }));
     }
 
     public final UUID uuid = UUID.randomUUID();

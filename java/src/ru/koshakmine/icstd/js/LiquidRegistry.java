@@ -2,13 +2,12 @@ package ru.koshakmine.icstd.js;
 
 import com.zhekasmirnov.innercore.api.mod.ScriptableObjectHelper;
 import org.mozilla.javascript.NativeArray;
-import org.mozilla.javascript.Scriptable;
 import org.mozilla.javascript.ScriptableObject;
 
 public class LiquidRegistry {
-    private static Scriptable scriptable;
+    private static ScriptableObject scriptable;
 
-    public static void init(Scriptable scriptable){
+    public static void init(ScriptableObject scriptable){
         LiquidRegistry.scriptable = scriptable;
     }
 
@@ -17,11 +16,11 @@ public class LiquidRegistry {
         for (int i = 0;i < textureUi.length;i++) {
             array.put(i, array, textureUi[i]);
         }
-        JsHelp.callFunction(scriptable, "registerLiquid", liquidName, name, array);
+        JsHelper.callFunction(scriptable, "registerLiquid", liquidName, name, array);
     }
 
     public static void registerBlock(String liquidName, int blockId, boolean isDynamic){
-        JsHelp.callFunction(scriptable, "registerBlock", liquidName, blockId, isDynamic);
+        JsHelper.callFunction(scriptable, "registerBlock", liquidName, blockId, isDynamic);
     }
 
     public static void registerItem(String liquidName, int emptyBucket, int emptyBucketData, int fullBucket, int fullBucketData){
@@ -33,6 +32,6 @@ public class LiquidRegistry {
         full.put("id", full, fullBucket);
         full.put("data", full, fullBucketData);
 
-        JsHelp.callFunction(scriptable, "registerItem", liquidName, empty, full);
+        JsHelper.callFunction(scriptable, "registerItem", liquidName, empty, full);
     }
 }

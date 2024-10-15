@@ -5,15 +5,30 @@
 		"author": "Koshak_Mine",
 		"version": "1.0",
 		"description": "InnerCore Standard Library for modding using Java",
-		"clientOnly": true
+		"clientOnly": true,
+		"icon": "mod_icon.png"
 	},
 	"resources": [],
 	"sources": [
 		{
+			"source": "dev",
+			"target": "main.js",
+			"type": "main",
+			"language": "typescript"
+		},
+		{
 			"source": "launcher.js",
 			"type": "launcher",
 			"language": "javascript"
+		},
+		{
+			"source": "libs/*",
+			"type": "library",
+			"language": "javascript"
 		}
+	],
+	"declarations": [
+		"declarations/energy-net.d.ts"
 	],
 	"compile": [
 		{

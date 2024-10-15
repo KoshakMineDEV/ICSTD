@@ -15,7 +15,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 
 public class TickingSystemBlockEntity {
-    private final ConcurrentHashMap<Integer, ConcurrentHashMap<ChunkPos, LinkedList<BlockEntityBase>>> dimensions = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<Integer, ConcurrentHashMap<ChunkPos, ConcurrentLinkedDeque<BlockEntityBase>>> dimensions = new ConcurrentHashMap<>();
     private final ExecutorService executor = Executors.newCachedThreadPool();
 
     public TickingSystemBlockEntity(Boolean isServer){
@@ -33,10 +33,7 @@ public class TickingSystemBlockEntity {
                                 level.isChunkLoaded(pos.x + 1, pos.z - 1) && level.isChunkLoaded(pos.x + 1, pos.z + 1)){
                             count.getAndIncrement();
                             ICSTD.onMultiThreadRun(executor, () -> {
-                                for (BlockEntityBase entity : list) {
-                                    if(!entity.canRemove() && entity.canInitialization())
-                                        ((ITickingBlockEntity) entity).onTick();
-                                }
+                                onTickChunk(list);
                                 count.addAndGet(-1);
                             });
                         }
@@ -52,25 +49,43 @@ public class TickingSystemBlockEntity {
         });
     }
 
-    public LinkedList<BlockEntityBase> getTiles(Level level, int x, int z){
-        final ConcurrentHashMap<ChunkPos, LinkedList<BlockEntityBase>> chunks = Java8BackComp.computeIfAbsent(dimensions, level.getDimension(), (Function<Integer, ConcurrentHashMap<ChunkPos, LinkedList<BlockEntityBase>>>) integer -> new ConcurrentHashMap<>());
-        return Java8BackComp.computeIfAbsent(chunks, new ChunkPos(x % 16, z % 16), (Function<ChunkPos, LinkedList<BlockEntityBase>>) chunkPos -> new LinkedList<>());
+    protected void onTickChunk(ConcurrentLinkedDeque<BlockEntityBase> list){
+        final Iterator<BlockEntityBase> it = list.iterator();
+        while (it.hasNext()) {
+            final BlockEntityBase entity = it.next();
+            if(!entity.canRemove() && entity.canInitialization())
+                ((ITickingBlockEntity) entity).onTick();
+        }
+    }
+
+    public ConcurrentLinkedDeque<BlockEntityBase> getTiles(Level level, int x, int z){
+        final ConcurrentHashMap<ChunkPos, ConcurrentLinkedDeque<BlockEntityBase>> chunks = Java8BackComp.computeIfAbsent(dimensions, level.getDimension(), (Function<Integer, ConcurrentHashMap<ChunkPos, ConcurrentLinkedDeque<BlockEntityBase>>>) integer -> new ConcurrentHashMap<>());
+        return Java8BackComp.computeIfAbsent(chunks, new ChunkPos(x / 16, z / 16), (Function<ChunkPos, ConcurrentLinkedDeque<BlockEntityBase>>) chunkPos -> new ConcurrentLinkedDeque<>());
     }
 
     public void addBlockEntity(BlockEntityBase entity){
-        getTiles(entity.getLevel(), entity.x, entity.z).add(entity);
+        getTiles(entity.getLevel(), entity.x, entity.z).push(entity);
+    }
+
+    public BlockEntityBase getBlockEntity(Level level, int x, int y, int z){
+        final Iterator<BlockEntityBase> it = getTiles(level, x, z).iterator();
+        while (it.hasNext()) {
+            final BlockEntityBase entity = it.next();
+            if (entity.x == x && entity.y == y && entity.z == z) {
+                return entity;
+            }
+        }
+        return null;
     }
 
     public void removeBlockEntity(BlockEntityBase removed){
-        Iterator<BlockEntityBase> it = getTiles(removed.getLevel(), removed.x, removed.z).iterator();
+        final Iterator<BlockEntityBase> it = getTiles(removed.getLevel(), removed.x, removed.z).iterator();
         while (it.hasNext()){
-            BlockEntityBase entity = it.next();
+            final BlockEntityBase entity = it.next();
             if(entity == removed){
                 it.remove();
                 return;
             }
         }
-
-        throw new RuntimeException("Not remove block entity!");
     }
 }

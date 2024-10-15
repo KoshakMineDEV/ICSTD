@@ -54,7 +54,7 @@ public abstract class BlockEntityBase {
     }
 
     public boolean canDestroyBlockEntity() {
-        return (level.isChunkLoaded(x / 16, z / 16) && level.getBlockId(x, y, z) != id) || canRemove();
+        return (level.isChunkLoadedAt(x, z) && level.getBlockId(x, y, z) != id) || canRemove();
     }
 
     public String getType() {

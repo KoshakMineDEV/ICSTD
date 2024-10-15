@@ -40,8 +40,6 @@ public class BlockFlowingLiquid extends Block implements IClickable {
     public BlockFlowingLiquid(BlockLiquid liquid, NativeBlock block){
         this.liquid = liquid;
         this.block = block;
-
-        buildBlock();
     }
 
     @Override

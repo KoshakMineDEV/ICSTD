@@ -74,6 +74,7 @@ public class BlockEntityManager {
         while (it.hasNext()) {
             final BlockEntityBase base = it.next();
             if(entity == base){
+                if(entity instanceof ITickingBlockEntity) SYSTEM.removeBlockEntity(entity);
                 entity.removeBlockEntity();
                 it.remove();
             }
