@@ -10,6 +10,12 @@
 	"resources": [],
 	"sources": [
 		{
+			"source": "dev",
+			"target": "main.js",
+			"type": "main",
+			"language": "typescript"
+		},
+		{
 			"source": "launcher.js",
 			"type": "launcher",
 			"language": "javascript"

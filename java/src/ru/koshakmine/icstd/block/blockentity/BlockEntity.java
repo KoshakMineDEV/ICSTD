@@ -65,7 +65,7 @@ public class BlockEntity extends BlockEntityBase implements IRuntimeSaveObject {
 
             final BlockEntity entity = (BlockEntity) SERVER_MANAGER.getBlockEntity(position, Level.getForRegion((NativeBlockSource) args[0]));
             if(entity != null){
-                entity.removeBlockEntity();
+                SERVER_MANAGER.removeBlockEntity(entity);
             }
         });
 
