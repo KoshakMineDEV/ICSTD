@@ -5,7 +5,8 @@
 		"author": "Koshak_Mine",
 		"version": "1.0",
 		"description": "InnerCore Standard Library for modding using Java",
-		"clientOnly": true
+		"clientOnly": true,
+		"icon": "mod_icon.png"
 	},
 	"resources": [],
 	"sources": [
