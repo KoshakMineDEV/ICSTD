@@ -1,18 +1,26 @@
+interface ITileApi {
+    energyTick(type: string, node: EnergyTileNode): void;
+    energyReceive(type: string, amount: number, voltage: number): number;
+
+    isConductor(type: string): boolean;
+    canReceiveEnergy(side: number, type: string): boolean;
+    canExtractEnergy(side: number, type: string): boolean;
+}
+
 declare class IJsTickBlockEntity {
     constructor(id: number, x: number, y: number, z: number, dimension: number, tiel: any);
+
+    public getApi(): ITileApi;
 }
 
 declare class ITickingSystemBlockEntity {
-    constructor(isServer: boolean);
-
     public addBlockEntity(entity: IJsTickBlockEntity): void;
     public removeBlockEntity(entity: IJsTickBlockEntity): void;
 }
 
 let JsTickBlockEntity: typeof IJsTickBlockEntity = WRAP_JAVA("ru.koshakmine.icstd.block.blockentity.ticking.JsTickBlockEntity");
-let TickingSystemBlockEntity: typeof ITickingSystemBlockEntity = WRAP_JAVA("ru.koshakmine.icstd.block.blockentity.ticking.JsTickingSystemBlockEntity");
-
-let System = new TickingSystemBlockEntity(true);
+let System: ITickingSystemBlockEntity = WRAP_JAVA("ru.koshakmine.icstd.block.blockentity.ticking.JsTickingSystemBlockEntity")
+    .getInstance();
 
 TileEntity.createTileEntityForPrototype = function(Prototype: any, addToUpdate?: boolean): any {
     var tileEntity: any = {};
@@ -47,32 +55,30 @@ TileEntity.createTileEntityForPrototype = function(Prototype: any, addToUpdate?:
 }
 
 function optiTile(tileEntity){
-    let fakeBlockEntity = new JsTickBlockEntity(tileEntity.blockID, tileEntity.x, tileEntity.y, tileEntity.z, tileEntity.dimension, tileEntity);
-
-    tileEntity.___fakeBlockEntity___ = fakeBlockEntity;
-
-    let func = tileEntity.destroy || function(){}
-    tileEntity.destroy = function(){
-        System.removeBlockEntity(fakeBlockEntity);
-        return func();
-    }
-
     tileEntity.update = function(){
         if (this.isLoaded) {
             if (!this.__initialized) {
+                !this.tick && System.removeBlockEntity(tileEntity.___fakeBlockEntity___);
                 if (!this._runInit()) {
                     this.noupdate = true;
-                    System.removeBlockEntity(fakeBlockEntity);
                     return;
                 }
             }
-            if (this.tick) {
-                this.tick();
-            }
+
+            this.tick && this.tick();
         }
     }
 
-    System.addBlockEntity(fakeBlockEntity);
+    tileEntity.___fakeBlockEntity___ = new JsTickBlockEntity(tileEntity.blockID, tileEntity.x, tileEntity.y, tileEntity.z, tileEntity.dimension, tileEntity);
+    tileEntity.__api__ = tileEntity.___fakeBlockEntity___.getApi()
+
+    let func = tileEntity.destroy || function(){}
+    tileEntity.destroy = function(){
+        System.removeBlockEntity(tileEntity.___fakeBlockEntity___);
+        return func();
+    }
+
+    System.addBlockEntity(tileEntity.___fakeBlockEntity___);
 }
 
 TileEntity.addTileEntity = function(x: number, y: number, z: number, blockSource: BlockSource): any {
@@ -100,10 +106,25 @@ TileEntity.addTileEntity = function(x: number, y: number, z: number, blockSource
     return null;
 }
 
+TileEntity.addUpdatableAsTileEntity = function(updatable){
+    updatable.remove = false;
+    updatable.isLoaded = true;
+    if (updatable.saverId && updatable.saverId !== -1) {
+        Saver.registerObject(updatable, updatable.saverId);
+    }
+    optiTile(updatable);
+    this.tileEntityList.push(updatable);
+    this.tileEntityCacheMap[updatable.x + "," + updatable.y + "," + updatable.z + "," + updatable.dimension] = updatable;
+    Callback.invokeCallback("TileEntityAdded", updatable, false);
+}
+
+let AbobaDeclarations: any = TileEntity;
+
 Saver.addSavesScope("_tiles", function read(data){
-    let tiles = TileEntity["tileEntityList"] = data || [];
-    for(let i in tiles)
-        optiTile(tiles[i]);
+    AbobaDeclarations.tileEntityList = data || [];
 }, function save(){
     return TileEntity["tileEntityList"];
 });
+
+WRAP_JAVA("ru.koshakmine.icstd.js.LiquidRegistry").init(LiquidRegistry);
+WRAP_JAVA("ru.koshakmine.icstd.js.TileEntity").init(TileEntity);

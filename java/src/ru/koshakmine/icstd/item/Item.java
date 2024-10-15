@@ -68,6 +68,8 @@ public abstract class Item implements IBaseRegister {
 
     @Override
     public int getNumId() {
+        if(item == null)
+            return IDRegistry.genItemID(getId());
         return item.id;
     }
 
@@ -138,49 +140,44 @@ public abstract class Item implements IBaseRegister {
         }
     }
 
-    protected void buildItem(){
+    @Override
+    public void factory() {
         onPreInit();
 
         createItem();
 
-        if(item != null) {
-            final int id = IDRegistry.genItemID(getId());
+        final int id = IDRegistry.genItemID(getId());
 
-            if (this instanceof IUsableItem) {
-                final IUsableItem usingItem = (IUsableItem) this;
+        if (this instanceof IUsableItem) {
+            final IUsableItem usingItem = (IUsableItem) this;
 
-                item.setMaxUseDuration(usingItem.getUsingDuration());
-                item.setUseAnimation(usingItem.getType().ordinal());
+            item.setMaxUseDuration(usingItem.getUsingDuration());
+            item.setUseAnimation(usingItem.getType().ordinal());
 
-                using.put(id, usingItem);
-            }
+            using.put(id, usingItem);
+        }
 
-            if (this instanceof IClickable) {
-                clickable.put(id, (IClickable) this);
-            }
+        if (this instanceof IClickable) {
+            clickable.put(id, (IClickable) this);
+        }
 
-            item.setGlint(isGlint());
-            item.setMaxDamage(getDurability());
-            item.setMaxStackSize(getMaxStack());
-            item.setLiquidClip(isLiquidClip());
+        item.setGlint(isGlint());
+        item.setMaxDamage(getDurability());
+        item.setMaxStackSize(getMaxStack());
+        item.setLiquidClip(isLiquidClip());
 
-            item.setArmorDamageable(isArmorDamageable());
-            item.setExplodable(isExplodable());
-            item.setShouldDespawn(isShouldDespawn());
-            item.setFireResistant(isFireResistant());
-            item.setHandEquipped(isToolRender());
+        item.setArmorDamageable(isArmorDamageable());
+        item.setExplodable(isExplodable());
+        item.setShouldDespawn(isShouldDespawn());
+        item.setFireResistant(isFireResistant());
+        item.setHandEquipped(isToolRender());
 
-            final CreativeCategory category = getCreativeCategory();
-            if (category != null) {
-                item.setCreativeCategory(category.ordinal());
-            }
+        final CreativeCategory category = getCreativeCategory();
+        if (category != null) {
+            item.setCreativeCategory(category.ordinal());
         }
 
         onInit();
-    }
-
-    public Item(){
-        buildItem();
     }
 
     public NativeItem getItem() {

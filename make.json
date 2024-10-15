@@ -20,7 +20,15 @@
 			"source": "launcher.js",
 			"type": "launcher",
 			"language": "javascript"
+		},
+		{
+			"source": "libs/*",
+			"type": "library",
+			"language": "javascript"
 		}
+	],
+	"declarations": [
+		"declarations/energy-net.d.ts"
 	],
 	"compile": [
 		{

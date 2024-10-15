@@ -6,4 +6,6 @@ public interface IBaseRegister {
     String getName();
     void onPreInit();
     void onInit();
+
+    void factory();
 }

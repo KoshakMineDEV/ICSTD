@@ -39,4 +39,11 @@ public class TestItem extends ItemHoe {
     public int getToolEfficiency() {
         return 15;
     }
+
+    /*@Override
+    public WorkbenchPattern[] getRecipes() {
+        return new WorkbenchPattern[]{
+                new WorkbenchPattern(new String[]{"aaa", "", ""}, "a", ItemID.DIAMOND, 0);
+        }
+    }*/
 }

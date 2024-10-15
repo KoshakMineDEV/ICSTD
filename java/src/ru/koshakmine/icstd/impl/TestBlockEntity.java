@@ -3,14 +3,16 @@ package ru.koshakmine.icstd.impl;
 import org.json.JSONException;
 import org.json.JSONObject;
 import ru.koshakmine.icstd.block.blockentity.BlockEntityContainer;
+import ru.koshakmine.icstd.block.blockentity.IEnergyTile;
 import ru.koshakmine.icstd.block.blockentity.ticking.ITickingBlockEntity;
+import ru.koshakmine.icstd.js.EnergyNetLib;
 import ru.koshakmine.icstd.level.Level;
 import ru.koshakmine.icstd.type.ItemID;
 import ru.koshakmine.icstd.type.common.ItemStack;
 import ru.koshakmine.icstd.type.common.Position;
 import ru.koshakmine.icstd.entity.Player;
 
-public class TestBlockEntity extends BlockEntityContainer implements ITickingBlockEntity {
+public class TestBlockEntity extends BlockEntityContainer implements ITickingBlockEntity, IEnergyTile {
     public int data, tick;
     public boolean active;
 
@@ -75,5 +77,28 @@ public class TestBlockEntity extends BlockEntityContainer implements ITickingBlo
     @Override
     public int getHideDistance() {
         return 16;
+    }
+
+    @Override
+    public void energyTick(String type, EnergyNetLib.EnergyTileNode node) {}
+
+    @Override
+    public float energyReceive(String type, float amount, int voltage) {
+        return Math.min(amount, 16);
+    }
+
+    @Override
+    public boolean isConductor(String type) {
+        return false;
+    }
+
+    @Override
+    public boolean canReceiveEnergy(int side, String type) {
+        return true;
+    }
+
+    @Override
+    public boolean canExtractEnergy(int side, String type) {
+        return false;
     }
 }

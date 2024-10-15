@@ -18,9 +18,9 @@ import ru.koshakmine.icstd.type.common.ItemStack;
 import ru.koshakmine.icstd.type.common.Position;
 
 public class ToolAPI {
-    private static Scriptable scriptable;
+    private static ScriptableObject scriptable;
 
-    public static void init(Scriptable scriptable){
+    public static void init(ScriptableObject scriptable){
         ToolAPI.scriptable = scriptable;
     }
 
@@ -36,43 +36,43 @@ public class ToolAPI {
     }
 
     public static void addBlockMaterial(String name, double breakingMultiplier){
-        JsHelp.callFunction(scriptable, "addBlockMaterial", name, breakingMultiplier);
+        JsHelper.callFunction(scriptable, "addBlockMaterial", name, breakingMultiplier);
     }
 
     public static void addToolMaterial(String name, ToolMaterial material){
-        JsHelp.callFunction(scriptable, "addToolMaterial", name, toMaterialScriptable(material));
+        JsHelper.callFunction(scriptable, "addToolMaterial", name, toMaterialScriptable(material));
     }
 
     public static double getBlockDestroyLevel(int id){
-        Object arg = JsHelp.callFunction(scriptable, "getBlockDestroyLevel", id);
+        Object arg = JsHelper.callFunction(scriptable, "getBlockDestroyLevel", id);
         if(arg instanceof Number)
             return ((Number) arg).doubleValue();
         throw new RuntimeException("Not js");
     }
 
     public static String getBlockMaterialName(int id){
-        Object arg = JsHelp.callFunction(scriptable, "getBlockMaterialName", id);
+        Object arg = JsHelper.callFunction(scriptable, "getBlockMaterialName", id);
         if(arg instanceof CharSequence)
             return arg.toString();
         throw new RuntimeException("Not js");
     }
 
     public static int getToolLevel(int itemId){
-        Object arg = JsHelp.callFunction(scriptable, "getBlockDestroyLevel", itemId);
+        Object arg = JsHelper.callFunction(scriptable, "getBlockDestroyLevel", itemId);
         if(arg instanceof Number)
             return ((Number) arg).intValue();
         throw new RuntimeException("Not js");
     }
 
     public static double getToolLevelViaBlock(int itemId, int blockId){
-        Object arg = JsHelp.callFunction(scriptable, "getToolLevelViaBlock", itemId, blockId);
+        Object arg = JsHelper.callFunction(scriptable, "getToolLevelViaBlock", itemId, blockId);
         if(arg instanceof Number)
             return ((Number) arg).doubleValue();
         throw new RuntimeException("Not js");
     }
 
     private static void registerSword(int id, Object material){
-        JsHelp.callFunction(scriptable, "registerSword", id, material);
+        JsHelper.callFunction(scriptable, "registerSword", id, material);
     }
 
     public static void registerSword(int id, String material){
@@ -87,7 +87,7 @@ public class ToolAPI {
         final NativeArray array = ScriptableObjectHelper.createEmptyArray();
         for (String str : blockBreakerMaterial)
             array.put(array.size(), array, str);
-        JsHelp.callFunction(scriptable, "registerTool", id, material, array);
+        JsHelper.callFunction(scriptable, "registerTool", id, material, array);
     }
 
     public static void registerTool(int id, String material, String[] blockBreakerMaterial){
@@ -99,11 +99,11 @@ public class ToolAPI {
     }
 
     public static void registerBlockMaterial(int id, String blockMaterial, int level){
-        JsHelp.callFunction(scriptable, "registerBlockMaterial", id, blockMaterial, level);
+        JsHelper.callFunction(scriptable, "registerBlockMaterial", id, blockMaterial, level);
     }
 
     public static void registerDropFunction(int id, IDropBlock dropFunc, int level){
-        JsHelp.callFunction(scriptable, "registerDropFunction", id, new ScriptableFunctionImpl() {
+        JsHelper.callFunction(scriptable, "registerDropFunction", id, new ScriptableFunctionImpl() {
             @Override
             public Object call(Context ctx, Scriptable self, Scriptable parent, Object[] args) {
                 final ItemStack[] items = dropFunc.getDrop(

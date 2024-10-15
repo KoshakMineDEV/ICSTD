@@ -3,23 +3,16 @@ package ru.koshakmine.icstd;
 import java.util.HashMap;
 import java.util.concurrent.Executor;
 
-import android.graphics.Color;
 import com.zhekasmirnov.apparatus.modloader.LegacyInnerCoreMod;
 import com.zhekasmirnov.innercore.mod.build.Config;
 import org.json.JSONException;
 import org.json.JSONObject;
-import ru.koshakmine.icstd.entity.Player;
-import ru.koshakmine.icstd.event.Event;
-import ru.koshakmine.icstd.event.Events;
 import ru.koshakmine.icstd.impl.TestBlock;
 import ru.koshakmine.icstd.impl.TestBlockLiquid;
 import ru.koshakmine.icstd.impl.TestItem;
 import ru.koshakmine.icstd.modloader.Mod;
+import ru.koshakmine.icstd.modloader.ObjectFactory;
 import ru.koshakmine.icstd.runtime.PostLevelLoaded;
-import ru.koshakmine.icstd.type.ItemID;
-import ru.koshakmine.icstd.type.common.ItemStack;
-import ru.koshakmine.icstd.ui.Window;
-import ru.koshakmine.icstd.ui.elements.SlotElement;
 
 /**
  * TODO LIST
@@ -50,7 +43,7 @@ public class ICSTD extends Mod {
     }
 
     @Override
-    public void runMod() {
+    public void runMod(ObjectFactory factory) {
         final Config config = getConfig();
         try{
             final JSONObject json = new JSONObject();
@@ -62,38 +55,14 @@ public class ICSTD extends Mod {
         }catch (JSONException ignore){}
 
         MULTI_THREAD = config.getBool("multi_thread");
+
+        factory.addBlock(TestBlock::new);
+        factory.addItem(TestItem::new);
+        factory.addBlock(TestBlockLiquid::new);
     }
 
 
     public static void boot(HashMap<?, ?> args) {
-        Event.onCall(Events.ModsLoaded, arg -> {
-            new TestBlock();
-            new TestItem();
-            new TestBlockLiquid();
-        });
-
-        final Window testWindow = new Window();
-
-        testWindow.setBackgroundColor(Color.TRANSPARENT);
-        testWindow.setAsGameOverlay(true);
-        testWindow.setBlockingBackground(false);
-        testWindow.setTouchable(false);
-
-        Event.onCall(Events.LocalTick, (arg) -> {
-            final ItemStack stack = Player.getLocal().getCarriedItem();
-
-            if(stack.id == ItemID.STONE){
-                testWindow.putElement("slot", new SlotElement(10, 10, 60)
-                        .setVisual(true)
-                        .setSource(stack));
-
-                testWindow.open();
-            }else
-                testWindow.close();
-        });
-
         PostLevelLoaded.boot();
     }
-
-
 }

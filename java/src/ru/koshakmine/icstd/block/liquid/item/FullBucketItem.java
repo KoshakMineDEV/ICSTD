@@ -18,15 +18,8 @@ import ru.koshakmine.icstd.type.common.*;
 public class FullBucketItem extends Item implements IClickable, IDispense {
     private final BlockLiquid liquid;
 
-    @Override
-    protected void createItem() {
-        if(liquid != null) super.createItem();
-    }
-
     public FullBucketItem(BlockLiquid liquid){
         this.liquid = liquid;
-
-        buildItem();
     }
 
     @Override

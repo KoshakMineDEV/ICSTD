@@ -15,7 +15,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 
 public class TickingSystemBlockEntity {
-    private final ConcurrentHashMap<Integer, ConcurrentHashMap<ChunkPos, LinkedList<BlockEntityBase>>> dimensions = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<Integer, ConcurrentHashMap<ChunkPos, ConcurrentLinkedDeque<BlockEntityBase>>> dimensions = new ConcurrentHashMap<>();
     private final ExecutorService executor = Executors.newCachedThreadPool();
 
     public TickingSystemBlockEntity(Boolean isServer){
@@ -49,24 +49,28 @@ public class TickingSystemBlockEntity {
         });
     }
 
-    protected void onTickChunk(LinkedList<BlockEntityBase> list){
-        for (BlockEntityBase entity : list) {
+    protected void onTickChunk(ConcurrentLinkedDeque<BlockEntityBase> list){
+        final Iterator<BlockEntityBase> it = list.iterator();
+        while (it.hasNext()) {
+            final BlockEntityBase entity = it.next();
             if(!entity.canRemove() && entity.canInitialization())
                 ((ITickingBlockEntity) entity).onTick();
         }
     }
 
-    public LinkedList<BlockEntityBase> getTiles(Level level, int x, int z){
-        final ConcurrentHashMap<ChunkPos, LinkedList<BlockEntityBase>> chunks = Java8BackComp.computeIfAbsent(dimensions, level.getDimension(), (Function<Integer, ConcurrentHashMap<ChunkPos, LinkedList<BlockEntityBase>>>) integer -> new ConcurrentHashMap<>());
-        return Java8BackComp.computeIfAbsent(chunks, new ChunkPos(x / 16, z / 16), (Function<ChunkPos, LinkedList<BlockEntityBase>>) chunkPos -> new LinkedList<>());
+    public ConcurrentLinkedDeque<BlockEntityBase> getTiles(Level level, int x, int z){
+        final ConcurrentHashMap<ChunkPos, ConcurrentLinkedDeque<BlockEntityBase>> chunks = Java8BackComp.computeIfAbsent(dimensions, level.getDimension(), (Function<Integer, ConcurrentHashMap<ChunkPos, ConcurrentLinkedDeque<BlockEntityBase>>>) integer -> new ConcurrentHashMap<>());
+        return Java8BackComp.computeIfAbsent(chunks, new ChunkPos(x / 16, z / 16), (Function<ChunkPos, ConcurrentLinkedDeque<BlockEntityBase>>) chunkPos -> new ConcurrentLinkedDeque<>());
     }
 
     public void addBlockEntity(BlockEntityBase entity){
-        getTiles(entity.getLevel(), entity.x, entity.z).add(entity);
+        getTiles(entity.getLevel(), entity.x, entity.z).push(entity);
     }
 
     public BlockEntityBase getBlockEntity(Level level, int x, int y, int z){
-        for (BlockEntityBase entity : getTiles(level, x, z)) {
+        final Iterator<BlockEntityBase> it = getTiles(level, x, z).iterator();
+        while (it.hasNext()) {
+            final BlockEntityBase entity = it.next();
             if (entity.x == x && entity.y == y && entity.z == z) {
                 return entity;
             }
