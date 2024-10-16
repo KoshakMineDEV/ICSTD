@@ -2,7 +2,6 @@ package ru.koshakmine.icstd.ui.container;
 
 import com.zhekasmirnov.apparatus.api.container.ItemContainer;
 import com.zhekasmirnov.apparatus.api.container.ItemContainerSlot;
-import com.zhekasmirnov.apparatus.mcpe.NativeBlockSource;
 import ru.koshakmine.icstd.entity.Player;
 import ru.koshakmine.icstd.level.Level;
 import ru.koshakmine.icstd.type.common.ItemStack;
@@ -54,5 +53,9 @@ public class Container {
 
     public void sendChanges() {
         container.sendChanges();
+    }
+
+    public ItemContainer getItemContainer() {
+        return container;
     }
 }

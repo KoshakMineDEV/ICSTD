@@ -1,4 +1,4 @@
-package ru.koshakmine.icstd.type;
+package ru.koshakmine.icstd.type.block;
 
 public class BlockID {
     public static final int BIRCH_STAIRS = 135;

@@ -28,7 +28,8 @@
 		}
 	],
 	"declarations": [
-		"declarations/energy-net.d.ts"
+		"declarations/energy-net.d.ts",
+		"declarations/StorageInterface.d.ts"
 	],
 	"compile": [
 		{

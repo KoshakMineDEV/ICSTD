@@ -6,6 +6,7 @@ import ru.koshakmine.icstd.block.blockentity.BlockEntityContainer;
 import ru.koshakmine.icstd.block.blockentity.IEnergyTile;
 import ru.koshakmine.icstd.block.blockentity.ticking.ITickingBlockEntity;
 import ru.koshakmine.icstd.js.EnergyNetLib;
+import ru.koshakmine.icstd.js.StorageInterfaceLib;
 import ru.koshakmine.icstd.level.Level;
 import ru.koshakmine.icstd.type.ItemID;
 import ru.koshakmine.icstd.type.common.ItemStack;
@@ -60,18 +61,22 @@ public class TestBlockEntity extends BlockEntityContainer implements ITickingBlo
 
     @Override
     public String getScreenName(Position position, ItemStack stack, Player player) {
+        if(stack.id == ItemID.STICK)
+            return null;
         return "main";
     }
 
     @Override
     public void onTick() {
+        StorageInterfaceLib.checkHoppers(this);
+
         final ItemStack slot = container.getSlot("slot1");
         if(active && ++tick % 100 == 0 && !slot.isEmpty()){
             level.spawnDroppedItem(x + .5f, y + 1.5f, z + .5f, new ItemStack(slot.id, 1, slot.data, slot.extra));
             slot.decrease(1);
             container.setSlot("slot1", slot);
-            container.sendChanges();
         }
+        container.sendChanges();
     }
 
     @Override
@@ -80,11 +85,16 @@ public class TestBlockEntity extends BlockEntityContainer implements ITickingBlo
     }
 
     @Override
-    public void energyTick(String type, EnergyNetLib.EnergyTileNode node) {}
+    public void energyTick(String type, EnergyNetLib.EnergyTileNode node) {
+        if(active)
+            node.add(16, 32);
+    }
 
     @Override
     public float energyReceive(String type, float amount, int voltage) {
-        return Math.min(amount, 16);
+        if(!active)
+            return Math.min(amount, 16);
+        return 0;
     }
 
     @Override
@@ -99,6 +109,6 @@ public class TestBlockEntity extends BlockEntityContainer implements ITickingBlo
 
     @Override
     public boolean canExtractEnergy(int side, String type) {
-        return false;
+        return true;
     }
 }

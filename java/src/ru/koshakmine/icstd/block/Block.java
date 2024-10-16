@@ -14,10 +14,12 @@ import ru.koshakmine.icstd.block.blockentity.BlockEntityRegistry;
 import ru.koshakmine.icstd.block.blockentity.LocalBlockEntity;
 import ru.koshakmine.icstd.event.Event;
 import ru.koshakmine.icstd.item.IClickable;
+import ru.koshakmine.icstd.js.StorageInterfaceLib;
 import ru.koshakmine.icstd.js.TileEntity;
 import ru.koshakmine.icstd.js.ToolAPI;
 import ru.koshakmine.icstd.level.Level;
 import ru.koshakmine.icstd.modloader.IBaseRegister;
+import ru.koshakmine.icstd.type.block.SoundType;
 import ru.koshakmine.icstd.type.common.BlockData;
 import ru.koshakmine.icstd.type.common.ItemStack;
 import ru.koshakmine.icstd.type.common.Position;
@@ -139,17 +141,17 @@ public abstract class Block implements IBaseRegister {
             }
             TileEntity.addTileEntity(position, level);
 
+            final BlockEntity entity = (BlockEntity) SERVER_MANAGER.getBlockEntity(position, level);
+            if(entity != null) {
+                entity.onClick(position, item, player);
+            }
+
             if(place != null && !NativeAPI.isDefaultPrevented()){
                 final Position tile = place.onPlace(position, item, block, player, level);
-                final BlockEntity entity = (BlockEntity) SERVER_MANAGER.getBlockEntity(tile, level);
 
-                if(entity != null){
-                    entity.onClick(position, item, player);
-                }else{
-                    holder = SERVER_REGISTRY.get(item.id);
-                    if(holder != null){
-                        SERVER_MANAGER.addBlockEntity(holder.createBlockEntity(tile, level));
-                    }
+                holder = SERVER_REGISTRY.get(item.id);
+                if(holder != null){
+                    SERVER_MANAGER.addBlockEntity(holder.createBlockEntity(tile, level));
                 }
 
                 TileEntity.addTileEntity(tile, level);
@@ -217,7 +219,7 @@ public abstract class Block implements IBaseRegister {
     }
 
     public String getSoundType() {
-        return "";
+        return SoundType.STONE;
     }
 
     public boolean isSolid() {
@@ -342,6 +344,10 @@ public abstract class Block implements IBaseRegister {
 
         if(this instanceof IClickable){
             clickable.put(getNumId(), (IClickable) this);
+        }
+
+        if(this instanceof StorageInterfaceLib.StorageDescriptor){
+            StorageInterfaceLib.createInterface(getNumId(), (StorageInterfaceLib.StorageDescriptor) this);
         }
 
         if (addToCreativeInventory()) {
