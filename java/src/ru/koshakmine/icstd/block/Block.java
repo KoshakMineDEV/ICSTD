@@ -13,23 +13,22 @@ import ru.koshakmine.icstd.block.blockentity.BlockEntityManager;
 import ru.koshakmine.icstd.block.blockentity.BlockEntityRegistry;
 import ru.koshakmine.icstd.block.blockentity.LocalBlockEntity;
 import ru.koshakmine.icstd.event.Event;
-import ru.koshakmine.icstd.item.IClickable;
+import ru.koshakmine.icstd.item.event.IClickable;
 import ru.koshakmine.icstd.js.StorageInterfaceLib;
 import ru.koshakmine.icstd.js.TileEntity;
 import ru.koshakmine.icstd.js.ToolAPI;
 import ru.koshakmine.icstd.level.Level;
-import ru.koshakmine.icstd.modloader.IBaseRegister;
+import ru.koshakmine.icstd.modloader.IBaseRegisterGameObject;
 import ru.koshakmine.icstd.type.block.SoundType;
-import ru.koshakmine.icstd.type.common.BlockData;
-import ru.koshakmine.icstd.type.common.ItemStack;
 import ru.koshakmine.icstd.type.common.Position;
 import ru.koshakmine.icstd.type.tools.BlockMaterials;
 
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.UUID;
 
-public abstract class Block implements IBaseRegister {
+public abstract class Block implements IBaseRegisterGameObject {
     private static final List<Integer> CONSTANT_VANILLA_UI_TILES = new LinkedList<>(), CONSTANT_REPLACEABLE_TILE = new LinkedList<>();
 
     private static final HashMap<Integer, IPlaceBlock> placed = new HashMap<>();
@@ -198,6 +197,17 @@ public abstract class Block implements IBaseRegister {
     @Override
     public void onInit() {}
 
+    @Override
+    public int getPriority() {
+        return 0;
+    }
+
+    private final UUID uuid = UUID.randomUUID();
+    @Override
+    public UUID getUUID() {
+        return uuid;
+    }
+
     /**
      * Sets the block breaking tool
      * @return ru.koshakmine.icstd.type.tools.BlockMaterials
@@ -290,8 +300,6 @@ public abstract class Block implements IBaseRegister {
 
     @Override
     public void factory() {
-        onPreInit();
-
         this.block = createBlock();
 
         NativeBlock.setMaterial(block.getId(), getMaterial());
@@ -353,12 +361,9 @@ public abstract class Block implements IBaseRegister {
         if (addToCreativeInventory()) {
             NativeItem.addToCreative(block.getId(), 1, 0, null);
         }
-
-        onInit();
     }
 
     public NativeBlock getNativeBlock() {
         return block;
     }
-
 }

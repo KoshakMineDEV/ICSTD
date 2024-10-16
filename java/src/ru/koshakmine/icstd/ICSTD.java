@@ -23,7 +23,6 @@ import ru.koshakmine.icstd.runtime.PostLevelLoaded;
  * api для кастумных измерений
  * api для кастумных биомов
  * api для кастумных зачарований
- * api для рецептов
  * api для комманд
  */
 

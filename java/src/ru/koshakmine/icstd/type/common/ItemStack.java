@@ -29,6 +29,10 @@ public class ItemStack {
         this(id, 1, data);
     }
 
+    public ItemStack(long ptr){
+        build(new NativeItemInstance(ptr));
+    }
+
     public ItemStack(ItemInstance instance) {
         build(instance);
     }
@@ -50,6 +54,10 @@ public class ItemStack {
         set(instance.id, instance.count, instance.data, instance.extra);
     }
 
+    protected void build(com.zhekasmirnov.apparatus.adapter.innercore.game.item.ItemStack instance){
+        set(instance.id, instance.count, instance.data, instance.extra);
+    }
+
     public ItemStack(Object item){
         if(item instanceof Wrapper)
             item = ((Wrapper) item).unwrap();
@@ -59,6 +67,9 @@ public class ItemStack {
             return;
         }else if(item instanceof NativeItemInstance){
             build(((NativeItemInstance) item));
+            return;
+        }else if(item instanceof com.zhekasmirnov.apparatus.adapter.innercore.game.item.ItemStack){
+            build((com.zhekasmirnov.apparatus.adapter.innercore.game.item.ItemStack) item);
             return;
         }
 

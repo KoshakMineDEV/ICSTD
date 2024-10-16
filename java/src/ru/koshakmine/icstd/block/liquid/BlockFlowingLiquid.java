@@ -3,7 +3,7 @@ package ru.koshakmine.icstd.block.liquid;
 import com.zhekasmirnov.innercore.api.NativeBlock;
 import ru.koshakmine.icstd.block.Block;
 import ru.koshakmine.icstd.entity.Player;
-import ru.koshakmine.icstd.item.IClickable;
+import ru.koshakmine.icstd.item.event.IClickable;
 
 import ru.koshakmine.icstd.type.common.BlockData;
 import ru.koshakmine.icstd.type.common.BlockPosition;
