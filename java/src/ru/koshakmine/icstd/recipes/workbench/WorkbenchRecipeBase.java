@@ -7,7 +7,6 @@ import com.zhekasmirnov.innercore.api.mod.recipes.workbench.WorkbenchField;
 import com.zhekasmirnov.innercore.api.mod.recipes.workbench.WorkbenchFieldAPI;
 import com.zhekasmirnov.innercore.api.mod.recipes.workbench.WorkbenchRecipeRegistry;
 import com.zhekasmirnov.innercore.api.runtime.Callback;
-import com.zhekasmirnov.innercore.api.runtime.other.PrintStacking;
 import ru.koshakmine.icstd.entity.Player;
 import ru.koshakmine.icstd.modloader.IBaseRegister;
 import ru.koshakmine.icstd.type.common.ItemStack;
@@ -63,7 +62,6 @@ public abstract class WorkbenchRecipeBase implements IBaseRegister {
         recipe.setPrefix("");
         recipe.setVanilla(false);
         WorkbenchRecipeRegistry.addRecipe(recipe);
-        PrintStacking.print("print");
     }
 
     @Override

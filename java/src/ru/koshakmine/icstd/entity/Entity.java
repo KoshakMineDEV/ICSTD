@@ -81,7 +81,7 @@ public class Entity {
     }
 
     public void setSneaking(boolean value){
-        NativeAPI.setSneaking(value);
+        NativeAPI.setSneaking(uid, value);
     }
 
     public double getYaw(){

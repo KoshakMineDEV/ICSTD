@@ -1,14 +1,11 @@
 package ru.koshakmine.icstd.level;
 
 import com.zhekasmirnov.apparatus.adapter.innercore.game.block.BlockState;
-import com.zhekasmirnov.apparatus.adapter.innercore.game.common.Vector3;
 import com.zhekasmirnov.apparatus.adapter.innercore.game.entity.StaticEntity;
 import com.zhekasmirnov.apparatus.mcpe.NativeBlockSource;
 import com.zhekasmirnov.apparatus.util.Java8BackComp;
 import com.zhekasmirnov.innercore.api.NativeAPI;
 import com.zhekasmirnov.innercore.api.NativeTileEntity;
-import com.zhekasmirnov.innercore.api.commontypes.Coords;
-import com.zhekasmirnov.innercore.api.mod.adaptedscript.AdaptedScriptAPI;
 import ru.koshakmine.icstd.entity.Entity;
 import ru.koshakmine.icstd.entity.EntityItem;
 import ru.koshakmine.icstd.entity.Player;
@@ -17,8 +14,6 @@ import ru.koshakmine.icstd.event.Events;
 import ru.koshakmine.icstd.network.Network;
 import ru.koshakmine.icstd.network.NetworkSide;
 import ru.koshakmine.icstd.network.packets.PlaySoundPacket;
-import ru.koshakmine.icstd.type.common.BlockData;
-import ru.koshakmine.icstd.type.common.BlockPosition;
 import ru.koshakmine.icstd.type.common.ItemStack;
 import ru.koshakmine.icstd.type.common.Position;
 
@@ -82,8 +77,16 @@ public class Level {
         return region.getBlockId(x, y, z);
     }
 
-    public int getBlockId(Vector3 pos) {
+    public int getBlockId(Position pos) {
         return getBlockId((int) pos.x, (int) pos.y, (int) pos.z);
+    }
+
+    public int getBlockData(int x, int y, int z) {
+        return region.getBlockData(x, y, z);
+    }
+
+    public int getBlockData(Position pos) {
+        return getBlockData((int) pos.x, (int) pos.y, (int) pos.z);
     }
 
     public EntityItem spawnDroppedItem(float x, float y, float z, ItemStack stack) {
@@ -98,11 +101,18 @@ public class Level {
         return region.isChunkLoadedAt(x, z);
     }
 
-    public void setBlock(Vector3 coords, int id, int data) {
-        region.setBlock((int) coords.x, (int) coords.y, (int) coords.z, id, data);
+    public Entity[] listEntityInAABB(Position pos1, Position pos2, int type, boolean blackList){
+        final long[] entitys = region.fetchEntitiesInAABB(pos1.x, pos1.y, pos1.z, pos2.x, pos2.y, pos2.z, type, blackList);
+
+        final Entity[] result = new Entity[entitys.length];
+        for (int i = 0;i < result.length;i++) {
+            result[i] = Entity.from(entitys[i]);
+        }
+
+        return result;
     }
 
-    public Player[] getPlayersForRadius(Vector3 pos, float radius){
+    public Player[] getPlayersForRadius(Position pos, float radius){
         final long[] entitys = region.fetchEntitiesInAABB(
                 pos.x - radius, pos.y - radius, pos.z - radius,
                 pos.x + radius, pos.y + radius, pos.z + radius,
@@ -118,7 +128,7 @@ public class Level {
         Network.registerPacket(NetworkSide.LOCAL, PlaySoundPacket::new);
     }
 
-    public void playSound(Vector3 pos, String sound, float volume, float pitch){
+    public void playSound(Position pos, String sound, float volume, float pitch){
         final Player[] players = getPlayersForRadius(pos,volume * 2);
         final PlaySoundPacket packet = new PlaySoundPacket(pos.x, pos.y, pos.z, sound, volume, pitch);
         for (Player player : players) player.sendPacket(packet);
@@ -136,11 +146,111 @@ public class Level {
         return getBlock((int) position.x, (int) position.y, (int) position.z);
     }
 
+    public void setBlock(Position coords, int id, int data) {
+        region.setBlock((int) coords.x, (int) coords.y, (int) coords.z, id, data);
+    }
+
+    public void setBlock(Position coords, BlockState state){
+        region.setBlock((int) coords.x, (int) coords.y, (int) coords.z, state);
+    }
+
     public NativeTileEntity getNativeBlockEntity(int x, int y, int z){
         return region.getBlockEntity(x, y, z);
     }
 
     public NativeTileEntity getNativeBlockEntity(Position position){
         return getNativeBlockEntity((int) position.x, (int) position.y, (int) position.z);
+    }
+
+    public boolean canSeeSky(int x, int y, int z){
+        return region.canSeeSky(x, y, z);
+    }
+
+    public boolean canSeeSky(Position position){
+        return region.canSeeSky((int) position.x, (int) position.y, (int) position.z);
+    }
+
+    public void destroyBlock(int x, int y, int z, boolean drop){
+        region.destroyBlock(x, y, z, drop);
+    }
+
+    public void destroyBlock(Position position, boolean drop){
+        destroyBlock((int) position.x, (int) position.y, (int) position.z, drop);
+    }
+
+    public void explode(float x, float y, float z, int power, boolean fire){
+        region.explode(x, y, z, power, fire);
+    }
+
+    public void explode(Position position, int power, boolean fire){
+        explode(position.x, position.y, position.z, power, fire);
+    }
+
+    public int getBiome(int x, int z){
+        return region.getBiome(x, z);
+    }
+
+    public void setBiome(int x, int z, int biomeId){
+        region.setBiome(x, z, biomeId);
+    }
+
+    public float getBiomeDownfallAt(int x, int y, int z){
+        return region.getBiomeDownfallAt(x, y, z);
+    }
+
+    public float getBiomeTemperatureAt(int x, int y, int z){
+        return region.getBiomeTemperatureAt(x, y, z);
+    }
+
+    public BlockState getExtraBlock(int x, int y, int z) {
+        return region.getExtraBlock(x, y, z);
+    }
+
+    public BlockState getExtraBlock(Position position) {
+        return getExtraBlock((int) position.x, (int) position.y, (int) position.z);
+    }
+
+    public void setExtraBlock(Position coords, int id, int data) {
+        region.setExtraBlock((int) coords.x, (int) coords.y, (int) coords.z, id, data);
+    }
+
+    public void setExtraBlock(Position coords, BlockState state){
+        region.setExtraBlock((int) coords.x, (int) coords.y, (int) coords.z, state);
+    }
+
+    public int getLightLevel(int x, int y, int z){
+        return region.getLightLevel(x, y, z);
+    }
+
+    public int getLightLevel(Position position){
+        return getLightLevel((int) position.x, (int) position.y, (int) position.z);
+    }
+
+    public void setDestroyParticlesEnabled(boolean enabled){
+        region.setDestroyParticlesEnabled(enabled);
+    }
+
+    public Entity spawnEntity(float x, float y, float z, String type){
+        return Entity.from(region.spawnEntity(x, y, z, type));
+    }
+
+    public Entity spawnEntity(Position position, String type){
+        return spawnEntity(position.x, position.y, position.z, type);
+    }
+
+    public Entity spawnEntity(float x, float y, float z, int type){
+        return Entity.from(region.spawnEntity(x, y, z, type));
+    }
+
+    public Entity spawnEntity(Position position, int type){
+        return spawnEntity(position.x, position.y, position.z, type);
+    }
+
+    public void spawnExpOrbs(float x, float y, float z, int amount){
+        region.spawnExpOrbs(x, y, z, amount);
+    }
+
+    public void spawnExpOrbs(Position position, int amount){
+        spawnExpOrbs(position.x, position.y, position.z, amount);
     }
 }
