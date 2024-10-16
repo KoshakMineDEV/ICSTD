@@ -7,7 +7,7 @@ import com.zhekasmirnov.innercore.api.mod.recipes.workbench.WorkbenchShapelessRe
 import ru.koshakmine.icstd.type.common.ItemStack;
 
 public class ShapelessRecipe extends WorkbenchRecipeBase{
-    public ShapelessRecipe(ItemStack item) {
+    public ShapelessRecipe(ItemCraft item) {
         super(item);
     }
 

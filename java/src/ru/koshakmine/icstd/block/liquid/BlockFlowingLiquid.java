@@ -64,6 +64,6 @@ public class BlockFlowingLiquid extends Block implements IClickable {
 
     @Override
     public void onPreInit() {
-        block.addVariant(new String[]{liquid.getFlowingTexture()}, new int[]{0});
+        addVariant(liquid.getName(), new String[]{liquid.getFlowingTexture()});
     }
 }

@@ -12,6 +12,8 @@ import ru.koshakmine.icstd.event.Events;
 import ru.koshakmine.icstd.item.event.IClickable;
 import ru.koshakmine.icstd.item.event.IDispense;
 import ru.koshakmine.icstd.level.Level;
+import ru.koshakmine.icstd.modloader.Mod;
+import ru.koshakmine.icstd.modloader.ObjectFactory;
 import ru.koshakmine.icstd.recipes.RecipeRegistry;
 import ru.koshakmine.icstd.type.CreativeCategory;
 import ru.koshakmine.icstd.modloader.IBaseRegisterGameObject;
@@ -23,6 +25,8 @@ import java.util.HashMap;
 import java.util.UUID;
 
 public abstract class Item implements IBaseRegisterGameObject {
+    protected static final ObjectFactory FACTORY = Mod.getFactory();
+
     private static final HashMap<Integer, IUsableItem> using = new HashMap<>();
     private static final HashMap<Integer, IClickable> clickable = new HashMap<>();
     private static final HashMap<Integer, IDispense> dispenses = new HashMap<>();

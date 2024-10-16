@@ -15,10 +15,11 @@ import java.util.HashMap;
 import java.util.UUID;
 
 public abstract class WorkbenchRecipeBase implements IBaseRegister {
-    protected final com.zhekasmirnov.innercore.api.mod.recipes.workbench.WorkbenchRecipe recipe;
+    protected final ItemCraft item;
+    protected HashMap<Character, RecipeEntry> entries = new HashMap<>();
 
-    public WorkbenchRecipeBase(ItemStack item){
-        this.recipe = buildRecipe(item);
+    public WorkbenchRecipeBase(ItemCraft item){
+        this.item = item;
     }
 
     protected abstract com.zhekasmirnov.innercore.api.mod.recipes.workbench.WorkbenchRecipe buildRecipe(ItemStack item);
@@ -29,19 +30,18 @@ public abstract class WorkbenchRecipeBase implements IBaseRegister {
         for (final PatternData data : datas)
             entries.put(data.symbol, new RecipeEntry(data.id, data.data));
 
-        recipe.setEntries(entries);
+        this.entries = entries;
+
         return this;
     }
 
     protected ItemInstance provideRecipeForPlayer(ItemInstance result, WorkbenchField field, long player){
         WorkbenchFieldAPI api = new WorkbenchFieldAPI(field);
-
         Callback.invokeCallback("CraftRecipePreProvided", this, field, player);
 
         onCraft(api, new Player(((NativeWorkbenchContainer) field).getPlayer()));
 
         Callback.invokeCallback("CraftRecipeProvided", this, field, api.isPrevented(), player);
-
         return api.isPrevented() ? null : result;
     }
 
@@ -59,8 +59,12 @@ public abstract class WorkbenchRecipeBase implements IBaseRegister {
 
     @Override
     public void factory() {
+        final com.zhekasmirnov.innercore.api.mod.recipes.workbench.WorkbenchRecipe recipe = buildRecipe(item.factory());
+
+        recipe.setEntries(entries);
         recipe.setPrefix("");
         recipe.setVanilla(false);
+
         WorkbenchRecipeRegistry.addRecipe(recipe);
     }
 

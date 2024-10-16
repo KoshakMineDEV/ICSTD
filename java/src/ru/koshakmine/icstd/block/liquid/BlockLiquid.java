@@ -76,8 +76,9 @@ public abstract class BlockLiquid extends Block implements IClickable {
 
         this.still = blocks[0];
         this.flowing = new BlockFlowingLiquid(this, blocks[1]);
+        block = blocks[0];
 
-        still.addVariant(new String[]{getStillTexture()}, new int[]{0});
+        addVariant(getName(), new String[]{getStillTexture()});
 
         LiquidRegistry.registerLiquid(getId(), getName(), getTextureUi());
         LiquidRegistry.registerBlock(getId(), stillId, false);

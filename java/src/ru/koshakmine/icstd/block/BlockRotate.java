@@ -7,15 +7,15 @@ import ru.koshakmine.icstd.type.common.*;
 public abstract class BlockRotate extends Block implements IPlaceBlock, IDropBlock {
     @Override
     public void onInit() {
-        final String[] td = getTextures();
-        final int[] metas = new int[td.length];
+        final String[] td = fixedTextures(getTextures());
         final String[][] rotated = new String[][]{
                 new String[]{td[0], td[1], td[3], td[2], td[5], td[4]},
                 new String[]{td[0], td[1], td[5], td[4], td[2], td[3]},
                 new String[]{td[0], td[1], td[4], td[5], td[3], td[2]},
         };
+
         for (String[] strings : rotated) {
-            getNativeBlock().addVariant(getName(), strings, metas);
+            addVariant(getName(), strings);
         }
     }
 
