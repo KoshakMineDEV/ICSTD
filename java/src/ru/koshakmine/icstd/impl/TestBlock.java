@@ -11,11 +11,14 @@ import ru.koshakmine.icstd.block.IBlockEntityHolder;
 import ru.koshakmine.icstd.block.ILocalBlockEntityHolder;
 import ru.koshakmine.icstd.block.blockentity.LocalBlockEntity;
 import ru.koshakmine.icstd.js.EnergyNetLib;
+import ru.koshakmine.icstd.js.StorageInterfaceLib;
 import ru.koshakmine.icstd.level.Level;
+import ru.koshakmine.icstd.type.common.ItemStack;
 import ru.koshakmine.icstd.type.common.Position;
 import ru.koshakmine.icstd.type.tools.BlockMaterials;
+import ru.koshakmine.icstd.type.tools.ToolLevel;
 
-public class TestBlock extends BlockRotate implements IBlockEntityHolder, ILocalBlockEntityHolder {
+public class TestBlock extends BlockRotate implements IBlockEntityHolder, ILocalBlockEntityHolder, StorageInterfaceLib.StorageDescriptor {
     @Override
     public String getId() {
         return "testik";
@@ -42,10 +45,19 @@ public class TestBlock extends BlockRotate implements IBlockEntityHolder, ILocal
     }
 
     @Override
+    public int getToolLevel() {
+        return ToolLevel.IRON;
+    }
+
+    @Override
+    public String getSoundType() {
+        return super.getSoundType();
+    }
+
+    @Override
     public void onInit() {
         super.onInit();
 
-        EnergyNetLib.registerTile(getNumId());
         NativeICRender.getGroup("ic-wire").add(getNumId(), -1);
         EnergyNetLib.addEnergyTileTypeForId(getNumId(), EnergyNetLib.assureEnergyType("Eu", 1));
     }
@@ -59,4 +71,24 @@ public class TestBlock extends BlockRotate implements IBlockEntityHolder, ILocal
     public LocalBlockEntity createLocalBlockEntity(Position position, NetworkEntity entity, JSONObject data) throws JSONException {
         return new TestLocalBlockEntity(getBlockEntityType(), getNativeBlock().getId(), position, entity, data);
     }
+
+    @Override
+    public String[] getInputSlots(int side) {
+        return new String[]{"slot1"};
+    }
+
+    @Override
+    public String[] getOutputSlots(int side) {
+        return new String[]{"slot1"};
+    }
+
+    @Override
+    public boolean isValidInput(ItemStack item, int side, BlockEntity entity) {
+        return true;
+    }
+
+    /*@Override
+    public int addItem(ItemStack item, int side, int maxCount) {
+        return Math.min(maxCount, 1);
+    }*/
 }

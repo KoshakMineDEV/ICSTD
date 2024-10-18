@@ -9,6 +9,8 @@ import org.mozilla.javascript.ScriptableObject;
 import java.util.Objects;
 
 public class Position extends Vector3 {
+    public static final Position EMPTY = new Position(0, 0, 0);
+
     private static float getCoord(ScriptableObject coords, String name){
         final Object value = coords.get(name);
 
@@ -37,6 +39,14 @@ public class Position extends Vector3 {
 
     public Position add(float x, float y, float z){
         return new Position(this.x + x, this.y + y, this.z + z);
+    }
+
+    public Position add(Position position){
+        return add(position.x, position.y, position.z);
+    }
+
+    public Position add(double x, double y, double z){
+        return add((float) x, (float) y, (float) z);
     }
 
     public JSONObject toJson() throws JSONException {

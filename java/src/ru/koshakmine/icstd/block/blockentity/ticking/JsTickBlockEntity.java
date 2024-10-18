@@ -14,7 +14,7 @@ import ru.koshakmine.icstd.level.Level;
 import ru.koshakmine.icstd.type.common.Position;
 
 public class JsTickBlockEntity extends BlockEntity {
-    private final ScriptableObject tile, api;
+    private final ScriptableObject tile;
     private final Function tickFunc;
 
     public JsTickBlockEntity(int id, int x, int y, int z, int dimension, ScriptableObject tile) {
@@ -22,44 +22,51 @@ public class JsTickBlockEntity extends BlockEntity {
 
         this.tile = tile;
         this.tickFunc = (Function) tile.get("update", tile);
+    }
 
-        api = ScriptableObjectHelper.createEmpty();
+    @Override
+    protected void onBuildFakeTileEntity(ScriptableObject api) {
+        final ScriptableObject energyNetTypes = EnergyNetLib.energyTypes.get(id);
+        if(energyNetTypes != null) {
+            api.put("isEnergyTile", api, true);
+            api.put("energyTypes", api, energyNetTypes);
 
-        api.put("energyTick", api, new ScriptableFunctionImpl() {
-            @Override
-            public Object call(Context ctx, Scriptable parent, Scriptable self, Object[] args) {
-                return apply(tile -> {
-                    tile.energyTick(args[0].toString(), new EnergyNetLib.EnergyTileNode((ScriptableObject) args[1], (Function) args[2]));
-                    return null;
-                }, null);
-            }
-        });
-        api.put("energyReceive", api, new ScriptableFunctionImpl() {
-            @Override
-            public Object call(Context ctx, Scriptable parent, Scriptable self, Object[] args) {
-                return apply(tile -> tile.energyReceive(args[0].toString(), ((Number) args[1]).floatValue(), ((Number) args[2]).intValue()), 0);
-            }
-        });
+            api.put("energyTick", api, new ScriptableFunctionImpl() {
+                @Override
+                public Object call(Context ctx, Scriptable parent, Scriptable self, Object[] args) {
+                    return apply(tile -> {
+                        tile.energyTick(args[0].toString(), new EnergyNetLib.EnergyTileNode((ScriptableObject) args[1], (Function) args[2]));
+                        return null;
+                    }, null);
+                }
+            });
+            api.put("energyReceive", api, new ScriptableFunctionImpl() {
+                @Override
+                public Object call(Context ctx, Scriptable parent, Scriptable self, Object[] args) {
+                    return apply(tile -> tile.energyReceive(args[0].toString(), ((Number) args[1]).floatValue(), ((Number) args[2]).intValue()), 0);
+                }
+            });
 
-        api.put("isConductor", api, new ScriptableFunctionImpl() {
-            @Override
-            public Object call(Context ctx, Scriptable parent, Scriptable self, Object[] args) {
-                return apply(tile -> tile.isConductor(args[0].toString()), false);
-            }
-        });
+            api.put("isConductor", api, new ScriptableFunctionImpl() {
+                @Override
+                public Object call(Context ctx, Scriptable parent, Scriptable self, Object[] args) {
+                    return apply(tile -> tile.isConductor(args[0].toString()), false);
+                }
+            });
 
-        api.put("canReceiveEnergy", api, new ScriptableFunctionImpl() {
-            @Override
-            public Object call(Context ctx, Scriptable parent, Scriptable self, Object[] args) {
-                return apply(tile -> tile.canReceiveEnergy(((Number) args[0]).intValue(), args[1].toString()), true);
-            }
-        });
-        api.put("canExtractEnergy", api, new ScriptableFunctionImpl() {
-            @Override
-            public Object call(Context ctx, Scriptable parent, Scriptable self, Object[] args) {
-                return apply(tile -> tile.canExtractEnergy(((Number) args[0]).intValue(), args[1].toString()), true);
-            }
-        });
+            api.put("canReceiveEnergy", api, new ScriptableFunctionImpl() {
+                @Override
+                public Object call(Context ctx, Scriptable parent, Scriptable self, Object[] args) {
+                    return apply(tile -> tile.canReceiveEnergy(((Number) args[0]).intValue(), args[1].toString()), true);
+                }
+            });
+            api.put("canExtractEnergy", api, new ScriptableFunctionImpl() {
+                @Override
+                public Object call(Context ctx, Scriptable parent, Scriptable self, Object[] args) {
+                    return apply(tile -> tile.canExtractEnergy(((Number) args[0]).intValue(), args[1].toString()), true);
+                }
+            });
+        }
     }
 
     private IEnergyTile entity;
@@ -81,10 +88,6 @@ public class JsTickBlockEntity extends BlockEntity {
         if(tile != null)
             return apply.apply(tile);
         return def;
-    }
-
-    public ScriptableObject getApi() {
-        return api;
     }
 
     public ScriptableObject getTile() {

@@ -1,14 +1,13 @@
 package ru.koshakmine.icstd.js;
 
 import com.zhekasmirnov.apparatus.mcpe.NativeBlockSource;
+import com.zhekasmirnov.horizon.runtime.logger.Logger;
 import com.zhekasmirnov.innercore.api.commontypes.Coords;
 import com.zhekasmirnov.innercore.api.commontypes.ItemInstance;
 import com.zhekasmirnov.innercore.api.mod.ScriptableObjectHelper;
 import com.zhekasmirnov.innercore.api.mod.util.ScriptableFunctionImpl;
-import org.mozilla.javascript.Context;
-import org.mozilla.javascript.NativeArray;
-import org.mozilla.javascript.Scriptable;
-import org.mozilla.javascript.ScriptableObject;
+import com.zhekasmirnov.innercore.mod.executable.Compiler;
+import org.mozilla.javascript.*;
 import ru.koshakmine.icstd.block.IDropBlock;
 import ru.koshakmine.icstd.item.tools.ToolMaterial;
 import ru.koshakmine.icstd.level.Level;
@@ -19,9 +18,11 @@ import ru.koshakmine.icstd.type.common.Position;
 
 public class ToolAPI {
     private static ScriptableObject scriptable;
+    private static ScriptableObject dropFunctions;
 
-    public static void init(ScriptableObject scriptable){
+    public static void init(ScriptableObject scriptable, ScriptableObject dropFunctions){
         ToolAPI.scriptable = scriptable;
+        ToolAPI.dropFunctions = dropFunctions;
     }
 
     public static ScriptableObject toMaterialScriptable(ToolMaterial material) {
@@ -122,5 +123,34 @@ public class ToolAPI {
                 return array;
             }
         }, level);
+    }
+
+    public static ItemStack[] getBlockDrop(Position position, BlockData block, Level level, int levelDigging, EnchantData data, ItemStack item){
+        final Object obj = dropFunctions.get(block.id);
+        if(obj instanceof Function){
+            final Function function = (Function) obj;
+            final Object result = function.call(Compiler.assureContextForCurrentThread(), function.getParentScope(), dropFunctions, new Object[]{
+                    new Coords(position.x, position.y, position.z),
+                    block.id,
+                    block.data,
+                    levelDigging,
+                    data.toScriptable(),
+                    item.getItemInstance(),
+                    level.getRegion()
+            });
+
+            if(result instanceof NativeArray){
+                final NativeArray list = (NativeArray) result;
+                final ItemStack[] stacks = new ItemStack[list.size()];
+
+                for (int i = 0;i < stacks.length;i++)
+                    stacks[i] = new ItemStack(list.get(i, list));
+
+                return stacks;
+            }
+
+        }
+
+        return new ItemStack[]{new ItemStack(block.id, 1, block.data)};
     }
 }

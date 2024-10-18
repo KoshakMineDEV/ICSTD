@@ -77,6 +77,7 @@ public class BlockEntityManager {
                 if(entity instanceof ITickingBlockEntity) SYSTEM.removeBlockEntity(entity);
                 entity.removeBlockEntity();
                 it.remove();
+                return;
             }
         }
     }
@@ -110,6 +111,10 @@ public class BlockEntityManager {
         }
 
         return false;
+    }
+
+    public BlockEntityBase getBlockEntity(int x, int y, int z, int dimension){
+        return getBlockEntity(new Position(x, y, z), Level.getForDimension(dimension));
     }
 
     public BlockEntityBase getBlockEntity(Position position, Level region){

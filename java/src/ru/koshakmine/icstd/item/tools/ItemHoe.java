@@ -1,7 +1,7 @@
 package ru.koshakmine.icstd.item.tools;
 
 import ru.koshakmine.icstd.entity.Player;
-import ru.koshakmine.icstd.item.IClickable;
+import ru.koshakmine.icstd.item.event.IClickable;
 import ru.koshakmine.icstd.level.Level;
 import ru.koshakmine.icstd.type.common.BlockData;
 import ru.koshakmine.icstd.type.common.BlockPosition;

@@ -35,7 +35,7 @@ public class TestClientPacket extends NetworkPacket {
 
     @Override
     protected void decode(NetworkClient client) {
-        Level.clientMessage("byte: "+getByte()+", short: "+getShort()+", "+getInt()+", "+getLong()+", "+getFloat()+", "+getDouble());
+        Level.getLocalLevel().message("byte: "+getByte()+", short: "+getShort()+", "+getInt()+", "+getLong()+", "+getFloat()+", "+getDouble());
 
         Network.sendToServer(new TestServerPacket(getString()));
     }

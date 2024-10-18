@@ -1,17 +1,19 @@
 package ru.koshakmine.icstd.js;
 
+import com.zhekasmirnov.apparatus.util.Java8BackComp;
+import com.zhekasmirnov.innercore.api.mod.ScriptableObjectHelper;
 import com.zhekasmirnov.innercore.mod.executable.Compiler;
 import org.mozilla.javascript.Function;
+import org.mozilla.javascript.NativeArray;
 import org.mozilla.javascript.ScriptableObject;
 
-public class EnergyNetLib {
-    private static ScriptableObject EnergyNet, EnergyTypeRegistry, EnergyTileRegistry, api;
+import java.util.HashMap;
 
-    public static void init(ScriptableObject EnergyNet, ScriptableObject EnergyTypeRegistry, ScriptableObject EnergyTileRegistry, ScriptableObject api){
-        EnergyNetLib.EnergyNet = EnergyNet;
+public class EnergyNetLib {
+    private static ScriptableObject EnergyTypeRegistry;
+
+    public static void init(ScriptableObject EnergyTypeRegistry){
         EnergyNetLib.EnergyTypeRegistry = EnergyTypeRegistry;
-        EnergyNetLib.EnergyTileRegistry = EnergyTileRegistry;
-        EnergyNetLib.api = api;
     }
 
     public static class EnergyType {
@@ -21,12 +23,16 @@ public class EnergyNetLib {
             this.self = self;
         }
 
-        private ScriptableObject getSelf() {
+        public ScriptableObject getSelf() {
             return self;
         }
 
         public void registerWire(int wireId, int maxEnergyPacket){
             JsHelper.callFunction(self, "registerWire", wireId, maxEnergyPacket);
+        }
+
+        public String getName(){
+            return ScriptableObjectHelper.getStringProperty(self, "name", null);
         }
     }
 
@@ -48,11 +54,12 @@ public class EnergyNetLib {
         return new EnergyType((ScriptableObject) JsHelper.callFunction(EnergyTypeRegistry, "assureEnergyType", name, energyValue));
     }
 
-    public static void addEnergyTileTypeForId(int blockId, EnergyType type){
-        JsHelper.callFunction(EnergyTileRegistry, "addEnergyTypeForId", blockId, type.getSelf());
-    }
+    public static final HashMap<Integer, ScriptableObject> energyTypes = new HashMap<>();
 
-    public static void registerTile(int id){
-        JsHelper.callFunction(api, "registerTile", id);
+    public static void addEnergyTileTypeForId(int blockId, EnergyType type){
+        final ScriptableObject types = Java8BackComp.computeIfAbsent(energyTypes, blockId, (java.util.function.Function<Integer, ScriptableObject>) integer -> ScriptableObjectHelper.createEmpty());
+        types.put(type.getName(), types, type);
+
+        TileEntity.registerPrototype(blockId, ScriptableObjectHelper.createEmpty());
     }
 }

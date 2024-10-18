@@ -18,4 +18,8 @@ public class TileEntity {
     public static void addTileEntity(Position position, Level level){
         addTileEntity((int) position.x, (int) position.y, (int) position.z, level);
     }
+
+    public static void registerPrototype(int id, ScriptableObject tile){
+        JsHelper.callFunction(TileEntity, "registerPrototype", id, tile);
+    }
 }

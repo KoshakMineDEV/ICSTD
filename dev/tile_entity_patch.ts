@@ -7,10 +7,12 @@ interface ITileApi {
     canExtractEnergy(side: number, type: string): boolean;
 }
 
-declare class IJsTickBlockEntity {
-    constructor(id: number, x: number, y: number, z: number, dimension: number, tiel: any);
+declare class IBlockEntity {
+    public getFakeTileEntity(): any;
+}
 
-    public getApi(): ITileApi;
+declare class IJsTickBlockEntity extends IBlockEntity {
+    constructor(id: number, x: number, y: number, z: number, dimension: number, tiel: any);
 }
 
 declare class ITickingSystemBlockEntity {
@@ -18,9 +20,16 @@ declare class ITickingSystemBlockEntity {
     public removeBlockEntity(entity: IJsTickBlockEntity): void;
 }
 
+declare class IBlockEntityManager {
+    public removeBlockEntity(entity: IBlockEntity): void;
+    public addBlockEntity(entity: IBlockEntity): void;
+    public getBlockEntity(x: number, y: number, z: number, dimension: number): IBlockEntity;
+}
+
 let JsTickBlockEntity: typeof IJsTickBlockEntity = WRAP_JAVA("ru.koshakmine.icstd.block.blockentity.ticking.JsTickBlockEntity");
 let System: ITickingSystemBlockEntity = WRAP_JAVA("ru.koshakmine.icstd.block.blockentity.ticking.JsTickingSystemBlockEntity")
     .getInstance();
+let Manager: IBlockEntityManager = WRAP_JAVA("ru.koshakmine.icstd.block.blockentity.BlockEntity").getManager();
 
 TileEntity.createTileEntityForPrototype = function(Prototype: any, addToUpdate?: boolean): any {
     var tileEntity: any = {};
@@ -54,6 +63,16 @@ TileEntity.createTileEntityForPrototype = function(Prototype: any, addToUpdate?:
     return tileEntity;
 }
 
+let getTileEntityOriginal = TileEntity.getTileEntity;
+TileEntity.getTileEntity = function(x: number, y: number, z:number, region?: BlockSource): any {
+    let result = getTileEntityOriginal.apply(this, arguments);
+    if(!result){
+        let tile = Manager.getBlockEntity(x, y, z, region ? region.getDimension() : Player.getDimension());
+        return tile ? tile.getFakeTileEntity() : undefined;
+    }
+    return result;
+}
+
 function optiTile(tileEntity){
     tileEntity.update = function(){
         if (this.isLoaded) {
@@ -70,7 +89,19 @@ function optiTile(tileEntity){
     }
 
     tileEntity.___fakeBlockEntity___ = new JsTickBlockEntity(tileEntity.blockID, tileEntity.x, tileEntity.y, tileEntity.z, tileEntity.dimension, tileEntity);
-    tileEntity.__api__ = tileEntity.___fakeBlockEntity___.getApi()
+    let fakeTile = tileEntity.___fakeBlockEntity___.getFakeTileEntity();
+    for(let key in fakeTile){
+        tileEntity[key] = fakeTile[key];
+    }
+
+    // Хрен пойми откуда rhinon получает add
+    if(fakeTile.energyTick){
+        tileEntity.energyTick = function(name, node){
+            fakeTile.energyTick(name, node, node.add);
+        }
+    }
+
+
 
     let func = tileEntity.destroy || function(){}
     tileEntity.destroy = function(){
@@ -82,7 +113,8 @@ function optiTile(tileEntity){
 }
 
 TileEntity.addTileEntity = function(x: number, y: number, z: number, blockSource: BlockSource): any {
-    if (this.getTileEntity(x, y, z, blockSource)) {
+    let tileGet = this.getTileEntity(x, y, z, blockSource);
+    if (tileGet && !tileGet.___fakeTile___) {
         return null;
     }
     var tile = blockSource ? blockSource.getBlockId(x, y, z) : World.getBlockID(x, y, z);
@@ -94,6 +126,10 @@ TileEntity.addTileEntity = function(x: number, y: number, z: number, blockSource
         tileEntity.y = y;
         tileEntity.z = z;
         tileEntity.dimension = blockSource ? blockSource.getDimension() : Player.getDimension();
+        
+        if(tileGet && tileGet.container){
+            tileEntity.container = tileGet.container;
+        }
 
         optiTile(tileEntity);
 
@@ -103,7 +139,7 @@ TileEntity.addTileEntity = function(x: number, y: number, z: number, blockSource
         Callback.invokeCallback("TileEntityAdded", tileEntity, true);
         return tileEntity;
     }
-    return null;
+    return tileGet;
 }
 
 TileEntity.addUpdatableAsTileEntity = function(updatable){

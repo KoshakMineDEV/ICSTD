@@ -1,6 +1,31 @@
 package ru.koshakmine.icstd.type;
 
+import com.zhekasmirnov.innercore.api.unlimited.IDRegistry;
+
+import java.lang.reflect.Field;
+import java.util.HashMap;
+
 public class ItemID {
+    private static final HashMap<String, Integer> itemIdShortcut;
+
+    static {
+        try {
+            final Field field = IDRegistry.class.getDeclaredField("itemIdShortcut");
+            field.setAccessible(true);
+            itemIdShortcut = (HashMap<String, Integer>) field.get(null);
+        }catch (Exception e){
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static Integer getModId(String strId){
+        return itemIdShortcut.get(strId);
+    }
+
+    public static int getModId(String strId, int def){
+        return itemIdShortcut.getOrDefault(strId, def);
+    }
+
     public static final int DRAGON_BREATH = 437;
     public static final int EGG = 344;
     public static final int REAL_DOUBLE_STONE_SLAB2 = 181;

@@ -96,7 +96,6 @@ public abstract class NetworkPacket {
 
     public byte[] get(){
         final byte[] bytes = new byte[buffer.getInt()];
-        final int pos = buffer.position();
         for (int i = 0;i < bytes.length;i++)
             bytes[i] = buffer.get();
         return bytes;

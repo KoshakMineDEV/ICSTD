@@ -9,7 +9,6 @@ import ru.koshakmine.icstd.level.Level;
 import ru.koshakmine.icstd.type.common.ChunkPos;
 
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;

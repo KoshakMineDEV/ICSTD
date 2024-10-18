@@ -13,7 +13,7 @@ public class ProjectileHitTarget {
        this.x = (float) params.get("x", params);
        this.y = (float) params.get("y", params);
        this.z = (float) params.get("z", params);
-       this.entity = new Entity((long) params.get("entity", params));
+       this.entity = Entity.from((long) params.get("entity", params));
        this.position = new BlockPosition((Coords) params.get("coords", params));
    }
 

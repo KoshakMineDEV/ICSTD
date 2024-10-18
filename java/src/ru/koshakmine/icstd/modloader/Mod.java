@@ -9,6 +9,8 @@ import com.zhekasmirnov.innercore.api.log.ICLog;
 import com.zhekasmirnov.innercore.mod.build.Config;
 import com.zhekasmirnov.innercore.utils.FileTools;
 import org.json.JSONArray;
+import org.mozilla.javascript.Scriptable;
+import ru.koshakmine.icstd.event.Event;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,7 +36,12 @@ public abstract class Mod {
         return mod.getLegacyModInstance().getConfig();
     }
 
+    public String[] getIntegration(){
+        return new String[]{};
+    }
+
     public abstract void runMod(ObjectFactory factory);
+    public void onLoadIntegration(String name, Scriptable api){}
 
     private static final ArrayList<Mod> mods = new ArrayList<>();
     private static final ObjectFactory factory = new ObjectFactory();
@@ -61,7 +68,15 @@ public abstract class Mod {
                     try{
                         final String classPath = json.getString(i);
                         Class<? extends Mod> clazz = (Class<? extends Mod>) Class.forName(classPath);
-                        Mod.mods.add(clazz.getConstructor(String.class, LegacyInnerCoreMod.class).newInstance(path, (LegacyInnerCoreMod) mod));
+                        final Mod mod_ = clazz.getConstructor(String.class, LegacyInnerCoreMod.class).newInstance(path, (LegacyInnerCoreMod) mod);
+                        Mod.mods.add(mod_);
+
+                        String[] integrations = mod_.getIntegration();
+                        for(String name : integrations){
+                            Event.onCall("API:"+name, (args -> {
+                                mod_.onLoadIntegration(name, (Scriptable) args[0]);
+                            }));
+                        }
                     }catch (Exception e){
                         Logger.error(ICLog.getStackTrace(e));
                     }

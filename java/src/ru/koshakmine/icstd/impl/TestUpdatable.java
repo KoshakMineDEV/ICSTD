@@ -8,12 +8,12 @@ public class TestUpdatable implements IUpdate {
     private int tick;
 
     public TestUpdatable(Position position){
-        Level.clientMessage("Init updatable" + position);
+        Level.getLocalLevel().message("Init updatable" + position);
     }
 
     @Override
     public boolean update() {
-        Level.clientMessage("Test tick: "+(++tick));
+        Level.getLocalLevel().message("Test tick: "+(++tick));
         return tick > 5;
     }
 }

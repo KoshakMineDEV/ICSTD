@@ -3,7 +3,7 @@ package ru.koshakmine.icstd.block.liquid;
 import com.zhekasmirnov.innercore.api.NativeBlock;
 import ru.koshakmine.icstd.block.Block;
 import ru.koshakmine.icstd.entity.Player;
-import ru.koshakmine.icstd.item.IClickable;
+import ru.koshakmine.icstd.item.event.IClickable;
 
 import ru.koshakmine.icstd.type.common.BlockData;
 import ru.koshakmine.icstd.type.common.BlockPosition;
@@ -64,6 +64,6 @@ public class BlockFlowingLiquid extends Block implements IClickable {
 
     @Override
     public void onPreInit() {
-        block.addVariant(new String[]{liquid.getFlowingTexture()}, new int[]{0});
+        addVariant(liquid.getName(), new String[]{liquid.getFlowingTexture()});
     }
 }
