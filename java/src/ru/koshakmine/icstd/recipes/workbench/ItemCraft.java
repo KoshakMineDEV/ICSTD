@@ -1,33 +1,11 @@
 package ru.koshakmine.icstd.recipes.workbench;
 
 import com.zhekasmirnov.innercore.api.NativeItemInstanceExtra;
-import com.zhekasmirnov.innercore.api.unlimited.IDRegistry;
+import ru.koshakmine.icstd.type.ItemID;
+import ru.koshakmine.icstd.type.block.BlockID;
 import ru.koshakmine.icstd.type.common.ItemStack;
 
-import java.lang.reflect.Field;
-import java.util.HashMap;
-
 public class ItemCraft extends ItemStack {
-    private static final HashMap<String, Integer> itemIdShortcut;
-    private static final HashMap<String, Integer> blockIdShortcut;
-
-
-    static {
-        final Class<IDRegistry> idRegistryClass = IDRegistry.class;
-
-        try {
-            final Field itemIdShortcutField = idRegistryClass.getDeclaredField("itemIdShortcut");
-            itemIdShortcutField.setAccessible(true);
-            itemIdShortcut = (HashMap<String, Integer>) itemIdShortcutField.get(null);
-
-            final Field blockIdShortcutField = idRegistryClass.getDeclaredField("blockIdShortcut");
-            blockIdShortcutField.setAccessible(true);
-            blockIdShortcut = (HashMap<String, Integer>) blockIdShortcutField.get(null);
-        }catch (Exception e){
-            throw new RuntimeException(e);
-        }
-    }
-
     private final String itemId;
 
     public ItemCraft(String id, int count, int data, NativeItemInstanceExtra extra) {
@@ -68,10 +46,11 @@ public class ItemCraft extends ItemStack {
 
     public ItemStack factory() {
         if(id == Integer.MIN_VALUE){
-            if(itemIdShortcut.containsKey(itemId))
-                id = itemIdShortcut.get(itemId);
+            final Integer numId = ItemID.getModId(itemId);
+            if(numId != null)
+                id = numId;
             else
-                id = blockIdShortcut.getOrDefault(itemId, 0);
+                id = BlockID.getModId(itemId, 0);;
         }
         return this;
     }

@@ -9,6 +9,7 @@ import com.zhekasmirnov.innercore.api.log.ICLog;
 import com.zhekasmirnov.innercore.mod.build.Config;
 import com.zhekasmirnov.innercore.utils.FileTools;
 import org.json.JSONArray;
+import org.mozilla.javascript.Scriptable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,7 +35,12 @@ public abstract class Mod {
         return mod.getLegacyModInstance().getConfig();
     }
 
+    public final String[] getIntegration(){
+        return new String[]{};
+    }
+
     public abstract void runMod(ObjectFactory factory);
+    public void onLoadIntegration(String name, Scriptable api){}
 
     private static final ArrayList<Mod> mods = new ArrayList<>();
     private static final ObjectFactory factory = new ObjectFactory();

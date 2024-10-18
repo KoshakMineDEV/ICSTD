@@ -4,16 +4,17 @@ import com.zhekasmirnov.apparatus.adapter.innercore.game.block.BlockState;
 import com.zhekasmirnov.apparatus.adapter.innercore.game.entity.StaticEntity;
 import com.zhekasmirnov.apparatus.mcpe.NativeBlockSource;
 import com.zhekasmirnov.apparatus.util.Java8BackComp;
-import com.zhekasmirnov.innercore.api.NativeAPI;
 import com.zhekasmirnov.innercore.api.NativeTileEntity;
 import ru.koshakmine.icstd.entity.Entity;
 import ru.koshakmine.icstd.entity.EntityItem;
 import ru.koshakmine.icstd.entity.Player;
 import ru.koshakmine.icstd.event.Event;
 import ru.koshakmine.icstd.event.Events;
+import ru.koshakmine.icstd.level.particle.Particle;
 import ru.koshakmine.icstd.network.Network;
 import ru.koshakmine.icstd.network.NetworkSide;
 import ru.koshakmine.icstd.network.packets.PlaySoundPacket;
+import ru.koshakmine.icstd.network.packets.SpawnParticlePacket;
 import ru.koshakmine.icstd.type.common.ItemStack;
 import ru.koshakmine.icstd.type.common.Position;
 
@@ -21,13 +22,9 @@ import java.util.HashMap;
 import java.util.function.Function;
 
 public class Level {
-    public static void clientMessage(String message){
-        NativeAPI.clientMessage(message);
-    }
+    protected final NativeBlockSource region;
 
-    private final NativeBlockSource region;
-
-    private Level(NativeBlockSource region){
+    protected Level(NativeBlockSource region){
         this.region = region;
     }
 
@@ -37,17 +34,21 @@ public class Level {
 
     private static final HashMap<Integer, Level> levels = new HashMap<>();
     private static Level localLevel;
+    private static final float VISUAL_RADIUS = 128;
 
     static {
         Event.onCall(Events.LevelLeft, args -> {
             levels.clear();
             localLevel = null;
         });
+
+        Network.registerPacket(NetworkSide.LOCAL, PlaySoundPacket::new);
+        Network.registerPacket(NetworkSide.LOCAL, SpawnParticlePacket::new);
     }
 
     public static Level getLocalLevel(){
         if(localLevel == null){
-            localLevel = new Level(NativeBlockSource.getCurrentClientRegion());
+            localLevel = new LocalLevel(NativeBlockSource.getCurrentClientRegion());
         }
         return localLevel;
     }
@@ -124,8 +125,8 @@ public class Level {
         return players;
     }
 
-    static {
-        Network.registerPacket(NetworkSide.LOCAL, PlaySoundPacket::new);
+    public Player[] getPlayersForRadius(Position pos){
+        return getPlayersForRadius(pos, VISUAL_RADIUS);
     }
 
     public void playSound(Position pos, String sound, float volume, float pitch){
@@ -252,5 +253,40 @@ public class Level {
 
     public void spawnExpOrbs(Position position, int amount){
         spawnExpOrbs(position.x, position.y, position.z, amount);
+    }
+
+    public boolean isLocal(){
+        return false;
+    }
+
+    public void messageForRadius(Position position, float radius, String message){
+        final Player[] players = getPlayersForRadius(position, radius);
+        for (Player player : players) {
+            player.message(message);
+        }
+    }
+
+    public void messageForPosition(Position position, String message){
+        messageForRadius(position, VISUAL_RADIUS, message);
+    }
+
+    public void message(String message){
+        final Player[] players = Player.getPlayers();
+        for (Player player : players) {
+            player.message(message);
+        }
+    }
+
+    public void spawnParticle(Particle particle, Position position, Position vector){
+        final Player[] players = getPlayersForRadius(position);
+        final SpawnParticlePacket packet = new SpawnParticlePacket(particle.getId(), position, vector);
+
+        for (Player player : players) {
+            player.sendPacket(packet);
+        }
+    }
+
+    public void spawnParticle(Particle particle, Position position){
+        spawnParticle(particle, position, Position.EMPTY);
     }
 }

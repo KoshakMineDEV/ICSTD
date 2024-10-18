@@ -1,6 +1,6 @@
 package ru.koshakmine.icstd.network.packets;
 
-import ru.koshakmine.icstd.level.Level;
+import com.zhekasmirnov.innercore.api.NativeAPI;
 import ru.koshakmine.icstd.network.NetworkClient;
 import ru.koshakmine.icstd.network.NetworkPacket;
 
@@ -22,7 +22,7 @@ public class ClientMessagePacket extends NetworkPacket {
 
     @Override
     protected void decode(NetworkClient client) {
-        Level.clientMessage(getString());
+        NativeAPI.clientMessage(getString());
     }
 
     @Override

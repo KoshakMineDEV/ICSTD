@@ -2,6 +2,7 @@ package ru.koshakmine.icstd.modloader;
 
 import ru.koshakmine.icstd.block.Block;
 import ru.koshakmine.icstd.item.Item;
+import ru.koshakmine.icstd.level.particle.Particle;
 import ru.koshakmine.icstd.recipes.workbench.WorkbenchRecipeBase;
 
 import java.util.ArrayList;
@@ -23,6 +24,10 @@ public class ObjectFactory {
     }
 
     public Item addItem(IFactory<Item> factory){
+        return add(factory);
+    }
+
+    public Particle addParticle(IFactory<Particle> factory){
         return add(factory);
     }
 

@@ -1,5 +1,6 @@
 package ru.koshakmine.icstd.impl;
 
+import com.zhekasmirnov.innercore.api.constants.ParticleType;
 import org.json.JSONException;
 import org.json.JSONObject;
 import ru.koshakmine.icstd.block.blockentity.BlockEntityContainer;
@@ -8,6 +9,9 @@ import ru.koshakmine.icstd.block.blockentity.ticking.ITickingBlockEntity;
 import ru.koshakmine.icstd.js.EnergyNetLib;
 import ru.koshakmine.icstd.js.StorageInterfaceLib;
 import ru.koshakmine.icstd.level.Level;
+import ru.koshakmine.icstd.level.particle.Particle;
+import ru.koshakmine.icstd.level.particle.ParticleGroup;
+import ru.koshakmine.icstd.level.particle.ParticleGroupCache;
 import ru.koshakmine.icstd.type.ItemID;
 import ru.koshakmine.icstd.type.common.ItemStack;
 import ru.koshakmine.icstd.type.common.Position;
@@ -23,13 +27,13 @@ public class TestBlockEntity extends BlockEntityContainer implements ITickingBlo
 
     @Override
     public void onInit() {
-        Level.clientMessage("Init block entity");
+        level.message("Init block entity");
         super.onInit();
     }
 
     @Override
     public void onRemove() {
-        Level.clientMessage("Remove block entity");
+        level.message("Remove block entity");
         super.onRemove();
     }
 
@@ -53,7 +57,7 @@ public class TestBlockEntity extends BlockEntityContainer implements ITickingBlo
     public void onClick(Position position, ItemStack stack, Player player) {
         if(stack.id == ItemID.STICK) {
             active = !active;
-            Level.clientMessage("Change mode active: " + active);
+            player.message("Change mode active: " + active);
         }
 
         super.onClick(position, stack, player);
@@ -66,6 +70,12 @@ public class TestBlockEntity extends BlockEntityContainer implements ITickingBlo
         return "main";
     }
 
+    private static final ParticleGroupCache cacheGroup = new ParticleGroupCache()
+            .add(Particle.getParticleById(ParticleType.flame), new Position(0, 1, 0))
+            .add(Particle.getParticleById(ParticleType.flame), new Position(1, 1, 1))
+            .add(Particle.getParticleById(ParticleType.flame), new Position(2, 1, 2))
+            .add(Particle.getParticleById(ParticleType.flame), new Position(3, 1, 3));
+
     @Override
     public void onTick() {
         StorageInterfaceLib.checkHoppers(this);
@@ -75,7 +85,18 @@ public class TestBlockEntity extends BlockEntityContainer implements ITickingBlo
             level.spawnDroppedItem(x + .5f, y + 1.5f, z + .5f, new ItemStack(slot.id, 1, slot.data, slot.extra));
             slot.decrease(1);
             container.setSlot("slot1", slot);
+        }else
+            level.spawnParticle(Particle.getParticleById(ParticleType.flame), position.add(.5, 1.5, .5));
+
+        cacheGroup.send(level, position);
+
+        final ParticleGroup group = new ParticleGroup();
+        for(int i = 0;i < 30;i++){
+            group.add(Particle.getParticleById(ParticleType.redstone), position.add(Math.random(), Math.random(), Math.random()));
         }
+
+        group.send(level);
+
         container.sendChanges();
     }
 

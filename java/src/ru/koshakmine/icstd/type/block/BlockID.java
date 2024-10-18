@@ -1,6 +1,31 @@
 package ru.koshakmine.icstd.type.block;
 
+import com.zhekasmirnov.innercore.api.unlimited.IDRegistry;
+
+import java.lang.reflect.Field;
+import java.util.HashMap;
+
 public class BlockID {
+    private static final HashMap<String, Integer> blockIdShortcut;
+
+    static {
+        try {
+            final Field field = IDRegistry.class.getDeclaredField("blockIdShortcut");
+            field.setAccessible(true);
+            blockIdShortcut = (HashMap<String, Integer>) field.get(null);
+        }catch (Exception e){
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static Integer getModId(String strId){
+        return blockIdShortcut.get(strId);
+    }
+
+    public static int getModId(String strId, int def){
+        return blockIdShortcut.getOrDefault(strId, def);
+    }
+
     public static final int BIRCH_STAIRS = 135;
     public static final int MAGMA = 213;
     public static final int MOSSY_COBBLESTONE = 48;

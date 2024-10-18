@@ -1,6 +1,7 @@
 package ru.koshakmine.icstd.entity;
 
 import com.zhekasmirnov.apparatus.mcpe.NativePlayer;
+import com.zhekasmirnov.apparatus.multiplayer.server.ConnectedClient;
 import com.zhekasmirnov.innercore.api.NativeAPI;
 import com.zhekasmirnov.innercore.api.NativeItemInstanceExtra;
 import ru.koshakmine.icstd.network.Network;
@@ -10,6 +11,8 @@ import ru.koshakmine.icstd.network.NetworkSide;
 import ru.koshakmine.icstd.network.packets.ClientMessagePacket;
 import ru.koshakmine.icstd.type.common.ItemStack;
 import ru.koshakmine.icstd.type.common.Position;
+
+import java.util.List;
 
 public class Player extends Entity {
     private final NativePlayer player;
@@ -21,6 +24,16 @@ public class Player extends Entity {
 
     public static Player getLocal() {
         return new Player(NativeAPI.getLocalPlayer());
+    }
+
+    public static Player[] getPlayers(){
+        final List<ConnectedClient> clients = com.zhekasmirnov.apparatus.multiplayer.Network.getSingleton().getServer().getConnectedClients();
+        final Player[] players = new Player[clients.size()];
+
+        for(int i = 0;i < players.length;i++)
+            players[i] = new Player(clients.get(i).getPlayerUid());
+
+        return players;
     }
 
     public Player(long uid) {
