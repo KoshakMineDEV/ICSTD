@@ -13,6 +13,12 @@ public class ScaleElement extends WindowElementSize {
         this.bitmap = bitmap;
     }
 
+    public ScaleElement(String bitmap, int x, int y, float scale) {
+        super("scale", x, y, scale);
+
+        this.bitmap = bitmap;
+    }
+
     public ScaleElement setDirection(int direction) {
         this.direction = direction;
         return this;

@@ -1,22 +1,30 @@
 package ru.koshakmine.icstd.block;
 
+import com.zhekasmirnov.innercore.api.NativeBlock;
+import com.zhekasmirnov.innercore.api.unlimited.IDRegistry;
 import ru.koshakmine.icstd.entity.Player;
 import ru.koshakmine.icstd.level.Level;
 import ru.koshakmine.icstd.type.common.*;
 
 public abstract class BlockRotate extends Block implements IPlaceBlock, IDropBlock {
-    @Override
-    public void onInit() {
-        final String[] td = fixedTextures(getTextures());
+    public void addRotateVariant(String name, String[] td){
+        td = fixedTextures(td);
         final String[][] rotated = new String[][]{
+                new String[]{td[0], td[1], td[2], td[3], td[4], td[5]},
                 new String[]{td[0], td[1], td[3], td[2], td[5], td[4]},
                 new String[]{td[0], td[1], td[5], td[4], td[2], td[3]},
                 new String[]{td[0], td[1], td[4], td[5], td[3], td[2]},
         };
-
         for (String[] strings : rotated) {
-            addVariant(getName(), strings);
+            addVariant(name, strings);
         }
+    }
+
+    @Override
+    public NativeBlock createBlock() {
+        block = NativeBlock.createBlock(IDRegistry.genBlockID(getId()), getId(), "blank", 0);
+        addRotateVariant(getName(), getTextures());
+        return block;
     }
 
     @Override

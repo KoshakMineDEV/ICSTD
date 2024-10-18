@@ -36,6 +36,10 @@ public class WindowStandard extends WindowGroup {
         });
     }
 
+    protected WindowStandard(UIWindowStandard standard){
+        super(standard);
+    }
+
     public Window getMain(){
         return getWindow("main");
     }

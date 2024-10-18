@@ -6,6 +6,7 @@ import com.zhekasmirnov.apparatus.modloader.LegacyInnerCoreMod;
 import com.zhekasmirnov.horizon.runtime.logger.Logger;
 import com.zhekasmirnov.innercore.api.log.DialogHelper;
 import com.zhekasmirnov.innercore.api.log.ICLog;
+import com.zhekasmirnov.innercore.api.runtime.Callback;
 import com.zhekasmirnov.innercore.mod.build.Config;
 import com.zhekasmirnov.innercore.utils.FileTools;
 import org.json.JSONArray;
@@ -43,6 +44,10 @@ public abstract class Mod {
     public abstract void runMod(ObjectFactory factory);
     public void onLoadIntegration(String name, Scriptable api){}
 
+    public int getPriority(){
+        return 0;
+    }
+
     private static final ArrayList<Mod> mods = new ArrayList<>();
     private static final ObjectFactory factory = new ObjectFactory();
 
@@ -69,7 +74,16 @@ public abstract class Mod {
                         final String classPath = json.getString(i);
                         Class<? extends Mod> clazz = (Class<? extends Mod>) Class.forName(classPath);
                         final Mod mod_ = clazz.getConstructor(String.class, LegacyInnerCoreMod.class).newInstance(path, (LegacyInnerCoreMod) mod);
-                        Mod.mods.add(mod_);
+
+                        boolean added = true;
+                        for (int a = 0; a < Mod.mods.size(); a++) {
+                            if (Mod.mods.get(a).getPriority() < mod_.getPriority()) {
+                                Mod.mods.add(a, mod_);
+                                added = false;
+                                break;
+                            }
+                        }
+                        if(added) Mod.mods.add(mod_);
 
                         String[] integrations = mod_.getIntegration();
                         for(String name : integrations){

@@ -1,14 +1,21 @@
 package ru.koshakmine.icstd.ui;
 
+import com.zhekasmirnov.horizon.util.FileUtils;
 import com.zhekasmirnov.innercore.api.mod.ScriptableObjectHelper;
 import com.zhekasmirnov.innercore.api.mod.ui.elements.UIElement;
 import com.zhekasmirnov.innercore.api.mod.ui.types.UIStyle;
 import com.zhekasmirnov.innercore.api.mod.ui.window.IWindowEventListener;
 import com.zhekasmirnov.innercore.api.mod.ui.window.UIWindow;
 import com.zhekasmirnov.innercore.api.mod.ui.window.UIWindowLocation;
+import com.zhekasmirnov.innercore.api.mod.ui.window.UIWindowStandard;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.mozilla.javascript.ScriptableObject;
 import ru.koshakmine.icstd.ui.elements.WindowElement;
+import com.zhekasmirnov.innercore.api.runtime.saver.serializer.ScriptableSerializer;
 
+import java.io.File;
 import java.util.HashMap;
 
 public class Window implements IWindow {
@@ -164,5 +171,49 @@ public class Window implements IWindow {
 
     public void forceRefresh(){
         window.forceRefresh();
+    }
+
+    private static IWindow loadDefWindow(JSONObject json){
+        return new Window(new UIWindow((ScriptableObject) ScriptableSerializer.scriptableFromJson(json)));
+    }
+
+    private static IWindow loadStandard(JSONObject json){
+        return new WindowStandard(new UIWindowStandard((ScriptableObject) ScriptableSerializer.scriptableFromJson(json)) {
+            @Override
+            protected boolean isLegacyFormat() {
+                return true;
+            }
+        });
+    }
+
+    private static IWindow loadWindow(JSONObject json) throws JSONException {
+        final String type = json.getString("type");
+
+        if(type == null || type.equals("default")){
+            return loadDefWindow(json);
+        }else if(type.equals("standard")){
+            return loadStandard(json);
+        }else if (type.equals("group")) {
+            final JSONObject windows = json.getJSONObject("windows");
+            final JSONArray names = windows.names();
+            final WindowGroup group = new WindowGroup();
+
+            for(int i = 0;i < names.length();i++){
+                final String windowName = names.getString(i);
+                group.addWindowInstance(windowName, loadWindow(windows.getJSONObject(windowName)));
+            }
+
+            return group;
+        }
+
+        throw new RuntimeException("Not support type");
+    }
+
+    public static IWindow loadWindow(String path){
+        try{
+            return loadWindow(FileUtils.readJSON(new File(path)));
+        }catch (Exception e){
+            throw new RuntimeException(e);
+        }
     }
 }

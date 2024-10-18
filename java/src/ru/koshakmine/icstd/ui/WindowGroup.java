@@ -19,7 +19,7 @@ public class WindowGroup implements IWindow {
         group.removeWindow(name);
     }
 
-    public void addWindowInstance(String name, Window _window){
+    public void addWindowInstance(String name, IWindow _window){
         group.addWindowInstance(name, _window.getWindow());
     }
 
