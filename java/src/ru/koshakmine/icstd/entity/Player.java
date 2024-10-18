@@ -55,9 +55,9 @@ public class Player extends Entity {
         return false;
     }
 
-    public boolean message(String message){
+    public boolean message(String message, String... formats){
         if(client != null){
-            client.send(new ClientMessagePacket(message));
+            client.send(new ClientMessagePacket(message, formats));
             return true;
         }
         return false;

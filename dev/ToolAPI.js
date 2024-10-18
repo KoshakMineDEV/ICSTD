@@ -43,4 +43,4 @@ WRAP_JAVA("ru.koshakmine.icstd.js.ToolAPI").init({
 	registerDropFunction(id, func, level){
 	    Block.registerDropFunction(id, func, level);
 	}
-});
+}, Block.dropFunctions);

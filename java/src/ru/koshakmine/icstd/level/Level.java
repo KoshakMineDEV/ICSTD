@@ -4,6 +4,7 @@ import com.zhekasmirnov.apparatus.adapter.innercore.game.block.BlockState;
 import com.zhekasmirnov.apparatus.adapter.innercore.game.entity.StaticEntity;
 import com.zhekasmirnov.apparatus.mcpe.NativeBlockSource;
 import com.zhekasmirnov.apparatus.util.Java8BackComp;
+import com.zhekasmirnov.innercore.api.NativeAPI;
 import com.zhekasmirnov.innercore.api.NativeTileEntity;
 import ru.koshakmine.icstd.entity.Entity;
 import ru.koshakmine.icstd.entity.EntityItem;
@@ -70,6 +71,10 @@ public class Level {
         return getForDimension(object.getDimension());
     }
 
+    public long getTime(){
+        return NativeAPI.getTime();
+    }
+
     public int getDimension(){
         return region.getDimension();
     }
@@ -91,7 +96,14 @@ public class Level {
     }
 
     public EntityItem spawnDroppedItem(float x, float y, float z, ItemStack stack) {
-        return new EntityItem(region.spawnDroppedItem(x, y, z, stack.id, stack.count, stack.data, stack.extra));
+        if(stack.id != 0 && stack.count > 0) {
+            return new EntityItem(region.spawnDroppedItem(x, y, z, stack.id, stack.count, stack.data, stack.extra));
+        }
+        return null;
+    }
+
+    public EntityItem spawnDroppedItem(Position position, ItemStack stack) {
+        return spawnDroppedItem(position.x, position.y, position.z, stack);
     }
 
     public boolean isChunkLoaded(int chunkX, int chunkZ) {
@@ -147,6 +159,14 @@ public class Level {
         return getBlock((int) position.x, (int) position.y, (int) position.z);
     }
 
+    public void setBlock(int x, int y, int z, int id, int data) {
+        region.setBlock(x, y, z, id, data);
+    }
+
+    public void setBlock(int x, int y, int z, BlockState state){
+        region.setBlock(x, y, z, state);
+    }
+
     public void setBlock(Position coords, int id, int data) {
         region.setBlock((int) coords.x, (int) coords.y, (int) coords.z, id, data);
     }
@@ -177,6 +197,14 @@ public class Level {
 
     public void destroyBlock(Position position, boolean drop){
         destroyBlock((int) position.x, (int) position.y, (int) position.z, drop);
+    }
+
+    public void destroyBlock(int x, int y, int z){
+        destroyBlock(x, y, z, false);
+    }
+
+    public void destroyBlock(Position position){
+        destroyBlock((int) position.x, (int) position.y, (int) position.z, false);
     }
 
     public void explode(float x, float y, float z, int power, boolean fire){
@@ -259,21 +287,21 @@ public class Level {
         return false;
     }
 
-    public void messageForRadius(Position position, float radius, String message){
+    public void messageForRadius(Position position, float radius, String message, String... formats){
         final Player[] players = getPlayersForRadius(position, radius);
         for (Player player : players) {
-            player.message(message);
+            player.message(message, formats);
         }
     }
 
-    public void messageForPosition(Position position, String message){
-        messageForRadius(position, VISUAL_RADIUS, message);
+    public void messageForPosition(Position position, String message, String... formats){
+        messageForRadius(position, VISUAL_RADIUS, message, formats);
     }
 
-    public void message(String message){
+    public void message(String message, String... formats){
         final Player[] players = Player.getPlayers();
         for (Player player : players) {
-            player.message(message);
+            player.message(message, formats);
         }
     }
 

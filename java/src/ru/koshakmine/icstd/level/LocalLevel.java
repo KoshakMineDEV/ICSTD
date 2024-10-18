@@ -3,6 +3,7 @@ package ru.koshakmine.icstd.level;
 import com.zhekasmirnov.apparatus.mcpe.NativeBlockSource;
 import com.zhekasmirnov.innercore.api.NativeAPI;
 import com.zhekasmirnov.innercore.api.particles.ParticleRegistry;
+import com.zhekasmirnov.innercore.api.runtime.other.NameTranslation;
 import ru.koshakmine.icstd.level.particle.Particle;
 import ru.koshakmine.icstd.type.common.Position;
 
@@ -17,8 +18,8 @@ public class LocalLevel extends Level {
     }
 
     @Override
-    public void message(String message) {
-        NativeAPI.clientMessage(message);
+    public void message(String message, String... formats) {
+        NativeAPI.clientMessage(String.format(NameTranslation.translate(message), (Object[]) formats));
     }
 
     @Override

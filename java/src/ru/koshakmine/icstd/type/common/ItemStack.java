@@ -58,12 +58,22 @@ public class ItemStack {
         set(instance.id, instance.count, instance.data, instance.extra);
     }
 
+    protected void build(NativeArray array){
+        NativeItemInstanceExtra extra  = null;
+        if(array.size() == 4)
+            extra = (NativeItemInstanceExtra) array.get(3, array);
+        set(((Number) array.get(0, array)).intValue(), ((Number) array.get(1, array)).intValue(), ((Number) array.get(2, array)).intValue(), extra);
+    }
+
     public ItemStack(Object item){
         if(item instanceof Wrapper)
             item = ((Wrapper) item).unwrap();
 
         if(item instanceof ItemContainerSlot) {
             build((ItemContainerSlot) item);
+            return;
+        }else if(item instanceof NativeArray){
+            build((NativeArray) item);
             return;
         }else if(item instanceof NativeItemInstance){
             build(((NativeItemInstance) item));

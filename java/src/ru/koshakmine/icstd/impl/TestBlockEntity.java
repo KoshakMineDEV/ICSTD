@@ -27,7 +27,7 @@ public class TestBlockEntity extends BlockEntityContainer implements ITickingBlo
 
     @Override
     public void onInit() {
-        level.message("Init block entity");
+        level.message("Init block entity %s", "testFormat");
         super.onInit();
     }
 

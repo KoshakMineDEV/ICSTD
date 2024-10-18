@@ -109,4 +109,12 @@ public class Container {
     public void setClientText(String element, String text){
         container.setClientText(element, text);
     }
+
+    public void setScale(String element, float scale){
+        container.setScale(element, scale);
+    }
+
+    public void setText(String element, String text){
+        container.setText(element, text);
+    }
 }
