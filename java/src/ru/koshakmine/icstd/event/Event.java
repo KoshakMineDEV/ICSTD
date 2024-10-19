@@ -317,4 +317,23 @@ public class Event {
         }, 0);
     }
 
+    public static void onChunkLoaded(ChunkFunction function){
+        Callback.addCallback(Events.ChunkLoaded, new ScriptableFunctionImpl() {
+            @Override
+            public Object call(Context context, Scriptable scriptable, Scriptable scriptable1, Object[] objects) {
+                function.call((int) objects[0], (int) objects[1], (int) objects[2], (boolean) objects[3]);
+                return null;
+            }
+        }, 0);
+    }
+
+    public static void onChunkDiscarded(ChunkFunction function){
+        Callback.addCallback(Events.ChunkDiscarded, new ScriptableFunctionImpl() {
+            @Override
+            public Object call(Context context, Scriptable scriptable, Scriptable scriptable1, Object[] objects) {
+                function.call((int) objects[0], (int) objects[1], (int) objects[2], (boolean) objects[3]);
+                return null;
+            }
+        }, 0);
+    }
 }

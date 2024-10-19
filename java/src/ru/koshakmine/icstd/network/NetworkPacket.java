@@ -155,8 +155,8 @@ public abstract class NetworkPacket {
         return buffer;
     }
 
-    public String buildPacket(){
-        return new String(Base64.getEncoder().encode(build().array()));
+    public byte[] buildPacket(){
+        return build().array();
     }
 
     public abstract String getName();

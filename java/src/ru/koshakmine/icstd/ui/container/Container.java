@@ -88,11 +88,11 @@ public class Container {
 
     public void addServerEventListener(String eventName, IServerEventListener listener){
         container.addServerEventListener(eventName, (itemContainer, connectedClient, data) -> {
-            if(data instanceof String) {
+            if(data instanceof byte[]) {
                 final NetworkClient client = new NetworkClient(connectedClient);
 
                 ContainerEventPacket packet = new ContainerEventPacket();
-                packet.setBuffer(ByteBuffer.wrap(Base64.getDecoder().decode((String) data)));
+                packet.setBuffer(ByteBuffer.wrap((byte[]) data));
                 listener.call(new Container(itemContainer), client, packet);
             }
         });
