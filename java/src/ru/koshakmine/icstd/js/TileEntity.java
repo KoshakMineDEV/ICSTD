@@ -18,4 +18,19 @@ public class TileEntity {
     public static void addTileEntity(Position position, Level level){
         addTileEntity((int) position.x, (int) position.y, (int) position.z, level);
     }
+
+    public static ScriptableObject getTileEntity(int x, int y, int z, Level level){
+        Object res = JsHelper.callFunction(TileEntity, "getTileEntity", x, y, z, level.getRegion());
+        if(res instanceof ScriptableObject)
+            return (ScriptableObject) res;
+        return null;
+    }
+
+    public static ScriptableObject getTileEntity(Position position, Level level){
+        return getTileEntity((int) position.x, (int) position.y, (int) position.z, level);
+    }
+
+    public static void registerPrototype(int id, ScriptableObject tile){
+        JsHelper.callFunction(TileEntity, "registerPrototype", id, tile);
+    }
 }

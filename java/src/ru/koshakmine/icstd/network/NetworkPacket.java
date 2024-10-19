@@ -96,7 +96,6 @@ public abstract class NetworkPacket {
 
     public byte[] get(){
         final byte[] bytes = new byte[buffer.getInt()];
-        final int pos = buffer.position();
         for (int i = 0;i < bytes.length;i++)
             bytes[i] = buffer.get();
         return bytes;
@@ -156,8 +155,8 @@ public abstract class NetworkPacket {
         return buffer;
     }
 
-    public String buildPacket(){
-        return new String(Base64.getEncoder().encode(build().array()));
+    public byte[] buildPacket(){
+        return build().array();
     }
 
     public abstract String getName();

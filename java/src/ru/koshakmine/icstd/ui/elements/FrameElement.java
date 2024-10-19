@@ -6,7 +6,6 @@ import org.mozilla.javascript.ScriptableObject;
 
 public class FrameElement extends WindowElementSize {
     protected String bitmap;
-    protected float scale;
     protected int color = Color.TRANSPARENT;
     protected ScriptableObject sides = ScriptableObjectHelper.createEmpty();
 
@@ -40,7 +39,6 @@ public class FrameElement extends WindowElementSize {
         final ScriptableObject desc = super.toElement();
 
         desc.put("bitmap", desc, bitmap);
-        desc.put("scale", desc, scale);
         desc.put("color", desc, color);
         desc.put("sides", desc, sides);
 

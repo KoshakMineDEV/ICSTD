@@ -2,11 +2,17 @@ package ru.koshakmine.icstd.ui.container;
 
 import com.zhekasmirnov.apparatus.api.container.ItemContainer;
 import com.zhekasmirnov.apparatus.api.container.ItemContainerSlot;
-import com.zhekasmirnov.apparatus.mcpe.NativeBlockSource;
+import com.zhekasmirnov.apparatus.multiplayer.server.ConnectedClient;
+import com.zhekasmirnov.apparatus.multiplayer.util.entity.NetworkEntity;
 import ru.koshakmine.icstd.entity.Player;
 import ru.koshakmine.icstd.level.Level;
+import ru.koshakmine.icstd.network.NetworkClient;
+import ru.koshakmine.icstd.network.NetworkPacket;
 import ru.koshakmine.icstd.type.common.ItemStack;
 import ru.koshakmine.icstd.type.common.Position;
+
+import java.nio.ByteBuffer;
+import java.util.Base64;
 
 public class Container {
     private final ItemContainer container;
@@ -25,6 +31,10 @@ public class Container {
 
     public void openFor(Player player, String name){
         container.openFor(player.getClient().getClient(), name);
+    }
+
+    public void closeFor(Player player){
+        container.closeFor(player.getClient().getClient());
     }
 
     public void setClientContainerTypeName(String name) {
@@ -54,5 +64,57 @@ public class Container {
 
     public void sendChanges() {
         container.sendChanges();
+    }
+
+    public ItemContainer getItemContainer() {
+        return container;
+    }
+
+    public void clearSlot(String name){
+        container.clearSlot(name);
+    }
+
+    public NetworkEntity getNetworkEntity(){
+        return container.getNetworkEntity();
+    }
+
+    public String getText(String element){
+        return container.getText(element);
+    }
+
+    interface IServerEventListener {
+        void call(Container container, NetworkClient client, ContainerEventPacket packet);
+    }
+
+    public void addServerEventListener(String eventName, IServerEventListener listener){
+        container.addServerEventListener(eventName, (itemContainer, connectedClient, data) -> {
+            if(data instanceof byte[]) {
+                final NetworkClient client = new NetworkClient(connectedClient);
+
+                ContainerEventPacket packet = new ContainerEventPacket();
+                packet.setBuffer(ByteBuffer.wrap((byte[]) data));
+                listener.call(new Container(itemContainer), client, packet);
+            }
+        });
+    }
+
+    public void sendEvent(String eventName, ContainerEventPacket packet){
+        container.sendEvent(eventName, packet.buildPacket());
+    }
+
+    public void setClientScale(String element, float scale){
+        container.setClientScale(element, scale);
+    }
+
+    public void setClientText(String element, String text){
+        container.setClientText(element, text);
+    }
+
+    public void setScale(String element, float scale){
+        container.setScale(element, scale);
+    }
+
+    public void setText(String element, String text){
+        container.setText(element, text);
     }
 }

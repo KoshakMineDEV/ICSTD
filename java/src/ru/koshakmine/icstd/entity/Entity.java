@@ -1,23 +1,39 @@
 package ru.koshakmine.icstd.entity;
 
-import com.zhekasmirnov.apparatus.adapter.innercore.game.common.Vector3;
 import com.zhekasmirnov.innercore.api.NativeAPI;
 import com.zhekasmirnov.innercore.api.NativeItemInstanceExtra;
 import com.zhekasmirnov.innercore.api.commontypes.ItemInstance;
+import com.zhekasmirnov.innercore.api.nbt.NativeCompoundTag;
 import ru.koshakmine.icstd.level.Level;
+import ru.koshakmine.icstd.type.ArmorSlot;
 import ru.koshakmine.icstd.type.common.ItemStack;
 import ru.koshakmine.icstd.type.common.Position;
 import ru.koshakmine.icstd.type.entity.Effect;
 
 public class Entity {
-    private final long uid;
+    protected final long uid;
 
-    public Entity(long uid){
+    protected Entity(long uid){
         this.uid = uid;
+    }
+
+    public static Entity from(long uid){
+        switch (NativeAPI.getEntityTypeName(uid)){
+            case "minecraft:player<>":
+                return new Player(uid);
+            case "minecraft:item<>":
+                return new EntityItem(uid);
+            default:
+                return new Entity(uid);
+        }
     }
 
     public long getUid() {
         return uid;
+    }
+
+    public String getEntityType() {
+        return NativeAPI.getEntityTypeName(uid);
     }
 
     public Level getRegion(){
@@ -40,6 +56,10 @@ public class Entity {
         addEffect(effect, duration, level, false);
     }
 
+    public boolean hasEffect(Effect effect){
+        return getEffectLevel(effect) != 0;
+    }
+
     public int getEffectLevel(Effect effect){
         return NativeAPI.getEffectLevel(uid, effect.ordinal());
     }
@@ -60,6 +80,10 @@ public class Entity {
         return NativeAPI.isSneaking(uid);
     }
 
+    public void setSneaking(boolean value){
+        NativeAPI.setSneaking(uid, value);
+    }
+
     public double getYaw(){
         final float[] rotation = new float[2];
         NativeAPI.getRotation(uid, rotation);
@@ -72,6 +96,10 @@ public class Entity {
         return rotation[1];
     }
 
+    public void setRotation(double yaw, double pitch){
+        NativeAPI.setRotation(uid, (float) yaw, (float) pitch);
+    }
+
     public boolean isItemSpendingAllowed(){
         return true;
     }
@@ -80,5 +108,138 @@ public class Entity {
         final float[] pos = new float[3];
         NativeAPI.getPosition(uid, pos);
         return new Position(pos[0], pos[1], pos[2]);
+    }
+
+    public void setPosition(float x, float y, float z){
+        NativeAPI.setPosition(uid, x, y, z);
+    }
+
+    public void setPosition(Position position){
+        setPosition(position.x, position.y, position.z);
+    }
+
+    public ItemStack getArmorSlot(ArmorSlot slot){
+        return new ItemStack(NativeAPI.getEntityArmor(uid, slot.ordinal()));
+    }
+
+    public void setArmorSlot(ArmorSlot slot, ItemStack item){
+        NativeAPI.setEntityArmor(uid, slot.ordinal(), item.id, item.count, item.data, NativeItemInstanceExtra.unwrapValue(item.extra));
+    }
+
+    public NativeCompoundTag getCompoundTag(){
+        return new NativeCompoundTag(NativeAPI.getEntityCompoundTag(uid));
+    }
+
+    public void setCompoundTag(NativeCompoundTag tag){
+        NativeAPI.setEntityCompoundTag(uid, tag.pointer);
+    }
+
+    public int getDimension(){
+        return NativeAPI.getEntityDimension(uid);
+    }
+
+    public int getHealth(){
+        return NativeAPI.getHealth(uid);
+    }
+
+    public int getMaxHealth(){
+        return NativeAPI.getMaxHealth(uid);
+    }
+
+    public void setHealth(int health){
+        NativeAPI.setHealth(uid, health);
+    }
+
+    public void setMaxHealth(int health){
+        NativeAPI.setMaxHealth(uid, health);
+    }
+
+    public void healEntity(int heal){
+        int health = getHealth() + heal;
+        int maxHealth = getMaxHealth();
+
+        setHealth(Math.min(health, maxHealth));
+    }
+
+    public ItemStack getOffhandItem(){
+        return new ItemStack(new ItemInstance(NativeAPI.getEntityOffhandItem(uid)));
+    }
+
+    public void setOffhandItem(ItemStack item){
+        NativeAPI.setEntityOffhandItem(uid, item.id, item.count, item.data, NativeItemInstanceExtra.unwrapValue(item.extra));
+    }
+
+    public Entity getRider(){
+        return from(NativeAPI.getRider(uid));
+    }
+
+    public Entity getRiding(){
+        return from(NativeAPI.getRider(uid));
+    }
+
+    public Entity getTarget(){
+        return from(NativeAPI.getTarget(uid));
+    }
+
+    public void setTarget(Entity target){
+        NativeAPI.setTarget(uid, target.uid);
+    }
+
+    public int getType(){
+        return NativeAPI.getEntityType(uid);
+    }
+
+    public Position getVelocity() {
+        final float[] pos = new float[3];
+        NativeAPI.getVelocity(uid, pos);
+        return new Position(pos[0], pos[1], pos[2]);
+    }
+
+    public void setVelocity(float x, float y, float z){
+        NativeAPI.setVelocity(uid, x, y, z);
+    }
+
+    public void setVelocity(Position position){
+        setVelocity(position.x, position.y, position.z);
+    }
+
+    public boolean isValid(){
+        return NativeAPI.isValidEntity(uid);
+    }
+
+    public void remove(){
+        NativeAPI.removeEntity(uid);
+    }
+
+    public void rideAnimal(Entity rider){
+        NativeAPI.rideAnimal(uid, rider.uid);
+    }
+
+    public int getFire(){
+        return NativeAPI.getFireTicks(uid);
+    }
+
+    public void setFire(int fire, boolean force){
+        NativeAPI.setFireTicks(uid, fire, force);
+    }
+
+    public void setFire(int fire){
+        setFire(fire, false);
+    }
+
+    public boolean isImmobile(){
+        return NativeAPI.isImmobile(uid);
+    }
+
+    public void setImmobile(boolean value){
+        NativeAPI.setImmobile(uid, value);
+    }
+
+    public String getNameTag(){
+        return NativeAPI.getNameTag(uid);
+    }
+
+    public void setNameTag(String tag){
+        NativeAPI.setNameTag(uid, tag);
     }
 }

@@ -1,4 +1,4 @@
-package ru.koshakmine.icstd.item;
+package ru.koshakmine.icstd.item.event;
 
 import ru.koshakmine.icstd.level.Level;
 import ru.koshakmine.icstd.type.common.BlockPosition;

@@ -85,4 +85,7 @@ public class Events {
     public static final String tick = "tick";
     public static final String WorkbenchCraft = "WorkbenchCraft";
     public static final String ModsLoaded = "ModsLoaded";
+    public static final String PostLoaded = "PostLoaded";
+    public static final String ChunkLoaded = "ChunkLoaded";
+    public static final String ChunkDiscarded = "ChunkDiscarded";
 }

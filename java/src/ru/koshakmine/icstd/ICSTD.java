@@ -4,28 +4,23 @@ import java.util.HashMap;
 import java.util.concurrent.Executor;
 
 import com.zhekasmirnov.apparatus.modloader.LegacyInnerCoreMod;
+import com.zhekasmirnov.horizon.runtime.logger.Logger;
 import com.zhekasmirnov.innercore.mod.build.Config;
 import org.json.JSONException;
 import org.json.JSONObject;
-import ru.koshakmine.icstd.impl.TestBlock;
-import ru.koshakmine.icstd.impl.TestBlockLiquid;
-import ru.koshakmine.icstd.impl.TestItem;
+import ru.koshakmine.icstd.event.Event;
+import ru.koshakmine.icstd.event.Events;
+import ru.koshakmine.icstd.level.Level;
 import ru.koshakmine.icstd.modloader.Mod;
 import ru.koshakmine.icstd.modloader.ObjectFactory;
 import ru.koshakmine.icstd.runtime.PostLevelLoaded;
 
 /**
  * TODO LIST
- * частицы
- * Прослойка совместимости для ванильных TileEntity
- * различные методы для классов Entity, Player
- * После добавления отправки массива байт в иннере, переписать network под это(более быстрая и экономная отправка)
  * Кеширование Player для более высокой производительности и экономии памяти
- * api для работы с StorageInterface
  * api для кастумных измерений
  * api для кастумных биомов
  * api для кастумных зачарований
- * api для рецептов
  * api для комманд
  */
 
@@ -56,13 +51,17 @@ public class ICSTD extends Mod {
 
         MULTI_THREAD = config.getBool("multi_thread");
 
-        factory.addBlock(TestBlock::new);
-        factory.addItem(TestItem::new);
-        factory.addBlock(TestBlockLiquid::new);
+        Event.onChunkLoaded(((dimension, chunkX, chunkZ, isServer) -> {
+            if(isServer) {
+                Level.getForDimension(dimension)
+                        .setBlock(chunkX * 16, 10, chunkZ * 16, 1, 0);
+            }
+        }));
     }
 
 
     public static void boot(HashMap<?, ?> args) {
+        Logger.debug("Loaded mod", "ICSTD");
         PostLevelLoaded.boot();
     }
 }

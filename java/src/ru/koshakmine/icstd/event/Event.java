@@ -161,7 +161,7 @@ public class Event {
         Callback.addCallback(Events.EntityInteract, new ScriptableFunctionImpl() {
             @Override
             public Object call(Context context, Scriptable scriptable, Scriptable scriptable1, Object[] objects) {
-                function.call(new Entity((long) objects[0]), new Player((long) objects[1]), new Position((Coords) objects[2]));
+                function.call(Entity.from((long) objects[0]), new Player((long) objects[1]), new Position((Coords) objects[2]));
                 return null;
             }
         }, 0);
@@ -171,7 +171,7 @@ public class Event {
         Callback.addCallback(Events.PlayerAttack, new ScriptableFunctionImpl() {
             @Override
             public Object call(Context context, Scriptable scriptable, Scriptable scriptable1, Object[] objects) {
-                function.call(new Entity((long) objects[0]), new Player((long) objects[1]));
+                function.call(Entity.from((long) objects[0]), new Player((long) objects[1]));
                 return null;
             }
         }, 0);
@@ -181,7 +181,7 @@ public class Event {
         Callback.addCallback(Events.EntityAdded, new ScriptableFunctionImpl() {
             @Override
             public Object call(Context context, Scriptable scriptable, Scriptable scriptable1, Object[] objects) {
-                function.call(new Player((long) objects[0]));
+                function.call(Entity.from((long) objects[0]));
                 return null;
             }
         }, 0);
@@ -191,7 +191,7 @@ public class Event {
         Callback.addCallback(Events.EntityRemoved, new ScriptableFunctionImpl() {
             @Override
             public Object call(Context context, Scriptable scriptable, Scriptable scriptable1, Object[] objects) {
-                function.call(new Player((long) objects[0]));
+                function.call(Entity.from((long) objects[0]));
                 return null;
             }
         }, 0);
@@ -201,7 +201,7 @@ public class Event {
         Callback.addCallback(Events.EntityAddedLocal, new ScriptableFunctionImpl() {
             @Override
             public Object call(Context context, Scriptable scriptable, Scriptable scriptable1, Object[] objects) {
-                function.call(new Player((long) objects[0]));;
+                function.call(Entity.from((long) objects[0]));;
                 return null;
             }
         }, 0);
@@ -211,7 +211,7 @@ public class Event {
         Callback.addCallback(Events.EntityRemovedLocal, new ScriptableFunctionImpl() {
             @Override
             public Object call(Context context, Scriptable scriptable, Scriptable scriptable1, Object[] objects) {
-                function.call(new Player((long) objects[0]));
+                function.call(Entity.from((long) objects[0]));
                 return null;
             }
         }, 0);
@@ -221,7 +221,7 @@ public class Event {
         Callback.addCallback(Events.EntityDeath, new ScriptableFunctionImpl() {
             @Override
             public Object call(Context context, Scriptable scriptable, Scriptable scriptable1, Object[] objects) {
-                function.call(new Entity((long) objects[0]), new Entity((long) objects[1]), (int) objects[2]);
+                function.call(Entity.from((long) objects[0]), Entity.from((long) objects[1]), (int) objects[2]);
                 return null;
             }
         }, 0);
@@ -231,7 +231,7 @@ public class Event {
         Callback.addCallback(Events.EntityHurt, new ScriptableFunctionImpl() {
             @Override
             public Object call(Context context, Scriptable scriptable, Scriptable scriptable1, Object[] objects) {
-                function.call(new Entity((long) objects[0]), new Entity((long) objects[1]), (int) objects[2], (int) objects[3], (boolean) objects[4], (boolean) objects[5]);
+                function.call(Entity.from((long) objects[0]), Entity.from((long) objects[1]), (int) objects[2], (int) objects[3], (boolean) objects[4], (boolean) objects[5]);
                 return null;
             }
         }, 0);
@@ -241,7 +241,7 @@ public class Event {
         Callback.addCallback(Events.EntityPickUpDrop, new ScriptableFunctionImpl() {
             @Override
             public Object call(Context context, Scriptable scriptable, Scriptable scriptable1, Object[] objects) {
-                function.call(new Entity((long) objects[0]), new EntityItem((long) objects[1]), new ItemStack((ItemInstance) objects[2]), (int) objects[3]);
+                function.call(Entity.from((long) objects[0]), new EntityItem((long) objects[1]), new ItemStack((ItemInstance) objects[2]), (int) objects[3]);
                 return null;
             }
         }, 0);
@@ -271,7 +271,7 @@ public class Event {
         Callback.addCallback(Events.BlockEventEntityInside, new ScriptableFunctionImpl() {
             @Override
             public Object call(Context context, Scriptable scriptable, Scriptable scriptable1, Object[] objects) {
-                function.call(new Position((Coords) objects[0]), new BlockData((FullBlock) objects[1]), new Entity((long) objects[2]));
+                function.call(new Position((Coords) objects[0]), new BlockData((FullBlock) objects[1]), Entity.from((long) objects[2]));
                 return null;
             }
         }, 0);
@@ -281,7 +281,7 @@ public class Event {
         Callback.addCallback(Events.BlockEventEntityStepOn, new ScriptableFunctionImpl() {
             @Override
             public Object call(Context context, Scriptable scriptable, Scriptable scriptable1, Object[] objects) {
-                function.call(new Position((Coords) objects[0]), new BlockData((FullBlock) objects[1]), new Entity((long) objects[2]));
+                function.call(new Position((Coords) objects[0]), new BlockData((FullBlock) objects[1]), Entity.from((long) objects[2]));
                 return null;
             }
         }, 0);
@@ -317,4 +317,23 @@ public class Event {
         }, 0);
     }
 
+    public static void onChunkLoaded(ChunkFunction function){
+        Callback.addCallback(Events.ChunkLoaded, new ScriptableFunctionImpl() {
+            @Override
+            public Object call(Context context, Scriptable scriptable, Scriptable scriptable1, Object[] objects) {
+                function.call((int) objects[0], (int) objects[1], (int) objects[2], (boolean) objects[3]);
+                return null;
+            }
+        }, 0);
+    }
+
+    public static void onChunkDiscarded(ChunkFunction function){
+        Callback.addCallback(Events.ChunkDiscarded, new ScriptableFunctionImpl() {
+            @Override
+            public Object call(Context context, Scriptable scriptable, Scriptable scriptable1, Object[] objects) {
+                function.call((int) objects[0], (int) objects[1], (int) objects[2], (boolean) objects[3]);
+                return null;
+            }
+        }, 0);
+    }
 }

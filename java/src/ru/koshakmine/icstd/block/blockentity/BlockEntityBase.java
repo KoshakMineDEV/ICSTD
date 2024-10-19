@@ -1,12 +1,14 @@
 package ru.koshakmine.icstd.block.blockentity;
 
-import ru.koshakmine.icstd.block.blockentity.ticking.ITickingBlockEntity;
 import ru.koshakmine.icstd.level.Level;
+import ru.koshakmine.icstd.modloader.Mod;
+import ru.koshakmine.icstd.modloader.ObjectFactory;
 import ru.koshakmine.icstd.network.NetworkSide;
-import ru.koshakmine.icstd.runtime.Updatable;
 import ru.koshakmine.icstd.type.common.Position;
 
 public abstract class BlockEntityBase {
+    public static final ObjectFactory FACTORY = Mod.getFactory();
+
     protected final Position position;
     protected final String type;
     public int x, y, z, id, dimension;

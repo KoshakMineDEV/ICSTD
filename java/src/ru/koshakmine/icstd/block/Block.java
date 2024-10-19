@@ -7,29 +7,38 @@ import com.zhekasmirnov.innercore.api.NativeItem;
 import com.zhekasmirnov.innercore.api.NativeItemModel;
 import com.zhekasmirnov.innercore.api.unlimited.BlockRegistry;
 import com.zhekasmirnov.innercore.api.unlimited.BlockVariant;
+import com.zhekasmirnov.innercore.api.unlimited.IDDataPair;
 import com.zhekasmirnov.innercore.api.unlimited.IDRegistry;
 import ru.koshakmine.icstd.block.blockentity.BlockEntity;
 import ru.koshakmine.icstd.block.blockentity.BlockEntityManager;
 import ru.koshakmine.icstd.block.blockentity.BlockEntityRegistry;
 import ru.koshakmine.icstd.block.blockentity.LocalBlockEntity;
 import ru.koshakmine.icstd.event.Event;
-import ru.koshakmine.icstd.item.IClickable;
+import ru.koshakmine.icstd.item.ItemGroup;
+import ru.koshakmine.icstd.item.event.IClickable;
+import ru.koshakmine.icstd.js.StorageInterfaceLib;
 import ru.koshakmine.icstd.js.TileEntity;
 import ru.koshakmine.icstd.js.ToolAPI;
 import ru.koshakmine.icstd.level.Level;
-import ru.koshakmine.icstd.modloader.IBaseRegister;
-import ru.koshakmine.icstd.type.common.BlockData;
-import ru.koshakmine.icstd.type.common.ItemStack;
+import ru.koshakmine.icstd.modloader.IBaseRegisterGameObject;
+import ru.koshakmine.icstd.modloader.Mod;
+import ru.koshakmine.icstd.modloader.ObjectFactory;
+import ru.koshakmine.icstd.type.CreativeCategory;
+import ru.koshakmine.icstd.type.block.SoundType;
 import ru.koshakmine.icstd.type.common.Position;
 import ru.koshakmine.icstd.type.tools.BlockMaterials;
 
+import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.UUID;
 
-public abstract class Block implements IBaseRegister {
+public abstract class Block implements IBaseRegisterGameObject {
+    protected static final ObjectFactory FACTORY = Mod.getFactory();
+
     private static final List<Integer> CONSTANT_VANILLA_UI_TILES = new LinkedList<>(), CONSTANT_REPLACEABLE_TILE = new LinkedList<>();
-
+    private static HashMap<IDDataPair, BlockVariant> blockVariantMap;
     private static final HashMap<Integer, IPlaceBlock> placed = new HashMap<>();
     private static final HashMap<Integer, IClickable> clickable = new HashMap<>();
 
@@ -42,6 +51,14 @@ public abstract class Block implements IBaseRegister {
     }
 
     static {
+        try {
+            Field field = BlockRegistry.class.getDeclaredField("blockVariantMap");
+            field.setAccessible(true);
+            blockVariantMap = (HashMap<IDDataPair, BlockVariant>) field.get(null);
+        }catch (Exception e){
+            throw new RuntimeException(e);
+        }
+
         CONSTANT_VANILLA_UI_TILES.add(23);
         CONSTANT_VANILLA_UI_TILES.add(25);
         CONSTANT_VANILLA_UI_TILES.add(26);
@@ -139,22 +156,22 @@ public abstract class Block implements IBaseRegister {
             }
             TileEntity.addTileEntity(position, level);
 
-            if(place != null && !NativeAPI.isDefaultPrevented()){
-                final Position tile = place.onPlace(position, item, block, player, level);
-                final BlockEntity entity = (BlockEntity) SERVER_MANAGER.getBlockEntity(tile, level);
+            final BlockEntity entity = (BlockEntity) SERVER_MANAGER.getBlockEntity(position, level);
+            if(entity != null) {
+                entity.onClick(position, item, player);
+            }
 
-                if(entity != null){
-                    entity.onClick(position, item, player);
-                }else{
-                    holder = SERVER_REGISTRY.get(item.id);
-                    if(holder != null){
-                        SERVER_MANAGER.addBlockEntity(holder.createBlockEntity(tile, level));
-                    }
+            if(place != null && !NativeAPI.isDefaultPrevented() && canTileBeReplaced(level.getBlockId(position.relative))){
+                final Position tile = place.onPlace(position, item, block, player, level);
+
+                holder = SERVER_REGISTRY.get(item.id);
+                if(holder != null){
+                    SERVER_MANAGER.addBlockEntity(holder.createBlockEntity(tile, level));
                 }
 
                 TileEntity.addTileEntity(tile, level);
 
-                player.setCarriedItem(item.decrease(1));
+                if(player.isItemSpendingAllowed()) player.setCarriedItem(item.decrease(1));
                 level.playSound(position, "dig.stone", 1, 0.8f);
                 NativeAPI.preventDefault();
             }
@@ -196,6 +213,17 @@ public abstract class Block implements IBaseRegister {
     @Override
     public void onInit() {}
 
+    @Override
+    public int getPriority() {
+        return 0;
+    }
+
+    private final UUID uuid = UUID.randomUUID();
+    @Override
+    public UUID getUUID() {
+        return uuid;
+    }
+
     /**
      * Sets the block breaking tool
      * @return ru.koshakmine.icstd.type.tools.BlockMaterials
@@ -217,7 +245,7 @@ public abstract class Block implements IBaseRegister {
     }
 
     public String getSoundType() {
-        return "";
+        return SoundType.STONE;
     }
 
     public boolean isSolid() {
@@ -272,13 +300,48 @@ public abstract class Block implements IBaseRegister {
         return 0;
     }
 
-    public boolean addToCreativeInventory() {
-        return true;
+    public ItemGroup getCreativeItemGroup(){
+        return null;
+    }
+
+    public CreativeCategory getCreativeCategory(){
+        return null;
+    }
+
+    protected static String[] fixedTextures(String[] textures){
+        final String[] fixedTextures = new String[6];
+        String lastTexture = "missing_block";
+        for (int i = 0; i < 6; i++)
+            if(i < textures.length)
+                fixedTextures[i] = lastTexture = textures[i];
+            else {
+                fixedTextures[i] = lastTexture;
+            }
+        return fixedTextures;
+    }
+
+    private int data;
+    public void addVariant(String name, String[] textures){
+        if(data >= 16)
+            throw new RuntimeException("Limit variant block");
+
+        textures = fixedTextures(textures);
+        final BlockVariant variant = new BlockVariant(getNumId(), data++, name, textures, new int[textures.length], false);
+        block.addVariant(name, variant.textures, variant.textureIds);
+        blockVariantMap.put(new IDDataPair(variant.uid, variant.data), variant);
+
+
+    final NativeItemModel model = NativeItemModel.getFor(variant.uid, variant.data);
+        model.updateForBlockVariant(variant);
+        if(model.getCacheKey() == null){
+            model.setCacheKey("modded");
+        }
+        model.isLazyLoading = variant.isTechnical;
     }
 
     public NativeBlock createBlock(){
-        final NativeBlock block = NativeBlock.createBlock(IDRegistry.genBlockID(getId()), getId(), "blank", 0);
-        block.addVariant(getName(), getTextures(), new int[getTextures().length]);
+        block = NativeBlock.createBlock(IDRegistry.genBlockID(getId()), getId(), "blank", 0);
+        addVariant(getName(), getTextures());
         return block;
     }
 
@@ -288,9 +351,7 @@ public abstract class Block implements IBaseRegister {
 
     @Override
     public void factory() {
-        onPreInit();
-
-        this.block = createBlock();
+        createBlock();
 
         NativeBlock.setMaterial(block.getId(), getMaterial());
         NativeBlock.setMaterialBase(block.getId(), getMaterialBase());
@@ -318,7 +379,6 @@ public abstract class Block implements IBaseRegister {
 
             if (variant != null) {
                 variant.shape = shapedBlock.getShape();
-                NativeItemModel.getFor(block.getId(), 0).updateForBlockVariant(variant);
             }
         }
 
@@ -344,15 +404,21 @@ public abstract class Block implements IBaseRegister {
             clickable.put(getNumId(), (IClickable) this);
         }
 
-        if (addToCreativeInventory()) {
-            NativeItem.addToCreative(block.getId(), 1, 0, null);
+        if(this instanceof StorageInterfaceLib.StorageDescriptor){
+            StorageInterfaceLib.createInterface(getNumId(), (StorageInterfaceLib.StorageDescriptor) this);
         }
 
-        onInit();
+        final CreativeCategory category = getCreativeCategory();
+        if (category != null) {
+            NativeItem.addToCreative(getNumId(), 1, 0, null);
+            NativeItem.setCategoryForId(getNumId(), category.ordinal());
+            final ItemGroup group = getCreativeItemGroup();
+            if(group != null)
+                group.addItem(getNumId());
+        }
     }
 
     public NativeBlock getNativeBlock() {
         return block;
     }
-
 }

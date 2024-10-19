@@ -6,6 +6,7 @@ import com.zhekasmirnov.apparatus.multiplayer.server.ConnectedClient;
 import com.zhekasmirnov.innercore.api.runtime.saver.serializer.ScriptableSerializer;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.mozilla.javascript.ScriptableObject;
 import ru.koshakmine.icstd.entity.Player;
 import ru.koshakmine.icstd.level.Level;
 import ru.koshakmine.icstd.type.common.ItemStack;
@@ -42,7 +43,7 @@ public class BlockEntityContainer extends BlockEntity {
     @Override
     public void onClick(Position position, ItemStack stack, Player player) {
         final String name = getScreenName(position, stack, player);
-        if(name != null){
+        if(name != null && !player.isSneaking()){
             container.openFor(player, x + "," + y + "," + z + ":" + name);
         }
     }
@@ -58,8 +59,11 @@ public class BlockEntityContainer extends BlockEntity {
         final Container itemContainer;
         if(slots == null)
             itemContainer = new Container(new ItemContainer());
-        else
-            itemContainer = new Container(new ItemContainer(new com.zhekasmirnov.innercore.api.mod.ui.container.Container(ScriptableSerializer.scriptableFromJson(slots))));
+        else{
+            final com.zhekasmirnov.innercore.api.mod.ui.container.Container cont = new com.zhekasmirnov.innercore.api.mod.ui.container.Container();
+            cont.slots = (ScriptableObject) ScriptableSerializer.scriptableFromJson(slots);
+            itemContainer = new Container(new ItemContainer(cont));
+        }
         onInitContainer(itemContainer);
         return itemContainer;
     }
@@ -84,5 +88,12 @@ public class BlockEntityContainer extends BlockEntity {
     public void onRemove() {
         container.dropAt(level, x + .5f, y +.5f, z + .5f);
         super.onRemove();
+    }
+
+    @Override
+    public ScriptableObject getFakeTileEntity() {
+        final ScriptableObject fake = super.getFakeTileEntity();
+        fake.put("container", fake, container.getItemContainer());
+        return fake;
     }
 }

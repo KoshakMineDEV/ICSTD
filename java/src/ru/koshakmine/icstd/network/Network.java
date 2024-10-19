@@ -30,9 +30,9 @@ public class Network {
 
         if(side == NetworkSide.LOCAL) {
             network.addClientPacket(namePacket, (data, meta, type) -> {
-                if (data instanceof String) {
+                if (data instanceof byte[]) {
                     NetworkPacket packet = builder.create();
-                    packet.setBuffer(ByteBuffer.wrap(Base64.getDecoder().decode((String) data)));
+                    packet.setBuffer(ByteBuffer.wrap((byte[]) data));
                     packet.decode(null);
                     return;
                 }
@@ -43,9 +43,9 @@ public class Network {
             network.addServerPacket(namePacket, new ModdedServer.OnPacketReceivedListener() {
                 @Override
                 public void onPacketReceived(ConnectedClient client, Object data, String meta, Class<?> type) {
-                    if (data instanceof String) {
+                    if (data instanceof byte[]) {
                         NetworkPacket packet = builder.create();
-                        packet.setBuffer(ByteBuffer.wrap(Base64.getDecoder().decode((String) data)));
+                        packet.setBuffer(ByteBuffer.wrap((byte[]) data));
                         packet.decode(new NetworkClient(client));
                         return;
                     }

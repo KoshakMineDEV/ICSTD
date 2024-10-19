@@ -6,7 +6,7 @@ import com.zhekasmirnov.innercore.api.unlimited.IDRegistry;
 import ru.koshakmine.icstd.block.Block;
 import ru.koshakmine.icstd.block.liquid.item.FullBucketItem;
 import ru.koshakmine.icstd.entity.Player;
-import ru.koshakmine.icstd.item.IClickable;
+import ru.koshakmine.icstd.item.event.IClickable;
 import ru.koshakmine.icstd.js.LiquidRegistry;
 import ru.koshakmine.icstd.level.Level;
 import ru.koshakmine.icstd.type.ItemID;
@@ -47,11 +47,6 @@ public abstract class BlockLiquid extends Block implements IClickable {
         return 2;
     }
 
-    @Override
-    public boolean addToCreativeInventory() {
-        return false;
-    }
-
     public abstract String[] getTextureUi();
 
     public int getTickDelay(){
@@ -76,8 +71,9 @@ public abstract class BlockLiquid extends Block implements IClickable {
 
         this.still = blocks[0];
         this.flowing = new BlockFlowingLiquid(this, blocks[1]);
+        block = blocks[0];
 
-        still.addVariant(new String[]{getStillTexture()}, new int[]{0});
+        addVariant(getName(), new String[]{getStillTexture()});
 
         LiquidRegistry.registerLiquid(getId(), getName(), getTextureUi());
         LiquidRegistry.registerBlock(getId(), stillId, false);

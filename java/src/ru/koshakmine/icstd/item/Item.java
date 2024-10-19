@@ -9,18 +9,24 @@ import com.zhekasmirnov.innercore.api.unlimited.IDRegistry;
 import ru.koshakmine.icstd.entity.Player;
 import ru.koshakmine.icstd.event.Event;
 import ru.koshakmine.icstd.event.Events;
+import ru.koshakmine.icstd.item.event.IClickable;
+import ru.koshakmine.icstd.item.event.IDispense;
 import ru.koshakmine.icstd.level.Level;
-import ru.koshakmine.icstd.type.AnimationType;
+import ru.koshakmine.icstd.modloader.Mod;
+import ru.koshakmine.icstd.modloader.ObjectFactory;
+import ru.koshakmine.icstd.recipes.RecipeRegistry;
 import ru.koshakmine.icstd.type.CreativeCategory;
-import ru.koshakmine.icstd.modloader.IBaseRegister;
+import ru.koshakmine.icstd.modloader.IBaseRegisterGameObject;
 import ru.koshakmine.icstd.type.common.BlockPosition;
 import ru.koshakmine.icstd.type.common.ItemStack;
-import ru.koshakmine.icstd.type.common.Position;
 import ru.koshakmine.icstd.type.common.Texture;
 
 import java.util.HashMap;
+import java.util.UUID;
 
-public abstract class Item implements IBaseRegister {
+public abstract class Item implements IBaseRegisterGameObject {
+    protected static final ObjectFactory FACTORY = Mod.getFactory();
+
     private static final HashMap<Integer, IUsableItem> using = new HashMap<>();
     private static final HashMap<Integer, IClickable> clickable = new HashMap<>();
     private static final HashMap<Integer, IDispense> dispenses = new HashMap<>();
@@ -89,6 +95,10 @@ public abstract class Item implements IBaseRegister {
         return false;
     }
 
+    public ItemGroup getCreativeItemGroup(){
+        return null;
+    }
+
     public CreativeCategory getCreativeCategory(){
         return null;
     }
@@ -119,6 +129,17 @@ public abstract class Item implements IBaseRegister {
     @Override
     public void onInit() {}
 
+    @Override
+    public int getPriority() {
+        return 0;
+    }
+
+    private final UUID uuid = UUID.randomUUID();
+    @Override
+    public UUID getUUID() {
+        return uuid;
+    }
+
     public abstract Texture getTexture();
 
     protected void createItem(){
@@ -142,8 +163,6 @@ public abstract class Item implements IBaseRegister {
 
     @Override
     public void factory() {
-        onPreInit();
-
         createItem();
 
         final int id = IDRegistry.genItemID(getId());
@@ -161,6 +180,10 @@ public abstract class Item implements IBaseRegister {
             clickable.put(id, (IClickable) this);
         }
 
+        if (this instanceof IFurnaceBurn) {
+            RecipeRegistry.addFurnaceFuel(getNumId(), -1, ((IFurnaceBurn) this).getFuelBurn());
+        }
+
         item.setGlint(isGlint());
         item.setMaxDamage(getDurability());
         item.setMaxStackSize(getMaxStack());
@@ -174,10 +197,12 @@ public abstract class Item implements IBaseRegister {
 
         final CreativeCategory category = getCreativeCategory();
         if (category != null) {
+            NativeItem.addToCreative(getNumId(), 1, 0, null);
             item.setCreativeCategory(category.ordinal());
+            final ItemGroup group = getCreativeItemGroup();
+            if(group != null)
+                group.addItem(getNumId());
         }
-
-        onInit();
     }
 
     public NativeItem getItem() {
