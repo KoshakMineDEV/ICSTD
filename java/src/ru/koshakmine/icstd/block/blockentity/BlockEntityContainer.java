@@ -59,8 +59,11 @@ public class BlockEntityContainer extends BlockEntity {
         final Container itemContainer;
         if(slots == null)
             itemContainer = new Container(new ItemContainer());
-        else
-            itemContainer = new Container(new ItemContainer(new com.zhekasmirnov.innercore.api.mod.ui.container.Container(ScriptableSerializer.scriptableFromJson(slots))));
+        else{
+            final com.zhekasmirnov.innercore.api.mod.ui.container.Container cont = new com.zhekasmirnov.innercore.api.mod.ui.container.Container();
+            cont.slots = (ScriptableObject) ScriptableSerializer.scriptableFromJson(slots);
+            itemContainer = new Container(new ItemContainer(cont));
+        }
         onInitContainer(itemContainer);
         return itemContainer;
     }

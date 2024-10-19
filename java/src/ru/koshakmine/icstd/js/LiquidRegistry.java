@@ -6,9 +6,12 @@ import org.mozilla.javascript.ScriptableObject;
 
 public class LiquidRegistry {
     private static ScriptableObject scriptable;
+    public static int liquidStorageSaverId;
 
     public static void init(ScriptableObject scriptable){
         LiquidRegistry.scriptable = scriptable;
+        liquidStorageSaverId = ScriptableObjectHelper.getIntProperty(scriptable, "liquidStorageSaverId", -1);
+        //scriptable.put("");
     }
 
     public static void registerLiquid(String liquidName, String name, String[] textureUi){
@@ -21,6 +24,10 @@ public class LiquidRegistry {
 
     public static void registerBlock(String liquidName, int blockId, boolean isDynamic){
         JsHelper.callFunction(scriptable, "registerBlock", liquidName, blockId, isDynamic);
+    }
+
+    public static String getLiquidUITexture(String liquid, int width, int height){
+        return JsHelper.callFunction(scriptable, "getLiquidUITexture", liquid, width, height).toString();
     }
 
     public static void registerItem(String liquidName, int emptyBucket, int emptyBucketData, int fullBucket, int fullBucketData){
