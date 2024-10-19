@@ -3,6 +3,7 @@ package ru.koshakmine.icstd.block.blockentity;
 
 import com.zhekasmirnov.apparatus.multiplayer.util.entity.NetworkEntity;
 import com.zhekasmirnov.apparatus.multiplayer.util.entity.NetworkEntityType;
+import com.zhekasmirnov.apparatus.multiplayer.util.entity.SyncedNetworkData;
 import org.json.JSONException;
 import org.json.JSONObject;
 import ru.koshakmine.icstd.block.ILocalBlockEntityHolder;
@@ -15,11 +16,14 @@ import ru.koshakmine.icstd.ui.IWindow;
 
 public class LocalBlockEntity extends BlockEntityBase {
     protected final NetworkEntity network;
+    protected final SyncedNetworkData networkData;
 
     public LocalBlockEntity(String type, int id, Position position, NetworkEntity network, JSONObject data) throws JSONException {
         super(position, Level.getLocalLevel(), type, id);
 
         this.network = network;
+        this.networkData = SyncedNetworkData.getClientSyncedData(data.getString("sd"));
+        networkData.fromJSON(data.getString("sj"));
     }
 
     @Override

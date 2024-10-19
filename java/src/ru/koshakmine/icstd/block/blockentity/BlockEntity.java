@@ -2,6 +2,7 @@ package ru.koshakmine.icstd.block.blockentity;
 
 import com.zhekasmirnov.apparatus.mcpe.NativeBlockSource;
 import com.zhekasmirnov.apparatus.multiplayer.util.entity.NetworkEntity;
+import com.zhekasmirnov.apparatus.multiplayer.util.entity.SyncedNetworkData;
 import com.zhekasmirnov.innercore.api.NativeAPI;
 import com.zhekasmirnov.innercore.api.mod.ScriptableObjectHelper;
 import org.json.JSONException;
@@ -75,6 +76,7 @@ public class BlockEntity extends BlockEntityBase implements IRuntimeSaveObject {
 
     public final UUID uuid = UUID.randomUUID();
     protected NetworkEntity network;
+    protected SyncedNetworkData networkData;
     protected String localType;
 
     public BlockEntity(String type, String localType, int id, Position position, Level level) {
@@ -86,7 +88,9 @@ public class BlockEntity extends BlockEntityBase implements IRuntimeSaveObject {
     @Override
     public void onInit() {
         if (LocalBlockEntity.getRegistry().get(localType) != null) {
+            networkData = new SyncedNetworkData();
             network = new NetworkEntity(LocalBlockEntity.TYPE, this);
+            networkData.setClients(network.getClients());
         } else network = null;
     }
 
@@ -105,12 +109,21 @@ public class BlockEntity extends BlockEntityBase implements IRuntimeSaveObject {
         return network;
     }
 
+    public SyncedNetworkData getNetworkData() {
+        return networkData;
+    }
+
     public String getLocalType() {
         return localType;
     }
 
-    public JSONObject buildPacketLocal() {
-        return new JSONObject();
+    public JSONObject buildPacketLocal() throws JSONException {
+        final JSONObject send = new JSONObject();
+        if(networkData != null) {
+            send.put("sd", networkData.getName());
+            send.put("sj", networkData.toJSON());
+        }
+        return send;
     }
 
     public int getHideDistance() {
