@@ -161,7 +161,7 @@ public abstract class Block implements IBaseRegisterGameObject {
                 entity.onClick(position, item, player);
             }
 
-            if(place != null && !NativeAPI.isDefaultPrevented()){
+            if(place != null && !NativeAPI.isDefaultPrevented() && canTileBeReplaced(level.getBlockId(position.relative))){
                 final Position tile = place.onPlace(position, item, block, player, level);
 
                 holder = SERVER_REGISTRY.get(item.id);
@@ -171,7 +171,7 @@ public abstract class Block implements IBaseRegisterGameObject {
 
                 TileEntity.addTileEntity(tile, level);
 
-                player.setCarriedItem(item.decrease(1));
+                if(player.isItemSpendingAllowed()) player.setCarriedItem(item.decrease(1));
                 level.playSound(position, "dig.stone", 1, 0.8f);
                 NativeAPI.preventDefault();
             }

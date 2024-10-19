@@ -1,11 +1,14 @@
 package ru.koshakmine.icstd.runtime.saver;
 
 import com.zhekasmirnov.horizon.runtime.logger.Logger;
+import com.zhekasmirnov.innercore.api.log.DialogHelper;
 import com.zhekasmirnov.innercore.api.log.ICLog;
 import com.zhekasmirnov.innercore.api.runtime.saver.world.WorldDataScopeRegistry;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import ru.koshakmine.icstd.event.Event;
+import ru.koshakmine.icstd.event.Events;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -16,6 +19,8 @@ public class Saver {
     private static final HashMap<UUID, IRuntimeSaveObject> runtimeSaveObject = new HashMap<>();
 
     static {
+        Event.onCall(Events.LevelLeft, (args -> runtimeSaveObject.clear()));
+
         register(new ISaveObject() {
             @Override
             public String getName() {
@@ -23,18 +28,24 @@ public class Saver {
             }
 
             @Override
-            public void read(JSONObject map) throws JSONException {
+            public void read(JSONObject map) {
                 final Iterator<String> it = map.keys();
                 while (it.hasNext()){
-                    final JSONArray json = (JSONArray) map.get(it.next());
-                    final IRead read = runtimeTypesSaveObject.get(json.getString(0));
+                    try{
+                        final JSONArray json = (JSONArray) map.get(it.next());
+                        final IRead read = runtimeTypesSaveObject.get(json.getString(0));
 
-                    if(read != null) read.read(json.getJSONObject(1));
+                        if(read != null) read.read(json.getJSONObject(1));
+                    }catch (Exception e){
+                        final String errorText = ICLog.getStackTrace(e);
+                        DialogHelper.openFormattedDialog(errorText, "Saver");
+                        Logger.error(errorText);
+                    }
                 }
             }
 
             @Override
-            public JSONObject save() throws JSONException {
+            public JSONObject save(){
                 final JSONObject map = new JSONObject();
                 runtimeSaveObject.forEach((uuid, saveObject) -> {
                     try {
@@ -47,7 +58,9 @@ public class Saver {
                             map.put(uuid.toString(), json);
                         }
                     } catch (JSONException e) {
-                        Logger.error(ICLog.getStackTrace(e));
+                        final String errorText = ICLog.getStackTrace(e);
+                        DialogHelper.openFormattedDialog(errorText, "Saver");
+                        Logger.error(errorText);
                     }
                 });
                 return map;

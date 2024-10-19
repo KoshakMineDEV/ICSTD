@@ -4,6 +4,7 @@ import com.zhekasmirnov.innercore.api.particles.ParticleRegistry;
 import ru.koshakmine.icstd.level.particle.Particle;
 import ru.koshakmine.icstd.network.NetworkClient;
 import ru.koshakmine.icstd.network.NetworkPacket;
+import ru.koshakmine.icstd.runtime.PostLevelLoaded;
 import ru.koshakmine.icstd.type.common.Position;
 
 public class SpawnParticlePacket extends NetworkPacket {
@@ -26,15 +27,17 @@ public class SpawnParticlePacket extends NetworkPacket {
 
     @Override
     protected void decode(NetworkClient client) {
-        position = getPosition();
-        vector = getPosition();
+        if(PostLevelLoaded.LOCAL.isLevelLoaded()) {
+            position = getPosition();
+            vector = getPosition();
 
-        ParticleRegistry.addParticle(
-                Particle.getParticleIdByName(getString()),
-                position.x, position.y, position.z,
-                vector.x, vector.y, vector.z,
-                getInt()
-        );
+            ParticleRegistry.addParticle(
+                    Particle.getParticleIdByName(getString()),
+                    position.x, position.y, position.z,
+                    vector.x, vector.y, vector.z,
+                    getInt()
+            );
+        }
     }
 
     @Override

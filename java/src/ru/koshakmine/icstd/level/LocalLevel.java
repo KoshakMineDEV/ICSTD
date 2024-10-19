@@ -5,6 +5,7 @@ import com.zhekasmirnov.innercore.api.NativeAPI;
 import com.zhekasmirnov.innercore.api.particles.ParticleRegistry;
 import com.zhekasmirnov.innercore.api.runtime.other.NameTranslation;
 import ru.koshakmine.icstd.level.particle.Particle;
+import ru.koshakmine.icstd.runtime.PostLevelLoaded;
 import ru.koshakmine.icstd.type.common.Position;
 
 public class LocalLevel extends Level {
@@ -24,9 +25,11 @@ public class LocalLevel extends Level {
 
     @Override
     public void spawnParticle(Particle particle, Position position, Position vector) {
-        ParticleRegistry.addParticle(particle.getNumId(),
-                position.x, position.y, position.z,
-                vector.x, vector.y, vector.z,
-                0);
+        if(PostLevelLoaded.LOCAL.isLevelLoaded()) {
+            ParticleRegistry.addParticle(particle.getNumId(),
+                    position.x, position.y, position.z,
+                    vector.x, vector.y, vector.z,
+                    0);
+        }
     }
 }

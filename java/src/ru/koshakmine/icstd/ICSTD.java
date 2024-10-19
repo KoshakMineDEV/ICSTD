@@ -8,9 +8,6 @@ import com.zhekasmirnov.horizon.runtime.logger.Logger;
 import com.zhekasmirnov.innercore.mod.build.Config;
 import org.json.JSONException;
 import org.json.JSONObject;
-import ru.koshakmine.icstd.impl.TestBlock;
-import ru.koshakmine.icstd.impl.TestBlockLiquid;
-import ru.koshakmine.icstd.impl.TestItem;
 import ru.koshakmine.icstd.modloader.Mod;
 import ru.koshakmine.icstd.modloader.ObjectFactory;
 import ru.koshakmine.icstd.runtime.PostLevelLoaded;
@@ -51,10 +48,6 @@ public class ICSTD extends Mod {
         }catch (JSONException ignore){}
 
         MULTI_THREAD = config.getBool("multi_thread");
-
-        factory.addBlock(TestBlock::new);
-        factory.addItem(TestItem::new);
-        factory.addBlock(TestBlockLiquid::new);
     }
 
 

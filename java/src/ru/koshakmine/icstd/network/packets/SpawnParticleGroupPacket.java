@@ -6,6 +6,7 @@ import ru.koshakmine.icstd.level.particle.AbstractParticleGroup;
 import ru.koshakmine.icstd.level.particle.Particle;
 import ru.koshakmine.icstd.network.NetworkClient;
 import ru.koshakmine.icstd.network.NetworkPacket;
+import ru.koshakmine.icstd.runtime.PostLevelLoaded;
 import ru.koshakmine.icstd.type.common.Position;
 
 public class SpawnParticleGroupPacket extends NetworkPacket {
@@ -24,18 +25,20 @@ public class SpawnParticleGroupPacket extends NetworkPacket {
 
     @Override
     protected void decode(NetworkClient client) {
-        final short count = getShort();
+        if(PostLevelLoaded.LOCAL.isLevelLoaded()) {
+            final short count = getShort();
 
-        for(short i = 0;i < count;i++){
-            final Position position = getPosition();
-            final Position vector = getPosition();
+            for (short i = 0; i < count; i++) {
+                final Position position = getPosition();
+                final Position vector = getPosition();
 
-            ParticleRegistry.addParticle(
-                    Particle.getParticleIdByName(getString()),
-                    position.x, position.y, position.z,
-                    vector.x, vector.y, vector.z,
-                    0
-            );
+                ParticleRegistry.addParticle(
+                        Particle.getParticleIdByName(getString()),
+                        position.x, position.y, position.z,
+                        vector.x, vector.y, vector.z,
+                        0
+                );
+            }
         }
     }
 
