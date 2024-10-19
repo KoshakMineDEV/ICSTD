@@ -32,11 +32,6 @@ public class BlockFlowingLiquid extends Block implements IClickable {
         return 2;
     }
 
-    @Override
-    public boolean addToCreativeInventory() {
-        return false;
-    }
-
     public BlockFlowingLiquid(BlockLiquid liquid, NativeBlock block){
         this.liquid = liquid;
         this.block = block;

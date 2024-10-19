@@ -75,24 +75,27 @@ public abstract class Mod {
                         Class<? extends Mod> clazz = (Class<? extends Mod>) Class.forName(classPath);
                         final Mod mod_ = clazz.getConstructor(String.class, LegacyInnerCoreMod.class).newInstance(path, (LegacyInnerCoreMod) mod);
 
-                        boolean added = true;
-                        for (int a = 0; a < Mod.mods.size(); a++) {
-                            if (Mod.mods.get(a).getPriority() < mod_.getPriority()) {
-                                Mod.mods.add(a, mod_);
-                                added = false;
-                                break;
+                        if(mod_.getConfig().getBool("enabled")) {
+                            boolean added = true;
+                            for (int a = 0; a < Mod.mods.size(); a++) {
+                                if (Mod.mods.get(a).getPriority() < mod_.getPriority()) {
+                                    Mod.mods.add(a, mod_);
+                                    added = false;
+                                    break;
+                                }
+                            }
+                            if (added) Mod.mods.add(mod_);
+                            Logger.debug("Register loaded mod: " + mod_.getName() + ", path: " + mod_.getDir());
+
+                            String[] integrations = mod_.getIntegration();
+                            for (String name : integrations) {
+                                Event.onCall("API:" + name, (args -> {
+                                    mod_.onLoadIntegration(name, (Scriptable) args[0]);
+                                }));
                             }
                         }
-                        if(added) Mod.mods.add(mod_);
-
-                        String[] integrations = mod_.getIntegration();
-                        for(String name : integrations){
-                            Event.onCall("API:"+name, (args -> {
-                                mod_.onLoadIntegration(name, (Scriptable) args[0]);
-                            }));
-                        }
                     }catch (Exception e){
-                        Logger.error(ICLog.getStackTrace(e));
+                        Logger.error(ICLog.getStackTrace(e), "ERROR-ICSTD");
                     }
                 }
             }catch (Exception ignore){
@@ -105,7 +108,7 @@ public abstract class Mod {
             } catch (Exception e){
                 final String errorText = ICLog.getStackTrace(e);
                 DialogHelper.openFormattedDialog(errorText, mod.getName());
-                Logger.error(ICLog.getStackTrace(e));
+                Logger.error(errorText);
             }
         }
         factory.build();

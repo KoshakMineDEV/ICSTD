@@ -38,11 +38,6 @@ public class TestItem extends ItemHoe {
     }
 
     @Override
-    public CreativeCategory getCreativeCategory() {
-        return CreativeCategory.MATERIAL;
-    }
-
-    @Override
     public int getToolDurability() {
         return 16;
     }
@@ -55,5 +50,10 @@ public class TestItem extends ItemHoe {
     @Override
     public int getToolEfficiency() {
         return 15;
+    }
+
+    @Override
+    public CreativeCategory getCreativeCategory() {
+        return CreativeCategory.CONSTRUCTION;
     }
 }

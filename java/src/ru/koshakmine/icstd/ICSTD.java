@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.concurrent.Executor;
 
 import com.zhekasmirnov.apparatus.modloader.LegacyInnerCoreMod;
+import com.zhekasmirnov.horizon.runtime.logger.Logger;
 import com.zhekasmirnov.innercore.mod.build.Config;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -58,6 +59,7 @@ public class ICSTD extends Mod {
 
 
     public static void boot(HashMap<?, ?> args) {
+        Logger.debug("Loaded mod", "ICSTD");
         PostLevelLoaded.boot();
     }
 }

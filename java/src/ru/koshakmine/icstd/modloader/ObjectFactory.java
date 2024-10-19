@@ -1,7 +1,11 @@
 package ru.koshakmine.icstd.modloader;
 
+import com.zhekasmirnov.horizon.runtime.logger.Logger;
+import com.zhekasmirnov.innercore.api.log.DialogHelper;
+import com.zhekasmirnov.innercore.api.log.ICLog;
 import ru.koshakmine.icstd.block.Block;
 import ru.koshakmine.icstd.item.Item;
+import ru.koshakmine.icstd.item.ItemGroup;
 import ru.koshakmine.icstd.level.particle.Particle;
 import ru.koshakmine.icstd.recipes.workbench.WorkbenchRecipeBase;
 
@@ -32,6 +36,10 @@ public class ObjectFactory {
     }
 
     public WorkbenchRecipeBase addRecipe(IFactory<WorkbenchRecipeBase> factory){
+        return add(factory);
+    }
+
+    public ItemGroup addItemGroup(IFactory<ItemGroup> factory){
         return add(factory);
     }
 
@@ -70,9 +78,16 @@ public class ObjectFactory {
         postFactory = true;
 
         for (IBaseRegister base : list) {
-            base.onPreInit();
-            base.factory();
-            base.onInit();
+            try{
+                base.onPreInit();
+                base.factory();
+                base.onInit();
+            }catch (Exception e){
+                final String errorText = ICLog.getStackTrace(e);
+                DialogHelper.openFormattedDialog(errorText, "ObjectFactory");
+                Logger.error(errorText);
+            }
+
         }
     }
 }

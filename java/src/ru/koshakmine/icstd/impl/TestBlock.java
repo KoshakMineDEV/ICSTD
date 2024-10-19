@@ -13,6 +13,7 @@ import ru.koshakmine.icstd.block.blockentity.LocalBlockEntity;
 import ru.koshakmine.icstd.js.EnergyNetLib;
 import ru.koshakmine.icstd.js.StorageInterfaceLib;
 import ru.koshakmine.icstd.level.Level;
+import ru.koshakmine.icstd.type.CreativeCategory;
 import ru.koshakmine.icstd.type.common.ItemStack;
 import ru.koshakmine.icstd.type.common.Position;
 import ru.koshakmine.icstd.type.tools.BlockMaterials;
@@ -85,6 +86,11 @@ public class TestBlock extends BlockRotate implements IBlockEntityHolder, ILocal
     @Override
     public boolean isValidInput(ItemStack item, int side, BlockEntity entity) {
         return true;
+    }
+
+    @Override
+    public CreativeCategory getCreativeCategory() {
+        return CreativeCategory.NATURE;
     }
 
     /*@Override

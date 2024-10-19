@@ -14,6 +14,7 @@ import ru.koshakmine.icstd.block.blockentity.BlockEntityManager;
 import ru.koshakmine.icstd.block.blockentity.BlockEntityRegistry;
 import ru.koshakmine.icstd.block.blockentity.LocalBlockEntity;
 import ru.koshakmine.icstd.event.Event;
+import ru.koshakmine.icstd.item.ItemGroup;
 import ru.koshakmine.icstd.item.event.IClickable;
 import ru.koshakmine.icstd.js.StorageInterfaceLib;
 import ru.koshakmine.icstd.js.TileEntity;
@@ -22,6 +23,7 @@ import ru.koshakmine.icstd.level.Level;
 import ru.koshakmine.icstd.modloader.IBaseRegisterGameObject;
 import ru.koshakmine.icstd.modloader.Mod;
 import ru.koshakmine.icstd.modloader.ObjectFactory;
+import ru.koshakmine.icstd.type.CreativeCategory;
 import ru.koshakmine.icstd.type.block.SoundType;
 import ru.koshakmine.icstd.type.common.Position;
 import ru.koshakmine.icstd.type.tools.BlockMaterials;
@@ -298,8 +300,12 @@ public abstract class Block implements IBaseRegisterGameObject {
         return 0;
     }
 
-    public boolean addToCreativeInventory() {
-        return true;
+    public ItemGroup getCreativeItemGroup(){
+        return null;
+    }
+
+    public CreativeCategory getCreativeCategory(){
+        return null;
     }
 
     protected static String[] fixedTextures(String[] textures){
@@ -402,8 +408,13 @@ public abstract class Block implements IBaseRegisterGameObject {
             StorageInterfaceLib.createInterface(getNumId(), (StorageInterfaceLib.StorageDescriptor) this);
         }
 
-        if (addToCreativeInventory()) {
-            NativeItem.addToCreative(block.getId(), 1, 0, null);
+        final CreativeCategory category = getCreativeCategory();
+        if (category != null) {
+            NativeItem.addToCreative(getNumId(), 1, 0, null);
+            NativeItem.setCategoryForId(getNumId(), category.ordinal());
+            final ItemGroup group = getCreativeItemGroup();
+            if(group != null)
+                group.addItem(getNumId());
         }
     }
 

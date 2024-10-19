@@ -95,6 +95,10 @@ public abstract class Item implements IBaseRegisterGameObject {
         return false;
     }
 
+    public ItemGroup getCreativeItemGroup(){
+        return null;
+    }
+
     public CreativeCategory getCreativeCategory(){
         return null;
     }
@@ -193,7 +197,11 @@ public abstract class Item implements IBaseRegisterGameObject {
 
         final CreativeCategory category = getCreativeCategory();
         if (category != null) {
+            NativeItem.addToCreative(getNumId(), 1, 0, null);
             item.setCreativeCategory(category.ordinal());
+            final ItemGroup group = getCreativeItemGroup();
+            if(group != null)
+                group.addItem(getNumId());
         }
     }
 

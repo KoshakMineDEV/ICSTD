@@ -47,11 +47,6 @@ public abstract class BlockLiquid extends Block implements IClickable {
         return 2;
     }
 
-    @Override
-    public boolean addToCreativeInventory() {
-        return false;
-    }
-
     public abstract String[] getTextureUi();
 
     public int getTickDelay(){
