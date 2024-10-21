@@ -1,0 +1,19 @@
+{
+    "configurations": [
+        {
+            "name": "Win32",
+            "includePath": [
+                "${workspaceFolder}/../toolchain/stdincludes/gnu_stl/**",
+                "${workspaceFolder}/../toolchain/stdincludes/horizon/**",
+                "${workspaceFolder}/../toolchain/ndk/arm/sysroot/usr/include/**"
+                
+            ],
+            "defines": [
+                "_DEBUG",
+                "UNICODE",
+                "_UNICODE"
+            ]
+        }
+    ],
+    "version": 4
+}

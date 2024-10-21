@@ -14,39 +14,77 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 
 public class TickingSystemBlockEntity {
-    private final ConcurrentHashMap<Integer, ConcurrentHashMap<ChunkPos, ConcurrentLinkedDeque<BlockEntityBase>>> dimensions = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<Integer, ConcurrentHashMap<Long, ConcurrentLinkedDeque<BlockEntityBase>>> dimensions = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<Integer, ConcurrentHashMap<Long, ConcurrentLinkedDeque<BlockEntityBase>>> loadedTiles = new ConcurrentHashMap<>();
     private final ExecutorService executor = Executors.newCachedThreadPool();
 
     public TickingSystemBlockEntity(Boolean isServer){
         Event.onCall(Events.LevelLeft, (args) -> dimensions.clear());
-        if(isServer != null) Event.onCall(isServer ? Events.tick : Events.LocalTick, (args) -> {
-            try {
-                AtomicInteger count = new AtomicInteger();
+        if(isServer != null) {
+            if(isServer){
+                Event.onChunkLoaded((this::onChunkLoaded));
+                Event.onChunkDiscarded(this::onChunkDiscarded);
+            } else {
+                Event.onLocalChunkLoaded((this::onChunkLoaded));
+                Event.onLocalChunkDiscarded(this::onChunkDiscarded);
+            }
+            Event.onCall(isServer ? Events.tick : Events.LocalTick, (args) -> {
+                try {
+                    final AtomicInteger count = new AtomicInteger();
 
-                dimensions.forEach((dimension, chunks) -> {
-                    final Level level = Level.getForDimension(dimension);
-
-                    chunks.forEach(((pos, list) -> {
-                        if(level.isChunkLoaded(pos.x, pos.z) &&
-                                level.isChunkLoaded(pos.x - 1, pos.z - 1) && level.isChunkLoaded(pos.x - 1, pos.z + 1) &&
-                                level.isChunkLoaded(pos.x + 1, pos.z - 1) && level.isChunkLoaded(pos.x + 1, pos.z + 1)){
+                    loadedTiles.forEach((dimension, chunks) -> {
+                        chunks.forEach(((hash, list) -> {
                             count.getAndIncrement();
                             ICSTD.onMultiThreadRun(executor, () -> {
                                 onTickChunk(list);
                                 count.addAndGet(-1);
                             });
-                        }
-                    }));
-                });
+                            /*if(level.isChunkLoaded(pos.x, pos.z) &&
+                                    level.isChunkLoaded(pos.x - 1, pos.z - 1) && level.isChunkLoaded(pos.x - 1, pos.z + 1) &&
+                                    level.isChunkLoaded(pos.x + 1, pos.z - 1) && level.isChunkLoaded(pos.x + 1, pos.z + 1))*/
+                        }));
+                    });
 
-                while (ICSTD.MULTI_THREAD && count.get() != 0){
-                    Thread.sleep(1L);
+                    while (ICSTD.MULTI_THREAD && count.get() != 0){
+                        Thread.sleep(1L);
+                    }
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
                 }
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
-        });
+            });
+        }
     }
+
+    private static Long hashChunkPos(int x, int z){
+        return (((long)x) << 32) | (z & 0xffffffffL);
+    }
+
+    public ConcurrentHashMap<Long, ConcurrentLinkedDeque<BlockEntityBase>> getChunks(int dimension, ConcurrentHashMap<Integer, ConcurrentHashMap<Long, ConcurrentLinkedDeque<BlockEntityBase>>> aboby){
+        return Java8BackComp.computeIfAbsent(aboby, dimension, (Function<Integer, ConcurrentHashMap<Long, ConcurrentLinkedDeque<BlockEntityBase>>>) integer -> new ConcurrentHashMap<>());
+    }
+
+    public ConcurrentLinkedDeque<BlockEntityBase> geTilesOrCreate(Long hash, ConcurrentHashMap<Long, ConcurrentLinkedDeque<BlockEntityBase>> aboby){
+        return Java8BackComp.computeIfAbsent(aboby, hash, (Function<Long, ConcurrentLinkedDeque<BlockEntityBase>>) _hash -> new ConcurrentLinkedDeque<>());
+
+    }
+
+    private void onChunkLoaded(int chunkX, int chunkZ, int dimension) {
+        synchronized (loadedTiles){
+            final ConcurrentHashMap<Long, ConcurrentLinkedDeque<BlockEntityBase>> loadedChunks = getChunks(dimension, loadedTiles);
+            final ConcurrentHashMap<Long, ConcurrentLinkedDeque<BlockEntityBase>> allChunks = getChunks(dimension, dimensions);
+
+            final Long hash = hashChunkPos(chunkX, chunkZ);
+            loadedChunks.put(hash, geTilesOrCreate(hash, allChunks));
+        }
+    }
+
+    private void onChunkDiscarded(int chunkX, int chunkZ, int dimension) {
+        synchronized (loadedTiles){
+            final ConcurrentHashMap<Long, ConcurrentLinkedDeque<BlockEntityBase>> chunks = getChunks(dimension, loadedTiles);
+            chunks.remove(hashChunkPos(chunkX, chunkZ));
+        }
+    }
+
 
     protected void onTickChunk(ConcurrentLinkedDeque<BlockEntityBase> list){
         final Iterator<BlockEntityBase> it = list.iterator();
@@ -58,8 +96,8 @@ public class TickingSystemBlockEntity {
     }
 
     public ConcurrentLinkedDeque<BlockEntityBase> getTiles(Level level, int x, int z){
-        final ConcurrentHashMap<ChunkPos, ConcurrentLinkedDeque<BlockEntityBase>> chunks = Java8BackComp.computeIfAbsent(dimensions, level.getDimension(), (Function<Integer, ConcurrentHashMap<ChunkPos, ConcurrentLinkedDeque<BlockEntityBase>>>) integer -> new ConcurrentHashMap<>());
-        return Java8BackComp.computeIfAbsent(chunks, new ChunkPos(x / 16, z / 16), (Function<ChunkPos, ConcurrentLinkedDeque<BlockEntityBase>>) chunkPos -> new ConcurrentLinkedDeque<>());
+        final ConcurrentHashMap<Long, ConcurrentLinkedDeque<BlockEntityBase>> chunks = getChunks(level.getDimension(), dimensions);
+        return Java8BackComp.computeIfAbsent(chunks, hashChunkPos(x / 16, z / 16), (Function<Long, ConcurrentLinkedDeque<BlockEntityBase>>) hash -> new ConcurrentLinkedDeque<>());
     }
 
     public void addBlockEntity(BlockEntityBase entity){
