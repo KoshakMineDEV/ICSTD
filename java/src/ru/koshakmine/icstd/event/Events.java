@@ -86,6 +86,10 @@ public class Events {
     public static final String WorkbenchCraft = "WorkbenchCraft";
     public static final String ModsLoaded = "ModsLoaded";
     public static final String PostLoaded = "PostLoaded";
+    public static final String LocalChunkLoaded = "LocalChunkLoaded";
     public static final String ChunkLoaded = "ChunkLoaded";
+    public static final String LocalChunkDiscarded = "LocalChunkDiscarded";
     public static final String ChunkDiscarded = "ChunkDiscarded";
+    public static final String ChunkStateChanged = "ChunkStateChanged";
+    public static final String LocalChunkStateChanged = "LocalChunkStateChanged";
 }

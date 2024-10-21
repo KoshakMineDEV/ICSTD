@@ -1,5 +1,5 @@
 package ru.koshakmine.icstd.event.function;
 
 public interface ChunkFunction {
-    void call(int dimension, int chunkX, int chunkZ, boolean isServer);
+    void call(int chunkX, int chunkZ, int dimension);
 }

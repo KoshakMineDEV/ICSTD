@@ -11,6 +11,8 @@ import ru.koshakmine.icstd.event.Event;
 import ru.koshakmine.icstd.event.Events;
 import ru.koshakmine.icstd.item.event.IClickable;
 import ru.koshakmine.icstd.item.event.IDispense;
+import ru.koshakmine.icstd.item.event.IOverrideIcon;
+import ru.koshakmine.icstd.item.event.IOverrideName;
 import ru.koshakmine.icstd.level.Level;
 import ru.koshakmine.icstd.modloader.Mod;
 import ru.koshakmine.icstd.modloader.ObjectFactory;
@@ -30,6 +32,8 @@ public abstract class Item implements IBaseRegisterGameObject {
     private static final HashMap<Integer, IUsableItem> using = new HashMap<>();
     private static final HashMap<Integer, IClickable> clickable = new HashMap<>();
     private static final HashMap<Integer, IDispense> dispenses = new HashMap<>();
+    private static final HashMap<Integer, IOverrideName> overrideName = new HashMap<>();
+    private static final HashMap<Integer, IOverrideIcon> overrideIcon = new HashMap<>();
 
     public static void registerUsing(int id, IUsableItem usableItem){
         using.put(id, usableItem);
@@ -41,6 +45,14 @@ public abstract class Item implements IBaseRegisterGameObject {
 
     public static void registerDispense(int id, IDispense dispense){
         dispenses.put(id, dispense);
+    }
+
+    public static void registerOverrideName(int id, IOverrideName item){
+        overrideName.put(id, item);
+    }
+
+    public static void registerOverrideIcon(int id, IOverrideIcon item){
+        overrideIcon.put(id, item);
     }
 
     static {
@@ -68,6 +80,27 @@ public abstract class Item implements IBaseRegisterGameObject {
                 dispense.onDispense(new BlockPosition((Coords) args[0]), item, Level.getForRegion((NativeBlockSource) args[2]), ((Number) args[3]).intValue());
             }
         });
+
+        Event.onCall(Events.ItemNameOverride, (args -> {
+            final ItemStack item = new ItemStack((ItemInstance) args[0]);
+            final IOverrideName override = overrideName.get(item.id);
+
+            if(override != null){
+                String name = override.onOverrideName(item, args[1].toString(), args[2].toString());
+                if(name != null){
+                    AdaptedScriptAPI.Item.overrideCurrentName(name);
+                }
+            }
+        }));
+
+        Event.onCall(Events.ItemIconOverride, (args -> {
+            final ItemStack item = new ItemStack(args[0]);
+            final IOverrideIcon override = overrideIcon.get(item.id);
+
+            if(override != null){
+                override.onOverrideIcon(item, (Boolean) args[1]);
+            }
+        }));
     }
 
     private NativeItem item;
@@ -161,6 +194,26 @@ public abstract class Item implements IBaseRegisterGameObject {
         }
     }
 
+    public static void registerEvents(IBaseRegisterGameObject self){
+        final int id = self.getNumId();
+
+        if (self instanceof IClickable) {
+            clickable.put(id, (IClickable) self);
+        }
+
+        if (self instanceof IFurnaceBurn) {
+            RecipeRegistry.addFurnaceFuel(id, -1, ((IFurnaceBurn) self).getFuelBurn());
+        }
+
+        if(self instanceof IOverrideName) {
+            registerOverrideName(id, (IOverrideName) self);
+        }
+
+        if(self instanceof IOverrideIcon) {
+            registerOverrideIcon(id, (IOverrideIcon) self);
+        }
+    }
+
     @Override
     public void factory() {
         createItem();
@@ -176,13 +229,7 @@ public abstract class Item implements IBaseRegisterGameObject {
             using.put(id, usingItem);
         }
 
-        if (this instanceof IClickable) {
-            clickable.put(id, (IClickable) this);
-        }
-
-        if (this instanceof IFurnaceBurn) {
-            RecipeRegistry.addFurnaceFuel(getNumId(), -1, ((IFurnaceBurn) this).getFuelBurn());
-        }
+        registerEvents(this);
 
         item.setGlint(isGlint());
         item.setMaxDamage(getDurability());

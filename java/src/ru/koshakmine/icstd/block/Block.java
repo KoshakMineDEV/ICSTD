@@ -1,19 +1,27 @@
 package ru.koshakmine.icstd.block;
 
+import com.zhekasmirnov.apparatus.mcpe.NativeBlockSource;
 import com.zhekasmirnov.apparatus.minecraft.enums.GameEnums;
 import com.zhekasmirnov.innercore.api.NativeAPI;
 import com.zhekasmirnov.innercore.api.NativeBlock;
 import com.zhekasmirnov.innercore.api.NativeItem;
 import com.zhekasmirnov.innercore.api.NativeItemModel;
+import com.zhekasmirnov.innercore.api.commontypes.Coords;
+import com.zhekasmirnov.innercore.api.commontypes.FullBlock;
+import com.zhekasmirnov.innercore.api.mod.util.ScriptableFunctionImpl;
 import com.zhekasmirnov.innercore.api.unlimited.BlockRegistry;
 import com.zhekasmirnov.innercore.api.unlimited.BlockVariant;
 import com.zhekasmirnov.innercore.api.unlimited.IDDataPair;
 import com.zhekasmirnov.innercore.api.unlimited.IDRegistry;
+import org.mozilla.javascript.Context;
+import org.mozilla.javascript.Scriptable;
 import ru.koshakmine.icstd.block.blockentity.BlockEntity;
 import ru.koshakmine.icstd.block.blockentity.BlockEntityManager;
 import ru.koshakmine.icstd.block.blockentity.BlockEntityRegistry;
 import ru.koshakmine.icstd.block.blockentity.LocalBlockEntity;
 import ru.koshakmine.icstd.event.Event;
+import ru.koshakmine.icstd.event.Events;
+import ru.koshakmine.icstd.item.Item;
 import ru.koshakmine.icstd.item.ItemGroup;
 import ru.koshakmine.icstd.item.event.IClickable;
 import ru.koshakmine.icstd.js.StorageInterfaceLib;
@@ -25,6 +33,7 @@ import ru.koshakmine.icstd.modloader.Mod;
 import ru.koshakmine.icstd.modloader.ObjectFactory;
 import ru.koshakmine.icstd.type.CreativeCategory;
 import ru.koshakmine.icstd.type.block.SoundType;
+import ru.koshakmine.icstd.type.common.BlockData;
 import ru.koshakmine.icstd.type.common.Position;
 import ru.koshakmine.icstd.type.tools.BlockMaterials;
 
@@ -41,6 +50,10 @@ public abstract class Block implements IBaseRegisterGameObject {
     private static HashMap<IDDataPair, BlockVariant> blockVariantMap;
     private static final HashMap<Integer, IPlaceBlock> placed = new HashMap<>();
     private static final HashMap<Integer, IClickable> clickable = new HashMap<>();
+    private static final HashMap<Integer, INeighbourChanged> neighbourChanged = new HashMap<>();
+    private static final HashMap<Integer, IPopResources> popResources = new HashMap<>();
+    private static final HashMap<Integer, IEntityInside> entityInside = new HashMap<>();
+    private static final HashMap<Integer, IEntityStepOn> entityStepOn = new HashMap<>();
 
     public static void registerPlace(int id, IPlaceBlock block){
         placed.put(id, block);
@@ -48,6 +61,23 @@ public abstract class Block implements IBaseRegisterGameObject {
 
     public static void registerClick(int id, IClickable block){
         clickable.put(id, block);
+    }
+
+    public static void registerNeighbourChanged(int id, INeighbourChanged block){
+        NativeBlock.setReceivingNeighbourChangeEvent(id, true);
+        neighbourChanged.put(id, block);
+    }
+
+    public static void registerPopResources(int id, IPopResources block){
+        popResources.put(id, block);
+    }
+
+    public static void registerEntityInside(int id, IEntityInside block){
+        entityInside.put(id, block);
+    }
+
+    public static void registerEntityStepOn(int id, IEntityStepOn block){
+        entityStepOn.put(id, block);
     }
 
     static {
@@ -181,6 +211,36 @@ public abstract class Block implements IBaseRegisterGameObject {
                 click.onClick(position, item, block, player);
             }
         }), 1);
+
+        Event.onBlockEventNeighbourChange(((position, block, neighbourPosition, blockSource) -> {
+            final INeighbourChanged changed = neighbourChanged.get(block.id);
+            if(changed != null){
+                changed.onNeighbourChanged(position, neighbourPosition, block, blockSource);
+            }
+        }));
+
+        Event.onCall(Events.PopBlockResources, (args -> {
+            final BlockData block = new BlockData((FullBlock) args[1]);
+
+            final IPopResources func = popResources.get(block.id);
+            if(func != null){
+                func.onPopResources(new Position((Coords) args[0]), block, Level.getForRegion((NativeBlockSource) args[4]), (double) args[2]);
+            }
+        }));
+
+        Event.onBlockEventEntityInside((position, block, entity) -> {
+            final IEntityInside func = entityInside.get(block.id);
+            if(func != null){
+                func.onEntityInside(position, block, entity);
+            }
+        });
+
+        Event.onBlockEventEntityStepOn(((position, block, entity) -> {
+            final IEntityStepOn func = entityStepOn.get(block.id);
+            if(func != null){
+                func.onEntityStepOn(position, block, entity);
+            }
+        }));
     }
 
     public static boolean canTileBeReplaced(int id, int data){
@@ -407,6 +467,46 @@ public abstract class Block implements IBaseRegisterGameObject {
         if(this instanceof StorageInterfaceLib.StorageDescriptor){
             StorageInterfaceLib.createInterface(getNumId(), (StorageInterfaceLib.StorageDescriptor) this);
         }
+
+        if(this instanceof IRandomTicking){
+            final IRandomTicking randomTick = (IRandomTicking) this;
+            NativeBlock.setRandomTickCallback(getNumId(), new ScriptableFunctionImpl() {
+                @Override
+                public Object call(Context ctx, Scriptable parent, Scriptable self, Object[] args) {
+                    randomTick.onRandomTick(new Position((int) args[0], (int) args[1], (int) args[2]), new BlockData((int) args[3], (int) args[4]), Level.getForRegion((NativeBlockSource) args[5]));
+                    return null;
+                }
+            });
+        }
+
+        if(this instanceof IAnimateTicking){
+            final IAnimateTicking animateTick = (IAnimateTicking) this;
+            NativeBlock.setRandomTickCallback(getNumId(), new ScriptableFunctionImpl() {
+                @Override
+                public Object call(Context ctx, Scriptable parent, Scriptable self, Object[] args) {
+                    animateTick.onAnimateTick(new Position((int) args[0], (int) args[1], (int) args[2]), new BlockData((int) args[3], (int) args[4]));
+                    return null;
+                }
+            });
+        }
+
+        if(this instanceof INeighbourChanged){
+            registerNeighbourChanged(getNumId(), (INeighbourChanged) this);
+        }
+
+        if(this instanceof IPopResources){
+            registerPopResources(getNumId(), (IPopResources) this);
+        }
+
+        if(this instanceof IEntityInside){
+            registerEntityInside(getNumId(), (IEntityInside) this);
+        }
+
+        if(this instanceof IEntityStepOn){
+            registerEntityStepOn(getNumId(), (IEntityStepOn) this);
+        }
+
+        Item.registerEvents(this);
 
         final CreativeCategory category = getCreativeCategory();
         if (category != null) {

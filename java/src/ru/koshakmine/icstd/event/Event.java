@@ -321,7 +321,7 @@ public class Event {
         Callback.addCallback(Events.ChunkLoaded, new ScriptableFunctionImpl() {
             @Override
             public Object call(Context context, Scriptable scriptable, Scriptable scriptable1, Object[] objects) {
-                function.call((int) objects[0], (int) objects[1], (int) objects[2], (boolean) objects[3]);
+                function.call((int) objects[0], (int) objects[1], (int) objects[2]);
                 return null;
             }
         }, 0);
@@ -331,7 +331,47 @@ public class Event {
         Callback.addCallback(Events.ChunkDiscarded, new ScriptableFunctionImpl() {
             @Override
             public Object call(Context context, Scriptable scriptable, Scriptable scriptable1, Object[] objects) {
-                function.call((int) objects[0], (int) objects[1], (int) objects[2], (boolean) objects[3]);
+                function.call((int) objects[0], (int) objects[1], (int) objects[2]);
+                return null;
+            }
+        }, 0);
+    }
+
+    public static void onLocalChunkLoaded(ChunkFunction function){
+        Callback.addCallback(Events.LocalChunkLoaded, new ScriptableFunctionImpl() {
+            @Override
+            public Object call(Context context, Scriptable scriptable, Scriptable scriptable1, Object[] objects) {
+                function.call((int) objects[0], (int) objects[1], (int) objects[2]);
+                return null;
+            }
+        }, 0);
+    }
+
+    public static void onLocalChunkDiscarded(ChunkFunction function){
+        Callback.addCallback(Events.LocalChunkDiscarded, new ScriptableFunctionImpl() {
+            @Override
+            public Object call(Context context, Scriptable scriptable, Scriptable scriptable1, Object[] objects) {
+                function.call((int) objects[0], (int) objects[1], (int) objects[2]);
+                return null;
+            }
+        }, 0);
+    }
+
+    public static void onChunkStateChanged(ChunkStateChangedFunction function){
+        Callback.addCallback(Events.ChunkStateChanged, new ScriptableFunctionImpl() {
+            @Override
+            public Object call(Context context, Scriptable scriptable, Scriptable scriptable1, Object[] objects) {
+                function.call((int) objects[0], (int) objects[1], (int) objects[2], (int) objects[3], (int) objects[4]);
+                return null;
+            }
+        }, 0);
+    }
+
+    public static void onLocalChunkStateChanged(ChunkStateChangedFunction function){
+        Callback.addCallback(Events.LocalChunkStateChanged, new ScriptableFunctionImpl() {
+            @Override
+            public Object call(Context context, Scriptable scriptable, Scriptable scriptable1, Object[] objects) {
+                function.call((int) objects[0], (int) objects[1], (int) objects[2], (int) objects[3], (int) objects[4]);
                 return null;
             }
         }, 0);
