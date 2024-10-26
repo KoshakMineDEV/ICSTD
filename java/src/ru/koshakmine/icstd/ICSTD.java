@@ -16,7 +16,6 @@ import ru.koshakmine.icstd.runtime.PostLevelLoaded;
  * TODO LIST
  * Кеширование Player для более высокой производительности и экономии памяти
  * api для кастумных измерений
- * api для кастумных биомов
  * api для кастумных зачарований
  * api для комманд
  */
@@ -24,6 +23,7 @@ import ru.koshakmine.icstd.runtime.PostLevelLoaded;
 public class ICSTD extends Mod {
     // The game client does not work well with a lot of traffic, there may be crashes!
     public static boolean MULTI_THREAD = false;
+    public static ClassLoader loader;
 
     public static void onMultiThreadRun(Executor executor, Runnable runnable){
         if(MULTI_THREAD) executor.execute(runnable);
@@ -52,6 +52,7 @@ public class ICSTD extends Mod {
 
     public static void boot(HashMap<?, ?> args) {
         Logger.debug("Loaded mod", "ICSTD");
+        loader = ICSTD.class.getClassLoader();
         PostLevelLoaded.boot();
     }
 }

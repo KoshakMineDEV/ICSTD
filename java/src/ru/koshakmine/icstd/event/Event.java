@@ -18,6 +18,8 @@ import ru.koshakmine.icstd.type.common.*;
 import ru.koshakmine.icstd.event.function.*;
 import ru.koshakmine.icstd.entity.Player;
 
+import java.util.Random;
+
 public class Event {
     public static void onCall(String name, EventFunction function, int priority) {
         Callback.addCallback(name, new ScriptableFunctionImpl() {
@@ -317,63 +319,28 @@ public class Event {
         }, 0);
     }
 
-    public static void onChunkLoaded(ChunkFunction function){
-        Callback.addCallback(Events.ChunkLoaded, new ScriptableFunctionImpl() {
+    public static void onGenerationChunk(String name, GenerateChunkFunction function){
+        Callback.addCallback(name, new ScriptableFunctionImpl() {
             @Override
-            public Object call(Context context, Scriptable scriptable, Scriptable scriptable1, Object[] objects) {
-                function.call((int) objects[0], (int) objects[1], (int) objects[2]);
+            public Object call(Context context, Scriptable scriptable, Scriptable scriptable1, Object[] args) {
+                final int dimensionId = ((Number) args[3]).intValue();
+                function.call(((Number) args[0]).intValue(), ((Number) args[1]).intValue(), (Random) args[2],
+                        dimensionId, ((Number) args[4]).longValue(), ((Number) args[5]).longValue(),
+                        ((Number) args[6]).longValue(), Level.getGenRegion());
                 return null;
             }
         }, 0);
     }
 
-    public static void onChunkDiscarded(ChunkFunction function){
-        Callback.addCallback(Events.ChunkDiscarded, new ScriptableFunctionImpl() {
-            @Override
-            public Object call(Context context, Scriptable scriptable, Scriptable scriptable1, Object[] objects) {
-                function.call((int) objects[0], (int) objects[1], (int) objects[2]);
-                return null;
-            }
-        }, 0);
+    public static void onBiomeMap(GenerateChunkFunction function){
+        onGenerationChunk(Events.GenerateBiomeMap, function);
     }
 
-    public static void onLocalChunkLoaded(ChunkFunction function){
-        Callback.addCallback(Events.LocalChunkLoaded, new ScriptableFunctionImpl() {
-            @Override
-            public Object call(Context context, Scriptable scriptable, Scriptable scriptable1, Object[] objects) {
-                function.call((int) objects[0], (int) objects[1], (int) objects[2]);
-                return null;
-            }
-        }, 0);
+    public static void onGenerateChunk(GenerateChunkFunction function){
+        onGenerationChunk(Events.GenerateChunk, function);
     }
 
-    public static void onLocalChunkDiscarded(ChunkFunction function){
-        Callback.addCallback(Events.LocalChunkDiscarded, new ScriptableFunctionImpl() {
-            @Override
-            public Object call(Context context, Scriptable scriptable, Scriptable scriptable1, Object[] objects) {
-                function.call((int) objects[0], (int) objects[1], (int) objects[2]);
-                return null;
-            }
-        }, 0);
-    }
-
-    public static void onChunkStateChanged(ChunkStateChangedFunction function){
-        Callback.addCallback(Events.ChunkStateChanged, new ScriptableFunctionImpl() {
-            @Override
-            public Object call(Context context, Scriptable scriptable, Scriptable scriptable1, Object[] objects) {
-                function.call((int) objects[0], (int) objects[1], (int) objects[2], (int) objects[3], (int) objects[4]);
-                return null;
-            }
-        }, 0);
-    }
-
-    public static void onLocalChunkStateChanged(ChunkStateChangedFunction function){
-        Callback.addCallback(Events.LocalChunkStateChanged, new ScriptableFunctionImpl() {
-            @Override
-            public Object call(Context context, Scriptable scriptable, Scriptable scriptable1, Object[] objects) {
-                function.call((int) objects[0], (int) objects[1], (int) objects[2], (int) objects[3], (int) objects[4]);
-                return null;
-            }
-        }, 0);
+    public static void onCustomDimensionGenerateChunk(GenerateChunkFunction function){
+        onGenerationChunk(Events.GenerateCustomDimensionChunk, function);
     }
 }

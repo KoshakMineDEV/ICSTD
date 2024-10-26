@@ -3,6 +3,8 @@ package ru.koshakmine.icstd.entity;
 import com.zhekasmirnov.innercore.api.NativeAPI;
 import com.zhekasmirnov.innercore.api.NativeItemInstanceExtra;
 import com.zhekasmirnov.innercore.api.commontypes.ItemInstance;
+import com.zhekasmirnov.innercore.api.constants.EntityType;
+import com.zhekasmirnov.innercore.api.mod.adaptedscript.AdaptedScriptAPI;
 import com.zhekasmirnov.innercore.api.nbt.NativeCompoundTag;
 import ru.koshakmine.icstd.level.Level;
 import ru.koshakmine.icstd.type.ArmorSlot;
@@ -18,14 +20,12 @@ public class Entity {
     }
 
     public static Entity from(long uid){
-        switch (NativeAPI.getEntityTypeName(uid)){
-            case "minecraft:player<>":
-                return new Player(uid);
-            case "minecraft:item<>":
-                return new EntityItem(uid);
-            default:
-                return new Entity(uid);
-        }
+        final int type = NativeAPI.getEntityType(uid);
+        if(type == EntityType.ITEM)
+            return new EntityItem(uid);
+        if(type == EntityType.PLAYER)
+            return new Player(uid);
+        return new Entity(uid);
     }
 
     public long getUid() {
@@ -73,7 +73,7 @@ public class Entity {
     }
 
     public void setCarriedItem(ItemStack item){
-        NativeAPI.setEntityCarriedItem(uid, item.id, item.count, item.data, NativeItemInstanceExtra.unwrapValue(item.extra));
+        AdaptedScriptAPI.Entity.setCarriedItem(uid, item.id, item.count, item.data, item.extra);
     }
 
     public boolean isSneaking(){
@@ -123,7 +123,7 @@ public class Entity {
     }
 
     public void setArmorSlot(ArmorSlot slot, ItemStack item){
-        NativeAPI.setEntityArmor(uid, slot.ordinal(), item.id, item.count, item.data, NativeItemInstanceExtra.unwrapValue(item.extra));
+        AdaptedScriptAPI.Entity.setArmorSlot(uid, slot.ordinal(), item.id, item.count, item.data, item.extra);
     }
 
     public NativeCompoundTag getCompoundTag(){
@@ -166,7 +166,7 @@ public class Entity {
     }
 
     public void setOffhandItem(ItemStack item){
-        NativeAPI.setEntityOffhandItem(uid, item.id, item.count, item.data, NativeItemInstanceExtra.unwrapValue(item.extra));
+        AdaptedScriptAPI.Entity.setOffhandItem(uid, item.id, item.count, item.data, item.extra);
     }
 
     public Entity getRider(){

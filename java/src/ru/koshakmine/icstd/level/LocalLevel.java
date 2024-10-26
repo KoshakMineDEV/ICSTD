@@ -4,11 +4,17 @@ import com.zhekasmirnov.apparatus.mcpe.NativeBlockSource;
 import com.zhekasmirnov.innercore.api.NativeAPI;
 import com.zhekasmirnov.innercore.api.particles.ParticleRegistry;
 import com.zhekasmirnov.innercore.api.runtime.other.NameTranslation;
+import ru.koshakmine.icstd.event.Event;
 import ru.koshakmine.icstd.level.particle.Particle;
 import ru.koshakmine.icstd.runtime.PostLevelLoaded;
 import ru.koshakmine.icstd.type.common.Position;
 
 public class LocalLevel extends Level {
+    static {
+        Event.onEntityAddedLocal((entity -> Level.getLocalLevel().entities.add(entity.getUid())));
+        Event.onEntityRemovedLocal((entity -> Level.getLocalLevel().entities.remove(entity.getUid())));
+    }
+
     protected LocalLevel(NativeBlockSource region) {
         super(region);
     }

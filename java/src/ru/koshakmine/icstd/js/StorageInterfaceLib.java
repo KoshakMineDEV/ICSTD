@@ -25,6 +25,9 @@ public class StorageInterfaceLib {
         String[] getOutputSlots(int side);
         boolean isValidInput(ItemStack item, int side, BlockEntity entity);
         //int addItem(ItemStack item, int side, int maxCount);
+
+        boolean canTransportLiquid(String name, int side);
+        boolean canReceiveLiquid(String name, int side);
     }
 
     public static void createInterface(int id, StorageDescriptor descriptor){
@@ -48,6 +51,20 @@ public class StorageInterfaceLib {
             @Override
             public Object call(Context ctx, Scriptable parent, Scriptable self, Object[] args) {
                 return descriptor.isValidInput(new ItemStack(args[0]), ((Number) args[1]).intValue(), (BlockEntity) ScriptableObjectHelper.getProperty((ScriptableObject) args[2], "___fakeTile___", null));
+            }
+        });
+
+        desc.put("canTransportLiquid", desc, new ScriptableFunctionImpl() {
+            @Override
+            public Object call(Context ctx, Scriptable parent, Scriptable self, Object[] args) {
+                return descriptor.canTransportLiquid(args[0].toString(), ((Number) args[1]).intValue());
+            }
+        });
+
+        desc.put("canReceiveLiquid", desc, new ScriptableFunctionImpl() {
+            @Override
+            public Object call(Context ctx, Scriptable parent, Scriptable self, Object[] args) {
+                return descriptor.canReceiveLiquid(args[0].toString(), ((Number) args[1]).intValue());
             }
         });
 

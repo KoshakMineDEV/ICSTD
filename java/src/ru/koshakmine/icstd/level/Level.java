@@ -20,10 +20,12 @@ import ru.koshakmine.icstd.type.common.ItemStack;
 import ru.koshakmine.icstd.type.common.Position;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.function.Function;
 
 public class Level {
     protected final NativeBlockSource region;
+    protected final HashSet<Long> entities = new HashSet<>();
 
     protected Level(NativeBlockSource region){
         this.region = region;
@@ -42,6 +44,9 @@ public class Level {
             levels.clear();
             localLevel = null;
         });
+
+        Event.onEntityAdded((entity -> entity.getRegion().entities.add(entity.getUid())));
+        Event.onEntityRemoved((entity -> entity.getRegion().entities.remove(entity.getUid())));
 
         Network.registerPacket(NetworkSide.LOCAL, PlaySoundPacket::new);
         Network.registerPacket(NetworkSide.LOCAL, SpawnParticlePacket::new);
@@ -67,8 +72,16 @@ public class Level {
         return getForDimension(StaticEntity.getDimension(entity));
     }
 
+    public static LevelGeneration getGenRegion(){
+        return new LevelGeneration(NativeBlockSource.getCurrentWorldGenRegion());
+    }
+
     public static Level getForRegion(NativeBlockSource object) {
         return getForDimension(object.getDimension());
+    }
+
+    public HashSet<Long> getEntities(){
+        return entities;
     }
 
     public long getTime(){

@@ -521,4 +521,12 @@ public abstract class Block implements IBaseRegisterGameObject {
     public NativeBlock getNativeBlock() {
         return block;
     }
+
+    public BlockData getBlockData(int data){
+        return new BlockData(getNumId(), data);
+    }
+
+    public BlockData getBlockData(){
+        return new BlockData(getNumId());
+    }
 }

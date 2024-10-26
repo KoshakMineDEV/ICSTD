@@ -15,6 +15,7 @@ import ru.koshakmine.icstd.ui.container.Container;
 
 public class BlockEntityContainer extends BlockEntity {
     protected Container container = newContainer(null);
+    protected LiquidStorage liquidStorage = new LiquidStorage(getFakeTileEntity());
 
     static {
         ItemContainer.registerScreenFactory("icstd.container.block_entity", (container, name) -> {
@@ -75,12 +76,14 @@ public class BlockEntityContainer extends BlockEntity {
     @Override
     public void onLoad(JSONObject json) throws JSONException {
         container = newContainer(json.get("container"));
+        liquidStorage.read(json.getJSONObject("liquidStorage"));
         super.onLoad(json);
     }
 
     @Override
     public void onSave(JSONObject json) throws JSONException {
         json.put("container", ScriptableSerializer.scriptableToJson(container.asLegacyContainer(false).slots, (e) -> {}));
+        json.put("liquidStorage", liquidStorage.save());
         super.onSave(json);
     }
 
@@ -94,6 +97,7 @@ public class BlockEntityContainer extends BlockEntity {
     public ScriptableObject getFakeTileEntity() {
         final ScriptableObject fake = super.getFakeTileEntity();
         fake.put("container", fake, container.getItemContainer());
+        fake.put("liquidStorage", fake, liquidStorage);
         return fake;
     }
 }

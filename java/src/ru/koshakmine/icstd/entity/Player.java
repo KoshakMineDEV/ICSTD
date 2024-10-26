@@ -23,7 +23,7 @@ public class Player extends Entity {
     }
 
     public static Player getLocal() {
-        return new Player(NativeAPI.getLocalPlayer());
+        return new LocalPlayer(NativeAPI.getLocalPlayer());
     }
 
     public static Player[] getPlayers(){

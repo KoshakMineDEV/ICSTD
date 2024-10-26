@@ -3,6 +3,7 @@ package ru.koshakmine.icstd.network;
 import com.zhekasmirnov.apparatus.multiplayer.ThreadTypeMarker;
 import com.zhekasmirnov.apparatus.multiplayer.server.ConnectedClient;
 import com.zhekasmirnov.apparatus.multiplayer.server.ModdedServer;
+import com.zhekasmirnov.innercore.api.NativeAPI;
 
 import java.nio.ByteBuffer;
 import java.util.Base64;
@@ -30,6 +31,7 @@ public class Network {
 
         if(side == NetworkSide.LOCAL) {
             network.addClientPacket(namePacket, (data, meta, type) -> {
+                NativeAPI.clientMessage("Gi "+data.getClass());
                 if (data instanceof byte[]) {
                     NetworkPacket packet = builder.create();
                     packet.setBuffer(ByteBuffer.wrap((byte[]) data));
@@ -40,18 +42,15 @@ public class Network {
                 throw new RuntimeException("Not support");
             });
         }else{
-            network.addServerPacket(namePacket, new ModdedServer.OnPacketReceivedListener() {
-                @Override
-                public void onPacketReceived(ConnectedClient client, Object data, String meta, Class<?> type) {
-                    if (data instanceof byte[]) {
-                        NetworkPacket packet = builder.create();
-                        packet.setBuffer(ByteBuffer.wrap((byte[]) data));
-                        packet.decode(new NetworkClient(client));
-                        return;
-                    }
-
-                    throw new RuntimeException("Not support");
+            network.addServerPacket(namePacket, (client, data, meta, type) -> {
+                if (data instanceof byte[]) {
+                    NetworkPacket packet = builder.create();
+                    packet.setBuffer(ByteBuffer.wrap((byte[]) data));
+                    packet.decode(new NetworkClient(client));
+                    return;
                 }
+
+                throw new RuntimeException("Not support");
             });
         }
     }
