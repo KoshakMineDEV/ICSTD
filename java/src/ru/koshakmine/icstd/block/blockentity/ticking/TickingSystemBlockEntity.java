@@ -1,7 +1,7 @@
 package ru.koshakmine.icstd.block.blockentity.ticking;
 
 import com.zhekasmirnov.apparatus.util.Java8BackComp;
-import com.zhekasmirnov.innercore.api.runtime.ChunkManager;
+import com.zhekasmirnov.innercore.api.NativeAPI;
 import ru.koshakmine.icstd.ICSTD;
 import ru.koshakmine.icstd.block.blockentity.BlockEntityBase;
 import ru.koshakmine.icstd.event.Event;
@@ -23,20 +23,31 @@ public class TickingSystemBlockEntity {
     public TickingSystemBlockEntity(Boolean isServer){
         Event.onCall(Events.LevelLeft, (args) -> dimensions.clear());
         if(isServer != null) {
+            NativeAPI.setChunkStateChangeCallbackEnabled(-1, true);
+            NativeAPI.setChunkStateChangeCallbackEnabled(9, true);
+
             if(isServer){
-                ChunkManager.addListenerChunkStateChaged((chunkX, chunkZ, dimension, i3, i4, b) -> {
-                    this.onChunkLoaded(chunkX, chunkZ, dimension);
-                }, new int[]{9});
-                ChunkManager.addListenerChunkStateChaged((chunkX, chunkZ, dimension, i3, i4, b) -> {
-                    this.onChunkDiscarded(chunkX, chunkZ, dimension);
-                }, new int[]{-1});
+                Event.onChunkLoadingStateChanged(((chunkX, chunkZ, dimension, preState, state, discarded) -> {
+                    if(state == 9){
+                        this.onChunkLoaded(chunkX, chunkZ, dimension);
+                    }
+                }));
+                Event.onChunkLoadingStateChanged(((chunkX, chunkZ, dimension, preState, state, discarded) -> {
+                    if(discarded){
+                        this.onChunkLoaded(chunkX, chunkZ, dimension);
+                    }
+                }));
             } else {
-                ChunkManager.addLocalListenerChunkStateChaged((chunkX, chunkZ, dimension, i3, i4, b) -> {
-                    this.onChunkLoaded(chunkX, chunkZ, dimension);
-                }, new int[]{9});
-                ChunkManager.addLocalListenerChunkStateChaged((chunkX, chunkZ, dimension, i3, i4, b) -> {
-                    this.onChunkDiscarded(chunkX, chunkZ, dimension);
-                }, new int[]{-1});
+                Event.onLocalChunkLoadingStateChanged(((chunkX, chunkZ, dimension, preState, state, discarded) -> {
+                    if(state == 9){
+                        this.onChunkLoaded(chunkX, chunkZ, dimension);
+                    }
+                }));
+                Event.onLocalChunkLoadingStateChanged(((chunkX, chunkZ, dimension, preState, state, discarded) -> {
+                    if(discarded){
+                        this.onChunkLoaded(chunkX, chunkZ, dimension);
+                    }
+                }));
             }
             Event.onCall(isServer ? Events.tick : Events.LocalTick, (args) -> {
                 try {

@@ -343,4 +343,26 @@ public class Event {
     public static void onCustomDimensionGenerateChunk(GenerateChunkFunction function){
         onGenerationChunk(Events.GenerateCustomDimensionChunk, function);
     }
+
+    public static void onChunkLoadingStateChanged(IChunkLoadingStateChanged function){
+        Callback.addCallback(Events.ChunkLoadingStateChanged, new ScriptableFunctionImpl() {
+            @Override
+            public Object call(Context context, Scriptable scriptable, Scriptable scriptable1, Object[] args) {
+                function.call(((Number) args[0]).intValue(), ((Number) args[1]).intValue(), ((Number) args[2]).intValue(),
+                        ((Number) args[3]).intValue(), ((Number) args[4]).intValue(), (Boolean) args[5]);
+                return null;
+            }
+        }, 0);
+    }
+
+    public static void onLocalChunkLoadingStateChanged(IChunkLoadingStateChanged function){
+        Callback.addCallback(Events.LocalChunkLoadingStateChanged, new ScriptableFunctionImpl() {
+            @Override
+            public Object call(Context context, Scriptable scriptable, Scriptable scriptable1, Object[] args) {
+                function.call(((Number) args[0]).intValue(), ((Number) args[1]).intValue(), ((Number) args[2]).intValue(),
+                        ((Number) args[3]).intValue(), ((Number) args[4]).intValue(), (Boolean) args[5]);
+                return null;
+            }
+        }, 0);
+    }
 }

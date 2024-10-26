@@ -2,7 +2,6 @@ package ru.koshakmine.icstd.block;
 
 import com.zhekasmirnov.innercore.api.NativeBlockRenderer;
 import com.zhekasmirnov.innercore.api.NativeICRender;
-import com.zhekasmirnov.innercore.api.NativeItemModel;
 import com.zhekasmirnov.innercore.api.NativeRenderMesh;
 import ru.koshakmine.icstd.item.PlantBaseItem;
 import ru.koshakmine.icstd.level.Level;
