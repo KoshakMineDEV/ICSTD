@@ -456,4 +456,5 @@ public class ItemID {
     public static final int RECORD_STAL = 507;
     public static final int HOPPER = 410;
     public static final int CARROT = 391;
+    public static final int CHAIN = 619;
 }

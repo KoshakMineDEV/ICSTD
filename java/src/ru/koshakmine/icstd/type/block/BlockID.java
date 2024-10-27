@@ -486,4 +486,5 @@ public class BlockID {
     public static final int YELLOW_GLAZED_TERRACOTTA = 224;
     public static final int RED_MUSHROOM = 40;
     public static final int HOPPER = 154;
+    public static final int CHAIN = 541;
 }
