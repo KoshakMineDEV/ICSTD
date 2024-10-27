@@ -3,21 +3,20 @@ package ru.koshakmine.icstd.item;
 import com.zhekasmirnov.apparatus.adapter.innercore.game.block.BlockState;
 import com.zhekasmirnov.innercore.api.NativeAPI;
 import ru.koshakmine.icstd.block.Block;
-import ru.koshakmine.icstd.block.PlantBlockBase;
+import ru.koshakmine.icstd.block.BlockPlantBase;
 import ru.koshakmine.icstd.entity.Player;
-import ru.koshakmine.icstd.item.event.IClickable;
+import ru.koshakmine.icstd.item.event.ClickableComponent;
 import ru.koshakmine.icstd.level.Level;
-import ru.koshakmine.icstd.type.block.BlockID;
 import ru.koshakmine.icstd.type.common.BlockData;
 import ru.koshakmine.icstd.type.common.BlockPosition;
 import ru.koshakmine.icstd.type.common.ItemStack;
 import ru.koshakmine.icstd.type.common.Texture;
 
-public class PlantBaseItem extends Item implements IClickable {
-    private final PlantBlockBase plantBlock;
+public class PlantBaseItem extends Item implements ClickableComponent {
+    private final BlockPlantBase plantBlock;
 
     public PlantBaseItem(Block block){
-        if(block instanceof PlantBlockBase) this.plantBlock = ((PlantBlockBase) block).setPlantItem(this);
+        if(block instanceof BlockPlantBase) this.plantBlock = ((BlockPlantBase) block).setPlantItem(this);
         else throw new RuntimeException("Not block plant");
     }
 

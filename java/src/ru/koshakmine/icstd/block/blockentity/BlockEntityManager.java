@@ -1,7 +1,7 @@
 package ru.koshakmine.icstd.block.blockentity;
 
 import ru.koshakmine.icstd.ICSTD;
-import ru.koshakmine.icstd.block.blockentity.ticking.ITickingBlockEntity;
+import ru.koshakmine.icstd.block.blockentity.ticking.TickingBlockEntityComponent;
 import ru.koshakmine.icstd.block.blockentity.ticking.TickingSystemBlockEntity;
 import ru.koshakmine.icstd.event.Event;
 import ru.koshakmine.icstd.event.Events;
@@ -45,7 +45,7 @@ public class BlockEntityManager {
                     final BlockEntityBase entity = it.next();
                     aboba.apply(entity);
                     if (entity.canDestroyBlockEntity()) {
-                        if(entity instanceof ITickingBlockEntity) SYSTEM.removeBlockEntity(entity);
+                        if(entity instanceof TickingBlockEntityComponent) SYSTEM.removeBlockEntity(entity);
                         entity.removeBlockEntity();
                         it.remove();
                     }
@@ -74,7 +74,7 @@ public class BlockEntityManager {
         while (it.hasNext()) {
             final BlockEntityBase base = it.next();
             if(entity == base){
-                if(entity instanceof ITickingBlockEntity) SYSTEM.removeBlockEntity(entity);
+                if(entity instanceof TickingBlockEntityComponent) SYSTEM.removeBlockEntity(entity);
                 entity.removeBlockEntity();
                 it.remove();
                 return;
@@ -88,7 +88,7 @@ public class BlockEntityManager {
         if(coordsEnitty == null) {
             allEntity.add(entity);
 
-            if(entity instanceof ITickingBlockEntity) SYSTEM.addBlockEntity(entity);
+            if(entity instanceof TickingBlockEntityComponent) SYSTEM.addBlockEntity(entity);
             if(entity instanceof IRuntimeSaveObject) Saver.addSaver((IRuntimeSaveObject) entity);
 
             if(this.side == NetworkSide.LOCAL) {

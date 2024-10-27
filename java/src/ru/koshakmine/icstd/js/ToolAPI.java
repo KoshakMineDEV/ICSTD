@@ -1,14 +1,13 @@
 package ru.koshakmine.icstd.js;
 
 import com.zhekasmirnov.apparatus.mcpe.NativeBlockSource;
-import com.zhekasmirnov.horizon.runtime.logger.Logger;
 import com.zhekasmirnov.innercore.api.commontypes.Coords;
 import com.zhekasmirnov.innercore.api.commontypes.ItemInstance;
 import com.zhekasmirnov.innercore.api.mod.ScriptableObjectHelper;
 import com.zhekasmirnov.innercore.api.mod.util.ScriptableFunctionImpl;
 import com.zhekasmirnov.innercore.mod.executable.Compiler;
 import org.mozilla.javascript.*;
-import ru.koshakmine.icstd.block.IDropBlock;
+import ru.koshakmine.icstd.block.DropComponent;
 import ru.koshakmine.icstd.item.tools.ToolMaterial;
 import ru.koshakmine.icstd.level.Level;
 import ru.koshakmine.icstd.type.common.BlockData;
@@ -103,7 +102,7 @@ public class ToolAPI {
         JsHelper.callFunction(scriptable, "registerBlockMaterial", id, blockMaterial, level);
     }
 
-    public static void registerDropFunction(int id, IDropBlock dropFunc, int level){
+    public static void registerDropFunction(int id, DropComponent dropFunc, int level){
         JsHelper.callFunction(scriptable, "registerDropFunction", id, new ScriptableFunctionImpl() {
             @Override
             public Object call(Context ctx, Scriptable self, Scriptable parent, Object[] args) {

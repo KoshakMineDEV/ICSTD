@@ -8,7 +8,7 @@ import com.zhekasmirnov.innercore.api.mod.ScriptableObjectHelper;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.mozilla.javascript.ScriptableObject;
-import ru.koshakmine.icstd.block.IBlockEntityHolder;
+import ru.koshakmine.icstd.block.BlockEntityHolderComponent;
 import ru.koshakmine.icstd.event.Event;
 import ru.koshakmine.icstd.event.Events;
 import ru.koshakmine.icstd.level.Level;
@@ -28,13 +28,13 @@ public class BlockEntity extends BlockEntityBase implements IRuntimeSaveObject {
         if (networkEntity != null)
             networkEntity.refreshClients();
     }, NetworkSide.SERVER);
-    private static final BlockEntityRegistry<IBlockEntityHolder> SERVER_REGISTRY = new BlockEntityRegistry<>();
+    private static final BlockEntityRegistry<BlockEntityHolderComponent> SERVER_REGISTRY = new BlockEntityRegistry<>();
 
     public static BlockEntityManager getManager() {
         return SERVER_MANAGER;
     }
 
-    public static BlockEntityRegistry<IBlockEntityHolder> getRegistry() {
+    public static BlockEntityRegistry<BlockEntityHolderComponent> getRegistry() {
         return SERVER_REGISTRY;
     }
 
@@ -42,7 +42,7 @@ public class BlockEntity extends BlockEntityBase implements IRuntimeSaveObject {
         Saver.registerRuntimeSaveObject("block_entity", jsonObject -> {
             PostLevelLoaded.SERVER.run(() -> {
                 try {
-                    final IBlockEntityHolder builder = SERVER_REGISTRY.get(jsonObject.getString("t"));
+                    final BlockEntityHolderComponent builder = SERVER_REGISTRY.get(jsonObject.getString("t"));
 
                     if (builder == null) return;
                     final Level level = Level.getForDimension(jsonObject.getInt("d"));
@@ -87,9 +87,9 @@ public class BlockEntity extends BlockEntityBase implements IRuntimeSaveObject {
 
     @Override
     public void onInit() {
-        if (LocalBlockEntity.getRegistry().get(localType) != null) {
+        if (BlockEntityLocal.getRegistry().get(localType) != null) {
             networkData = new SyncedNetworkData();
-            network = new NetworkEntity(LocalBlockEntity.TYPE, this);
+            network = new NetworkEntity(BlockEntityLocal.TYPE, this);
             networkData.setClients(network.getClients());
         } else network = null;
     }

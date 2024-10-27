@@ -1,6 +1,5 @@
 package ru.koshakmine.icstd.block.blockentity.ticking;
 
-import com.zhekasmirnov.innercore.api.mod.ScriptableObjectHelper;
 import com.zhekasmirnov.innercore.api.mod.util.ScriptableFunctionImpl;
 import org.mozilla.javascript.Context;
 import org.mozilla.javascript.Function;
@@ -8,7 +7,7 @@ import org.mozilla.javascript.Scriptable;
 import org.mozilla.javascript.ScriptableObject;
 import ru.koshakmine.icstd.block.blockentity.BlockEntity;
 import ru.koshakmine.icstd.block.blockentity.BlockEntityBase;
-import ru.koshakmine.icstd.block.blockentity.IEnergyTile;
+import ru.koshakmine.icstd.block.blockentity.EnergyTileComponent;
 import ru.koshakmine.icstd.js.EnergyNetLib;
 import ru.koshakmine.icstd.level.Level;
 import ru.koshakmine.icstd.type.common.Position;
@@ -69,22 +68,22 @@ public class JsTickBlockEntity extends BlockEntity {
         }
     }
 
-    private IEnergyTile entity;
-    public IEnergyTile getBlockEntity(){
+    private EnergyTileComponent entity;
+    public EnergyTileComponent getBlockEntity(){
         if(entity == null) {
             final BlockEntityBase base = BlockEntity.getManager().getBlockEntity(position, level);;
-            if(base instanceof IEnergyTile)
-                entity = (IEnergyTile) base;
+            if(base instanceof EnergyTileComponent)
+                entity = (EnergyTileComponent) base;
         }
         return entity;
     }
 
     interface IApply<T> {
-        T apply(IEnergyTile tile);
+        T apply(EnergyTileComponent tile);
     }
 
     public <T>T apply(IApply<T> apply, T def){
-        final IEnergyTile tile = getBlockEntity();
+        final EnergyTileComponent tile = getBlockEntity();
         if(tile != null)
             return apply.apply(tile);
         return def;

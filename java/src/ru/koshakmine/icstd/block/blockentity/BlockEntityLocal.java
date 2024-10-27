@@ -6,19 +6,17 @@ import com.zhekasmirnov.apparatus.multiplayer.util.entity.NetworkEntityType;
 import com.zhekasmirnov.apparatus.multiplayer.util.entity.SyncedNetworkData;
 import org.json.JSONException;
 import org.json.JSONObject;
-import ru.koshakmine.icstd.block.ILocalBlockEntityHolder;
-import ru.koshakmine.icstd.block.blockentity.ticking.TickingSystemBlockEntity;
-import ru.koshakmine.icstd.event.Events;
+import ru.koshakmine.icstd.block.BlockEntityLocalHolderComponent;
 import ru.koshakmine.icstd.level.Level;
 import ru.koshakmine.icstd.network.NetworkSide;
 import ru.koshakmine.icstd.type.common.Position;
 import ru.koshakmine.icstd.ui.IWindow;
 
-public class LocalBlockEntity extends BlockEntityBase {
+public class BlockEntityLocal extends BlockEntityBase {
     protected final NetworkEntity network;
     protected final SyncedNetworkData networkData;
 
-    public LocalBlockEntity(String type, int id, Position position, NetworkEntity network, JSONObject data) throws JSONException {
+    public BlockEntityLocal(String type, int id, Position position, NetworkEntity network, JSONObject data) throws JSONException {
         super(position, Level.getLocalLevel(), type, id);
 
         this.network = network;
@@ -41,14 +39,14 @@ public class LocalBlockEntity extends BlockEntityBase {
     }
 
     private static final BlockEntityManager LOCAL_MANAGER = new BlockEntityManager(entity -> {}, NetworkSide.LOCAL);
-    private static final BlockEntityRegistry<ILocalBlockEntityHolder> LOCAL_REGISTRY = new BlockEntityRegistry<>();
+    private static final BlockEntityRegistry<BlockEntityLocalHolderComponent> LOCAL_REGISTRY = new BlockEntityRegistry<>();
     public static final NetworkEntityType TYPE;
 
     public static BlockEntityManager getLocalManager() {
         return LOCAL_MANAGER;
     }
 
-    public static BlockEntityRegistry<ILocalBlockEntityHolder> getRegistry() {
+    public static BlockEntityRegistry<BlockEntityLocalHolderComponent> getRegistry() {
         return LOCAL_REGISTRY;
     }
 
@@ -80,9 +78,9 @@ public class LocalBlockEntity extends BlockEntityBase {
             final JSONObject data = (JSONObject) o;
 
             try {
-                final ILocalBlockEntityHolder holder = LOCAL_REGISTRY.get(data.getString("t"));
+                final BlockEntityLocalHolderComponent holder = LOCAL_REGISTRY.get(data.getString("t"));
                 if(holder != null){
-                    final LocalBlockEntity local = holder.createLocalBlockEntity(new Position(data.getJSONObject("p")), networkEntity, data.getJSONObject("d"));
+                    final BlockEntityLocal local = holder.createLocalBlockEntity(new Position(data.getJSONObject("p")), networkEntity, data.getJSONObject("d"));
                     LOCAL_MANAGER.addBlockEntity(local);
                     return local;
                 }
@@ -92,7 +90,7 @@ public class LocalBlockEntity extends BlockEntityBase {
             return null;
         });
         TYPE.setClientEntityRemovedListener((o, networkEntity, o1) -> {
-            ((LocalBlockEntity) o).removeBlockEntity();
+            ((BlockEntityLocal) o).removeBlockEntity();
         });
     }
 }

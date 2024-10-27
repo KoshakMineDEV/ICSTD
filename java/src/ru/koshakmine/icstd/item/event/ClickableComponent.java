@@ -5,6 +5,6 @@ import ru.koshakmine.icstd.type.common.BlockData;
 import ru.koshakmine.icstd.type.common.BlockPosition;
 import ru.koshakmine.icstd.type.common.ItemStack;
 
-public interface IClickable {
+public interface ClickableComponent {
     void onClick(BlockPosition position, ItemStack item, BlockData block, Player player);
 }

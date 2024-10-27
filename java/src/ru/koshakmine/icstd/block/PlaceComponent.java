@@ -7,6 +7,6 @@ import ru.koshakmine.icstd.type.common.BlockPosition;
 import ru.koshakmine.icstd.type.common.ItemStack;
 import ru.koshakmine.icstd.type.common.Position;
 
-public interface IPlaceBlock {
+public interface PlaceComponent {
     Position onPlace(BlockPosition position, ItemStack item, BlockData block, Player player, Level level);
 }

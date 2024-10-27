@@ -11,8 +11,6 @@ import ru.koshakmine.icstd.type.common.ChunkPos;
 
 import java.util.Iterator;
 import java.util.concurrent.*;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 
 public class TickingSystemBlockEntity {
@@ -105,7 +103,7 @@ public class TickingSystemBlockEntity {
         while (it.hasNext() && level.isChunkLoaded(chunkX, chunkZ)) {
             final BlockEntityBase entity = it.next();
             if(!entity.canRemove() && entity.canInitialization() )
-                ((ITickingBlockEntity) entity).onTick();
+                ((TickingBlockEntityComponent) entity).onTick();
         }
     }
 

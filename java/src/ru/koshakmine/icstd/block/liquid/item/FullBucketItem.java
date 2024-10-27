@@ -7,15 +7,15 @@ import com.zhekasmirnov.innercore.api.runtime.MainThreadQueue;
 import ru.koshakmine.icstd.block.Block;
 import ru.koshakmine.icstd.block.liquid.BlockLiquid;
 import ru.koshakmine.icstd.entity.Player;
-import ru.koshakmine.icstd.item.event.IClickable;
-import ru.koshakmine.icstd.item.event.IDispense;
+import ru.koshakmine.icstd.item.event.ClickableComponent;
+import ru.koshakmine.icstd.item.event.DispenseComponent;
 import ru.koshakmine.icstd.item.Item;
 import ru.koshakmine.icstd.level.Level;
 import ru.koshakmine.icstd.type.CreativeCategory;
 import ru.koshakmine.icstd.type.ItemID;
 import ru.koshakmine.icstd.type.common.*;
 
-public class FullBucketItem extends Item implements IClickable, IDispense {
+public class FullBucketItem extends Item implements ClickableComponent, DispenseComponent {
     private final BlockLiquid liquid;
 
     public FullBucketItem(BlockLiquid liquid){
