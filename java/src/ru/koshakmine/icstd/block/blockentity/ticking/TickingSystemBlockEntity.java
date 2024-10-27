@@ -32,7 +32,7 @@ public class TickingSystemBlockEntity {
                 }));
                 Event.onChunkLoadingStateChanged(((chunkX, chunkZ, dimension, preState, state, discarded) -> {
                     if(discarded){
-                        this.onChunkLoaded(chunkX, chunkZ, dimension);
+                        this.onChunkDiscarded(chunkX, chunkZ, dimension);
                     }
                 }));
             } else {
@@ -43,7 +43,7 @@ public class TickingSystemBlockEntity {
                 }));
                 Event.onLocalChunkLoadingStateChanged(((chunkX, chunkZ, dimension, preState, state, discarded) -> {
                     if(discarded){
-                        this.onChunkLoaded(chunkX, chunkZ, dimension);
+                        this.onChunkDiscarded(chunkX, chunkZ, dimension);
                     }
                 }));
             }
@@ -80,36 +80,31 @@ public class TickingSystemBlockEntity {
     }
 
     private void onChunkLoaded(int chunkX, int chunkZ, int dimension) {
-        synchronized (loadedTiles){
-            final ConcurrentHashMap<ChunkPos, ConcurrentLinkedDeque<BlockEntityBase>> loadedChunks = getChunks(dimension, loadedTiles);
-            final ConcurrentHashMap<ChunkPos, ConcurrentLinkedDeque<BlockEntityBase>> allChunks = getChunks(dimension, dimensions);
+        final ConcurrentHashMap<ChunkPos, ConcurrentLinkedDeque<BlockEntityBase>> loadedChunks = getChunks(dimension, loadedTiles);
+        final ConcurrentHashMap<ChunkPos, ConcurrentLinkedDeque<BlockEntityBase>> allChunks = getChunks(dimension, dimensions);
 
-            final ChunkPos hash = new ChunkPos(chunkX, chunkZ);
-            loadedChunks.put(hash, geTilesOrCreate(hash, allChunks));
-        }
+        final ChunkPos hash = new ChunkPos(chunkX, chunkZ);
+        loadedChunks.put(hash, geTilesOrCreate(hash, allChunks));
     }
 
     private void onChunkDiscarded(int chunkX, int chunkZ, int dimension) {
-        synchronized (loadedTiles){
-            final ConcurrentHashMap<ChunkPos, ConcurrentLinkedDeque<BlockEntityBase>> chunks = getChunks(dimension, loadedTiles);
-            chunks.remove(new ChunkPos(chunkX, chunkZ));
-        }
+        final ConcurrentHashMap<ChunkPos, ConcurrentLinkedDeque<BlockEntityBase>> chunks = getChunks(dimension, loadedTiles);
+        chunks.remove(new ChunkPos(chunkX, chunkZ));
     }
 
 
     protected void onTickChunk(ConcurrentLinkedDeque<BlockEntityBase> list, int chunkX, int chunkZ, Level level){
         final Iterator<BlockEntityBase> it = list.iterator();
-
         while (it.hasNext() && level.isChunkLoaded(chunkX, chunkZ)) {
             final BlockEntityBase entity = it.next();
-            if(!entity.canRemove() && entity.canInitialization() )
+            if(!entity.canRemove() && entity.canInitialization())
                 ((TickingBlockEntityComponent) entity).onTick();
         }
     }
 
     public ConcurrentLinkedDeque<BlockEntityBase> getTiles(Level level, int x, int z){
         final ConcurrentHashMap<ChunkPos, ConcurrentLinkedDeque<BlockEntityBase>> chunks = getChunks(level.getDimension(), dimensions);
-        return Java8BackComp.computeIfAbsent(chunks, new ChunkPos(x, z), (Function<ChunkPos, ConcurrentLinkedDeque<BlockEntityBase>>) hash -> new ConcurrentLinkedDeque<>());
+        return Java8BackComp.computeIfAbsent(chunks, new ChunkPos(x / 16, z / 16), (Function<ChunkPos, ConcurrentLinkedDeque<BlockEntityBase>>) hash -> new ConcurrentLinkedDeque<>());
     }
 
     public void addBlockEntity(BlockEntityBase entity){
