@@ -6,6 +6,6 @@ import ru.koshakmine.icstd.type.common.EnchantData;
 import ru.koshakmine.icstd.type.common.ItemStack;
 import ru.koshakmine.icstd.type.common.Position;
 
-public interface IDropBlock {
+public interface DropComponent {
     ItemStack[] getDrop(Position position, BlockData block, Level level, int diggingLevel, EnchantData enchant, ItemStack item);
 }

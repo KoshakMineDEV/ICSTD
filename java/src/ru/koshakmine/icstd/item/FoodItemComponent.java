@@ -1,5 +1,5 @@
 package ru.koshakmine.icstd.item;
 
-public interface IFoodItem {
+public interface FoodItemComponent {
     int getFood();
 }

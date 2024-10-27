@@ -14,7 +14,7 @@ import ru.koshakmine.icstd.type.common.Position;
 import ru.koshakmine.icstd.type.tools.BlockMaterials;
 import ru.koshakmine.icstd.type.tools.ToolLevel;
 
-public abstract class PlantBlockBase extends Block implements INeighbourChanged, IDropBlock {
+public abstract class BlockPlantBase extends Block implements NeighbourChangeComponent, DropComponent {
     protected PlantBaseItem plantItem = null;
 
     public abstract String getTexture();
@@ -110,7 +110,7 @@ public abstract class PlantBlockBase extends Block implements INeighbourChanged,
         NativeBlockRenderer.setStaticICRender(getNumId(), -1, getModel(0, 0));
     }
 
-    public PlantBlockBase setPlantItem(PlantBaseItem plantItem) {
+    public BlockPlantBase setPlantItem(PlantBaseItem plantItem) {
         this.plantItem = plantItem;
         return this;
     }

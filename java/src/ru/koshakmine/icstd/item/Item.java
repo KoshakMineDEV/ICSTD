@@ -9,10 +9,10 @@ import com.zhekasmirnov.innercore.api.unlimited.IDRegistry;
 import ru.koshakmine.icstd.entity.Player;
 import ru.koshakmine.icstd.event.Event;
 import ru.koshakmine.icstd.event.Events;
-import ru.koshakmine.icstd.item.event.IClickable;
-import ru.koshakmine.icstd.item.event.IDispense;
-import ru.koshakmine.icstd.item.event.IOverrideIcon;
-import ru.koshakmine.icstd.item.event.IOverrideName;
+import ru.koshakmine.icstd.item.event.ClickableComponent;
+import ru.koshakmine.icstd.item.event.DispenseComponent;
+import ru.koshakmine.icstd.item.event.OverrideIconComponent;
+import ru.koshakmine.icstd.item.event.OverrideNameComponent;
 import ru.koshakmine.icstd.level.Level;
 import ru.koshakmine.icstd.modloader.Mod;
 import ru.koshakmine.icstd.modloader.ObjectFactory;
@@ -29,35 +29,35 @@ import java.util.UUID;
 public abstract class Item implements IBaseRegisterGameObject {
     protected static final ObjectFactory FACTORY = Mod.getFactory();
 
-    private static final HashMap<Integer, IUsableItem> using = new HashMap<>();
-    private static final HashMap<Integer, IClickable> clickable = new HashMap<>();
-    private static final HashMap<Integer, IDispense> dispenses = new HashMap<>();
-    private static final HashMap<Integer, IOverrideName> overrideName = new HashMap<>();
-    private static final HashMap<Integer, IOverrideIcon> overrideIcon = new HashMap<>();
+    private static final HashMap<Integer, UsableItemComponent> using = new HashMap<>();
+    private static final HashMap<Integer, ClickableComponent> clickable = new HashMap<>();
+    private static final HashMap<Integer, DispenseComponent> dispenses = new HashMap<>();
+    private static final HashMap<Integer, OverrideNameComponent> overrideName = new HashMap<>();
+    private static final HashMap<Integer, OverrideIconComponent> overrideIcon = new HashMap<>();
 
-    public static void registerUsing(int id, IUsableItem usableItem){
+    public static void registerUsing(int id, UsableItemComponent usableItem){
         using.put(id, usableItem);
     }
 
-    public static void registerClick(int id, IClickable click){
+    public static void registerClick(int id, ClickableComponent click){
         clickable.put(id, click);
     }
 
-    public static void registerDispense(int id, IDispense dispense){
+    public static void registerDispense(int id, DispenseComponent dispense){
         dispenses.put(id, dispense);
     }
 
-    public static void registerOverrideName(int id, IOverrideName item){
+    public static void registerOverrideName(int id, OverrideNameComponent item){
         overrideName.put(id, item);
     }
 
-    public static void registerOverrideIcon(int id, IOverrideIcon item){
+    public static void registerOverrideIcon(int id, OverrideIconComponent item){
         overrideIcon.put(id, item);
     }
 
     static {
         Event.onItemUse((position, item, block, player) -> {
-            final IClickable clickableItem = clickable.get(item.id);
+            final ClickableComponent clickableItem = clickable.get(item.id);
             if (clickableItem != null) {
                 clickableItem.onClick(position, item, block, player);
             }
@@ -65,7 +65,7 @@ public abstract class Item implements IBaseRegisterGameObject {
 
         Event.onCall(Events.ItemUsingComplete, (args) -> {
             final ItemStack item = new ItemStack((ItemInstance) args[0]);
-            final IUsableItem usingItem = using.get(item.id);
+            final UsableItemComponent usingItem = using.get(item.id);
 
             if (usingItem != null) {
                 usingItem.onItemUsingComplete(item, new Player((long) args[1]));
@@ -74,7 +74,7 @@ public abstract class Item implements IBaseRegisterGameObject {
 
         Event.onCall(Events.ItemDispensed, (args) -> {
             final ItemStack item = new ItemStack((ItemInstance) args[1]);
-            final IDispense dispense = dispenses.get(item.id);
+            final DispenseComponent dispense = dispenses.get(item.id);
 
             if(dispense != null){
                 dispense.onDispense(new BlockPosition((Coords) args[0]), item, Level.getForRegion((NativeBlockSource) args[2]), ((Number) args[3]).intValue());
@@ -83,7 +83,7 @@ public abstract class Item implements IBaseRegisterGameObject {
 
         Event.onCall(Events.ItemNameOverride, (args -> {
             final ItemStack item = new ItemStack((ItemInstance) args[0]);
-            final IOverrideName override = overrideName.get(item.id);
+            final OverrideNameComponent override = overrideName.get(item.id);
 
             if(override != null){
                 String name = override.onOverrideName(item, args[1].toString(), args[2].toString());
@@ -95,7 +95,7 @@ public abstract class Item implements IBaseRegisterGameObject {
 
         Event.onCall(Events.ItemIconOverride, (args -> {
             final ItemStack item = new ItemStack(args[0]);
-            final IOverrideIcon override = overrideIcon.get(item.id);
+            final OverrideIconComponent override = overrideIcon.get(item.id);
 
             if(override != null){
                 override.onOverrideIcon(item, (Boolean) args[1]);
@@ -180,14 +180,14 @@ public abstract class Item implements IBaseRegisterGameObject {
         if(texture == null) texture = Texture.EMPTY;
         final int id = IDRegistry.genItemID(getId());
 
-        if(this instanceof IFoodItem) {
+        if(this instanceof FoodItemComponent) {
             // Food is created differently on the server core and on the client
-            this.item = AdaptedScriptAPI.Item.createFoodItem(id, getId(), getName(), texture.texture, texture.meta, ((IFoodItem) this).getFood());
-        } else if (this instanceof IArmorItem) {
-            final IArmorItem armorItem = (IArmorItem) this;
+            this.item = AdaptedScriptAPI.Item.createFoodItem(id, getId(), getName(), texture.texture, texture.meta, ((FoodItemComponent) this).getFood());
+        } else if (this instanceof ArmorItemComponent) {
+            final ArmorItemComponent armorItem = (ArmorItemComponent) this;
             this.item = NativeItem.createArmorItem(id, getId(), getName(), texture.texture, texture.meta, armorItem.getArmorPlayerTexture(),
                     armorItem.getSlot().ordinal(), armorItem.getDefense(), armorItem.getDuration(), armorItem.getKnockbackResist());
-        } else if (this instanceof IThrowableItem) {
+        } else if (this instanceof ThrowableItemComponent) {
             this.item = NativeItem.createThrowableItem(id, getId(), getName(), texture.texture, texture.meta);
         } else {
             this.item = NativeItem.createItem(id, getId(), getName(), texture.texture, texture.meta);
@@ -197,20 +197,20 @@ public abstract class Item implements IBaseRegisterGameObject {
     public static void registerEvents(IBaseRegisterGameObject self){
         final int id = self.getNumId();
 
-        if (self instanceof IClickable) {
-            clickable.put(id, (IClickable) self);
+        if (self instanceof ClickableComponent) {
+            clickable.put(id, (ClickableComponent) self);
         }
 
-        if (self instanceof IFurnaceBurn) {
-            RecipeRegistry.addFurnaceFuel(id, -1, ((IFurnaceBurn) self).getFuelBurn());
+        if (self instanceof FurnaceBurnComponent) {
+            RecipeRegistry.addFurnaceFuel(id, -1, ((FurnaceBurnComponent) self).getFuelBurn());
         }
 
-        if(self instanceof IOverrideName) {
-            registerOverrideName(id, (IOverrideName) self);
+        if(self instanceof OverrideNameComponent) {
+            registerOverrideName(id, (OverrideNameComponent) self);
         }
 
-        if(self instanceof IOverrideIcon) {
-            registerOverrideIcon(id, (IOverrideIcon) self);
+        if(self instanceof OverrideIconComponent) {
+            registerOverrideIcon(id, (OverrideIconComponent) self);
         }
     }
 
@@ -220,8 +220,8 @@ public abstract class Item implements IBaseRegisterGameObject {
 
         final int id = IDRegistry.genItemID(getId());
 
-        if (this instanceof IUsableItem) {
-            final IUsableItem usingItem = (IUsableItem) this;
+        if (this instanceof UsableItemComponent) {
+            final UsableItemComponent usingItem = (UsableItemComponent) this;
 
             item.setMaxUseDuration(usingItem.getUsingDuration());
             item.setUseAnimation(usingItem.getType().ordinal());

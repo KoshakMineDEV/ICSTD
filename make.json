@@ -2,7 +2,7 @@
 	"$schema": "https://raw.githubusercontent.com/zheka2304/innercore-mod-toolchain/develop/toolchain/schemas/make.schema.json",
 	"info": {
 		"name": "ICSTD",
-		"author": "Koshak_Mine",
+		"author": "Koshak_Mine & Reider745",
 		"version": "1.0",
 		"description": "InnerCore Standard Library for modding using Java",
 		"clientOnly": true,

@@ -98,7 +98,7 @@ public class TickingSystemBlockEntity {
         while (it.hasNext() && level.isChunkLoaded(chunkX, chunkZ)) {
             final BlockEntityBase entity = it.next();
             if(!entity.canRemove() && entity.canInitialization())
-                ((ITickingBlockEntity) entity).onTick();
+                ((TickingBlockEntityComponent) entity).onTick();
         }
     }
 

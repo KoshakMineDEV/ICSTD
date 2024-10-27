@@ -6,7 +6,7 @@ import ru.koshakmine.icstd.entity.Player;
 import ru.koshakmine.icstd.level.Level;
 import ru.koshakmine.icstd.type.common.*;
 
-public abstract class BlockRotatable extends Block implements IPlaceBlock, IDropBlock {
+public abstract class BlockRotatable extends Block implements PlaceComponent, DropComponent {
     public void addRotateVariant(String name, String[] td){
         td = fixedTextures(td);
         final String[][] rotated = new String[][]{

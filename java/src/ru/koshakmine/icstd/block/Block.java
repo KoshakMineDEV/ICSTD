@@ -18,12 +18,12 @@ import org.mozilla.javascript.Scriptable;
 import ru.koshakmine.icstd.block.blockentity.BlockEntity;
 import ru.koshakmine.icstd.block.blockentity.BlockEntityManager;
 import ru.koshakmine.icstd.block.blockentity.BlockEntityRegistry;
-import ru.koshakmine.icstd.block.blockentity.LocalBlockEntity;
+import ru.koshakmine.icstd.block.blockentity.BlockEntityLocal;
 import ru.koshakmine.icstd.event.Event;
 import ru.koshakmine.icstd.event.Events;
 import ru.koshakmine.icstd.item.Item;
 import ru.koshakmine.icstd.item.ItemGroup;
-import ru.koshakmine.icstd.item.event.IClickable;
+import ru.koshakmine.icstd.item.event.ClickableComponent;
 import ru.koshakmine.icstd.js.StorageInterfaceLib;
 import ru.koshakmine.icstd.js.TileEntity;
 import ru.koshakmine.icstd.js.ToolAPI;
@@ -48,35 +48,35 @@ public abstract class Block implements IBaseRegisterGameObject {
 
     private static final List<Integer> CONSTANT_VANILLA_UI_TILES = new LinkedList<>(), CONSTANT_REPLACEABLE_TILE = new LinkedList<>();
     private static HashMap<IDDataPair, BlockVariant> blockVariantMap;
-    private static final HashMap<Integer, IPlaceBlock> placed = new HashMap<>();
-    private static final HashMap<Integer, IClickable> clickable = new HashMap<>();
-    private static final HashMap<Integer, INeighbourChanged> neighbourChanged = new HashMap<>();
-    private static final HashMap<Integer, IPopResources> popResources = new HashMap<>();
-    private static final HashMap<Integer, IEntityInside> entityInside = new HashMap<>();
-    private static final HashMap<Integer, IEntityStepOn> entityStepOn = new HashMap<>();
+    private static final HashMap<Integer, PlaceComponent> placed = new HashMap<>();
+    private static final HashMap<Integer, ClickableComponent> clickable = new HashMap<>();
+    private static final HashMap<Integer, NeighbourChangeComponent> neighbourChanged = new HashMap<>();
+    private static final HashMap<Integer, PopResourcesComponent> popResources = new HashMap<>();
+    private static final HashMap<Integer, EntityInsideComponent> entityInside = new HashMap<>();
+    private static final HashMap<Integer, EntityStepOnComponent> entityStepOn = new HashMap<>();
 
-    public static void registerPlace(int id, IPlaceBlock block){
+    public static void registerPlace(int id, PlaceComponent block){
         placed.put(id, block);
     }
 
-    public static void registerClick(int id, IClickable block){
+    public static void registerClick(int id, ClickableComponent block){
         clickable.put(id, block);
     }
 
-    public static void registerNeighbourChanged(int id, INeighbourChanged block){
+    public static void registerNeighbourChanged(int id, NeighbourChangeComponent block){
         NativeBlock.setReceivingNeighbourChangeEvent(id, true);
         neighbourChanged.put(id, block);
     }
 
-    public static void registerPopResources(int id, IPopResources block){
+    public static void registerPopResources(int id, PopResourcesComponent block){
         popResources.put(id, block);
     }
 
-    public static void registerEntityInside(int id, IEntityInside block){
+    public static void registerEntityInside(int id, EntityInsideComponent block){
         entityInside.put(id, block);
     }
 
-    public static void registerEntityStepOn(int id, IEntityStepOn block){
+    public static void registerEntityStepOn(int id, EntityStepOnComponent block){
         entityStepOn.put(id, block);
     }
 
@@ -174,13 +174,13 @@ public abstract class Block implements IBaseRegisterGameObject {
         CONSTANT_REPLACEABLE_TILE.add(106);
 
         Event.onItemUse(((position, item, block, player) -> {
-            final IPlaceBlock place = placed.get(item.id);
+            final PlaceComponent place = placed.get(item.id);
             final Level level = player.getRegion();
 
             final BlockEntityManager SERVER_MANAGER = BlockEntity.getManager();
-            final BlockEntityRegistry<IBlockEntityHolder> SERVER_REGISTRY = BlockEntity.getRegistry();
+            final BlockEntityRegistry<BlockEntityHolderComponent> SERVER_REGISTRY = BlockEntity.getRegistry();
 
-            IBlockEntityHolder holder = SERVER_REGISTRY.get(block.id);
+            BlockEntityHolderComponent holder = SERVER_REGISTRY.get(block.id);
             if(holder != null) {
                 SERVER_MANAGER.addBlockEntity(holder.createBlockEntity(position, level));
             }
@@ -206,14 +206,14 @@ public abstract class Block implements IBaseRegisterGameObject {
                 NativeAPI.preventDefault();
             }
 
-            final IClickable click = clickable.get(block.id);
+            final ClickableComponent click = clickable.get(block.id);
             if(click != null){
                 click.onClick(position, item, block, player);
             }
         }), 1);
 
         Event.onBlockEventNeighbourChange(((position, block, neighbourPosition, blockSource) -> {
-            final INeighbourChanged changed = neighbourChanged.get(block.id);
+            final NeighbourChangeComponent changed = neighbourChanged.get(block.id);
             if(changed != null){
                 changed.onNeighbourChanged(position, neighbourPosition, block, blockSource);
             }
@@ -222,21 +222,21 @@ public abstract class Block implements IBaseRegisterGameObject {
         Event.onCall(Events.PopBlockResources, (args -> {
             final BlockData block = new BlockData((FullBlock) args[1]);
 
-            final IPopResources func = popResources.get(block.id);
+            final PopResourcesComponent func = popResources.get(block.id);
             if(func != null){
                 func.onPopResources(new Position((Coords) args[0]), block, Level.getForRegion((NativeBlockSource) args[4]), (double) args[2]);
             }
         }));
 
         Event.onBlockEventEntityInside((position, block, entity) -> {
-            final IEntityInside func = entityInside.get(block.id);
+            final EntityInsideComponent func = entityInside.get(block.id);
             if(func != null){
                 func.onEntityInside(position, block, entity);
             }
         });
 
         Event.onBlockEventEntityStepOn(((position, block, entity) -> {
-            final IEntityStepOn func = entityStepOn.get(block.id);
+            final EntityStepOnComponent func = entityStepOn.get(block.id);
             if(func != null){
                 func.onEntityStepOn(position, block, entity);
             }
@@ -431,8 +431,8 @@ public abstract class Block implements IBaseRegisterGameObject {
         NativeBlock.setMapColor(block.getId(), getMapColor());
         ToolAPI.registerBlockMaterial(block.getId(), getBlockMaterial(), getToolLevel());
 
-        if (this instanceof IShapedBlock) {
-            IShapedBlock shapedBlock = (IShapedBlock) this;
+        if (this instanceof ShapeComponent) {
+            ShapeComponent shapedBlock = (ShapeComponent) this;
             shapedBlock.getShape().setToBlock(block.getId(), 0);
 
             final BlockVariant variant = BlockRegistry.getBlockVariant(block.getId(), 0);
@@ -442,34 +442,34 @@ public abstract class Block implements IBaseRegisterGameObject {
             }
         }
 
-        if (this instanceof ILocalBlockEntityHolder) {
-            LocalBlockEntity.getRegistry().registerBlockEntity(getBlockEntityType(), (ILocalBlockEntityHolder) this);
-            LocalBlockEntity.getRegistry().registerBlockEntity(getBlockEntityType(), getNumId());
+        if (this instanceof BlockEntityLocalHolderComponent) {
+            BlockEntityLocal.getRegistry().registerBlockEntity(getBlockEntityType(), (BlockEntityLocalHolderComponent) this);
+            BlockEntityLocal.getRegistry().registerBlockEntity(getBlockEntityType(), getNumId());
         }
 
-        if (this instanceof IBlockEntityHolder) {
-            BlockEntity.getRegistry().registerBlockEntity(getBlockEntityType(), (IBlockEntityHolder) this);
+        if (this instanceof BlockEntityHolderComponent) {
+            BlockEntity.getRegistry().registerBlockEntity(getBlockEntityType(), (BlockEntityHolderComponent) this);
             BlockEntity.getRegistry().registerBlockEntity(getBlockEntityType(), getNumId());
         }
 
-        if (this instanceof IDropBlock) {
-            ToolAPI.registerDropFunction(block.getId(), (IDropBlock) this, getToolLevel());
+        if (this instanceof DropComponent) {
+            ToolAPI.registerDropFunction(block.getId(), (DropComponent) this, getToolLevel());
         }
 
-        if (this instanceof IPlaceBlock) {
-            placed.put(getNumId(), (IPlaceBlock) this);
+        if (this instanceof PlaceComponent) {
+            placed.put(getNumId(), (PlaceComponent) this);
         }
 
-        if(this instanceof IClickable){
-            clickable.put(getNumId(), (IClickable) this);
+        if(this instanceof ClickableComponent){
+            clickable.put(getNumId(), (ClickableComponent) this);
         }
 
         if(this instanceof StorageInterfaceLib.StorageDescriptor){
             StorageInterfaceLib.createInterface(getNumId(), (StorageInterfaceLib.StorageDescriptor) this);
         }
 
-        if(this instanceof IRandomTicking){
-            final IRandomTicking randomTick = (IRandomTicking) this;
+        if(this instanceof RandomTickingComponent){
+            final RandomTickingComponent randomTick = (RandomTickingComponent) this;
             NativeBlock.setRandomTickCallback(getNumId(), new ScriptableFunctionImpl() {
                 @Override
                 public Object call(Context ctx, Scriptable parent, Scriptable self, Object[] args) {
@@ -479,31 +479,31 @@ public abstract class Block implements IBaseRegisterGameObject {
             });
         }
 
-        if(this instanceof IAnimateTicking){
-            final IAnimateTicking animateTick = (IAnimateTicking) this;
+        if(this instanceof AnimationTickingComponent){
+            final AnimationTickingComponent animateTick = (AnimationTickingComponent) this;
             NativeBlock.setRandomTickCallback(getNumId(), new ScriptableFunctionImpl() {
                 @Override
                 public Object call(Context ctx, Scriptable parent, Scriptable self, Object[] args) {
-                    animateTick.onAnimateTick(new Position((int) args[0], (int) args[1], (int) args[2]), new BlockData((int) args[3], (int) args[4]));
+                    animateTick.onAnimationTick(new Position((int) args[0], (int) args[1], (int) args[2]), new BlockData((int) args[3], (int) args[4]));
                     return null;
                 }
             });
         }
 
-        if(this instanceof INeighbourChanged){
-            registerNeighbourChanged(getNumId(), (INeighbourChanged) this);
+        if(this instanceof NeighbourChangeComponent){
+            registerNeighbourChanged(getNumId(), (NeighbourChangeComponent) this);
         }
 
-        if(this instanceof IPopResources){
-            registerPopResources(getNumId(), (IPopResources) this);
+        if(this instanceof PopResourcesComponent){
+            registerPopResources(getNumId(), (PopResourcesComponent) this);
         }
 
-        if(this instanceof IEntityInside){
-            registerEntityInside(getNumId(), (IEntityInside) this);
+        if(this instanceof EntityInsideComponent){
+            registerEntityInside(getNumId(), (EntityInsideComponent) this);
         }
 
-        if(this instanceof IEntityStepOn){
-            registerEntityStepOn(getNumId(), (IEntityStepOn) this);
+        if(this instanceof EntityStepOnComponent){
+            registerEntityStepOn(getNumId(), (EntityStepOnComponent) this);
         }
 
         Item.registerEvents(this);

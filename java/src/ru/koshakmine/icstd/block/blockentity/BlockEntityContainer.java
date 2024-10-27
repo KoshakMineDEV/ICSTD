@@ -25,7 +25,7 @@ public class BlockEntityContainer extends BlockEntity {
             if(args.length != 2 || pos.length != 3) return null;
 
 
-            final LocalBlockEntity blockEntity = (LocalBlockEntity) LocalBlockEntity.getLocalManager().getBlockEntity(new Position(Float.valueOf(pos[0]), Float.valueOf(pos[1]), Float.valueOf(pos[2])), Level.getLocalLevel());
+            final BlockEntityLocal blockEntity = (BlockEntityLocal) BlockEntityLocal.getLocalManager().getBlockEntity(new Position(Float.valueOf(pos[0]), Float.valueOf(pos[1]), Float.valueOf(pos[2])), Level.getLocalLevel());
             return blockEntity.getScreenByName(args[1]).getWindow();
         });
     }
