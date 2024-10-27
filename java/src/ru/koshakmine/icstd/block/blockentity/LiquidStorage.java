@@ -205,6 +205,10 @@ public class LiquidStorage {
         return 0;
     }
 
+    public float getLiquid(String liquid, float amount){
+        return getLiquid(liquid, amount, false);
+    }
+
     public JSONObject save() throws JSONException {
         final JSONObject json = new JSONObject();
 

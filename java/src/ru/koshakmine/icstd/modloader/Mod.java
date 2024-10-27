@@ -11,6 +11,7 @@ import com.zhekasmirnov.innercore.mod.build.Config;
 import com.zhekasmirnov.innercore.utils.FileTools;
 import org.json.JSONArray;
 import org.mozilla.javascript.Scriptable;
+import ru.koshakmine.icstd.ICSTD;
 import ru.koshakmine.icstd.event.Event;
 
 import java.util.ArrayList;
@@ -72,7 +73,7 @@ public abstract class Mod {
                 for(int i = 0;i < json.length();i++){
                     try{
                         final String classPath = json.getString(i);
-                        Class<? extends Mod> clazz = (Class<? extends Mod>) Class.forName(classPath);
+                        Class<? extends Mod> clazz = (Class<? extends Mod>) ICSTD.loader.loadClass(classPath);
                         final Mod mod_ = clazz.getConstructor(String.class, LegacyInnerCoreMod.class).newInstance(path, (LegacyInnerCoreMod) mod);
 
                         if(mod_.getConfig().getBool("enabled")) {

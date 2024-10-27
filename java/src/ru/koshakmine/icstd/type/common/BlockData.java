@@ -16,6 +16,10 @@ public class BlockData {
         this.data = data;
     }
 
+    public BlockData(int id){
+        this(id, 0);
+    }
+
     public BlockData(BlockState state) {
         this(state.id, state.data);
     }

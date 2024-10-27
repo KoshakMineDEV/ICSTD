@@ -255,4 +255,16 @@ public abstract class Item implements IBaseRegisterGameObject {
     public NativeItem getItem() {
         return item;
     }
+
+    public ItemStack getStack(int count, int data) {
+        return new ItemStack(getNumId(), count, data);
+    }
+
+    public ItemStack getStack(int count) {
+        return getStack(count, 0);
+    }
+
+    public ItemStack getStack() {
+        return getStack(1, 0);
+    }
 }

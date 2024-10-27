@@ -11,6 +11,8 @@ public abstract class NetworkPacket {
 
     private final ArrayList<Object> list = new ArrayList<>();
     private int length = 0;
+    private boolean cacheBuildPacket = true;
+    private byte[] cahce = null;
 
     public void setBuffer(ByteBuffer buffer){
         this.buffer = buffer;
@@ -133,6 +135,8 @@ public abstract class NetworkPacket {
     }
 
     private ByteBuffer build(){
+        list.clear();
+
         encode();
 
         final ByteBuffer buffer = ByteBuffer.wrap(new byte[length]);
@@ -155,8 +159,15 @@ public abstract class NetworkPacket {
         return buffer;
     }
 
+    public void setCacheBuildPacket(boolean cacheBuildPacket) {
+        this.cacheBuildPacket = cacheBuildPacket;
+    }
+
     public byte[] buildPacket(){
-        return build().array();
+        if(cacheBuildPacket && cahce != null)
+            return cahce;
+        cahce = build().array();
+        return cahce;
     }
 
     public abstract String getName();

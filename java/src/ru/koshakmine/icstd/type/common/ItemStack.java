@@ -29,6 +29,7 @@ public class ItemStack {
         this(id, 1, data);
     }
 
+    @Deprecated
     public ItemStack(long ptr){
         build(new NativeItemInstance(ptr));
     }
