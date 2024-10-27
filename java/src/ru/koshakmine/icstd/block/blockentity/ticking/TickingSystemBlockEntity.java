@@ -51,8 +51,6 @@ public class TickingSystemBlockEntity {
             }
             Event.onCall(isServer ? Events.tick : Events.LocalTick, (args) -> {
                 try {
-
-
                     loadedTiles.forEach((dimension, chunks) -> {
                         final Level level = Level.getForDimension(dimension);
 
@@ -60,15 +58,13 @@ public class TickingSystemBlockEntity {
                             ICSTD.onMultiThreadRun(executor, () -> {
                                 onTickChunk(list, pos.x, pos.z, level);
                             });
-                            /*if(level.isChunkLoaded(pos.x, pos.z) &&
-                                    level.isChunkLoaded(pos.x - 1, pos.z - 1) && level.isChunkLoaded(pos.x - 1, pos.z + 1) &&
-                                    level.isChunkLoaded(pos.x + 1, pos.z - 1) && level.isChunkLoaded(pos.x + 1, pos.z + 1))*/
                         }));
                     });
 
-                    executor.shutdown();
-                    while (ICSTD.MULTI_THREAD && executor.awaitTermination(1L, TimeUnit.MILLISECONDS)){}
-                    executor.shutdownNow();
+                    if(ICSTD.MULTI_THREAD){
+                        executor.shutdown();
+                        while (!executor.awaitTermination(1L, TimeUnit.MILLISECONDS)){}
+                    }
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);
                 }

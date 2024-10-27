@@ -56,9 +56,13 @@ public abstract class PlantBlockBase extends Block implements INeighbourChanged,
         return new ItemStack[]{new ItemStack(block.id, block.data)};
     }
 
+    public boolean canPlantStand(int id){
+        return id == BlockID.DIRT || id == BlockID.GRASS;
+    }
+
     @Override
     public void onNeighbourChanged(Position position, Position changePosition, BlockData block, Level level) {
-        if (position.y - 1 == changePosition.y){
+        if (position.y - 1 == changePosition.y && !canPlantStand(level.getBlockId(position.add(0, -1, 0)))){
             level.destroyBlock(position);
             if(plantItem != null) level.spawnDroppedItem(position.add(.5, .5, .5), plantItem.getStack());
         }

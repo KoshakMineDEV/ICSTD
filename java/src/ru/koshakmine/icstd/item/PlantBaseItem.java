@@ -42,7 +42,7 @@ public class PlantBaseItem extends Item implements IClickable {
         final BlockState tile = region.getBlock(position.relative);
         final int id = region.getBlockId(position.relative.add(0, -1, 0));
 
-        if(!NativeAPI.isDefaultPrevented() && Block.canTileBeReplaced(tile.id, tile.data) && (id == BlockID.DIRT || id == BlockID.GRASS)) {
+        if(!NativeAPI.isDefaultPrevented() && Block.canTileBeReplaced(tile.id, tile.data) && plantBlock.canPlantStand(id)) {
             region.setBlock(position.relative, plantBlock.getNumId(), 0);
             player.setCarriedItem(item.decrease(1));
         }
