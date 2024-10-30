@@ -4,6 +4,6 @@ import ru.koshakmine.icstd.level.Level;
 import ru.koshakmine.icstd.type.common.BlockData;
 import ru.koshakmine.icstd.type.common.Position;
 
-public interface IPopResources {
-    void onPopResources(Position position, BlockData block, Level level, double explosionRadius);
+public interface RandomTickingComponent {
+    void onRandomTick(Position position, BlockData block, Level level);
 }

@@ -6,7 +6,7 @@ import com.zhekasmirnov.innercore.api.unlimited.IDRegistry;
 import ru.koshakmine.icstd.block.Block;
 import ru.koshakmine.icstd.block.liquid.item.FullBucketItem;
 import ru.koshakmine.icstd.entity.Player;
-import ru.koshakmine.icstd.item.event.IClickable;
+import ru.koshakmine.icstd.item.event.ClickableComponent;
 import ru.koshakmine.icstd.js.LiquidRegistry;
 import ru.koshakmine.icstd.level.Level;
 import ru.koshakmine.icstd.type.ItemID;
@@ -15,7 +15,7 @@ import ru.koshakmine.icstd.type.common.BlockPosition;
 import ru.koshakmine.icstd.type.common.ItemStack;
 import ru.koshakmine.icstd.type.common.Texture;
 
-public abstract class BlockLiquid extends Block implements IClickable {
+public abstract class BlockLiquid extends Block implements ClickableComponent {
     private NativeBlock still;
     private BlockFlowingLiquid flowing;
     private FullBucketItem bucket;

@@ -3,13 +3,13 @@ package ru.koshakmine.icstd.block.liquid;
 import com.zhekasmirnov.innercore.api.NativeBlock;
 import ru.koshakmine.icstd.block.Block;
 import ru.koshakmine.icstd.entity.Player;
-import ru.koshakmine.icstd.item.event.IClickable;
+import ru.koshakmine.icstd.item.event.ClickableComponent;
 
 import ru.koshakmine.icstd.type.common.BlockData;
 import ru.koshakmine.icstd.type.common.BlockPosition;
 import ru.koshakmine.icstd.type.common.ItemStack;
 
-public class BlockFlowingLiquid extends Block implements IClickable {
+public class BlockFlowingLiquid extends Block implements ClickableComponent {
     private final BlockLiquid liquid;
 
     @Override

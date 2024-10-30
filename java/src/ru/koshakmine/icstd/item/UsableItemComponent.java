@@ -4,7 +4,7 @@ import ru.koshakmine.icstd.entity.Player;
 import ru.koshakmine.icstd.type.AnimationType;
 import ru.koshakmine.icstd.type.common.ItemStack;
 
-public interface IUsableItem {
+public interface UsableItemComponent {
     AnimationType getType();
     int getUsingDuration();
 

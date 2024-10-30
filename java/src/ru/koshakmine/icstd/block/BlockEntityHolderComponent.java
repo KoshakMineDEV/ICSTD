@@ -4,6 +4,6 @@ import ru.koshakmine.icstd.block.blockentity.BlockEntity;
 import ru.koshakmine.icstd.level.Level;
 import ru.koshakmine.icstd.type.common.Position;
 
-public interface IBlockEntityHolder {
+public interface BlockEntityHolderComponent {
     BlockEntity createBlockEntity(Position position, Level region);
 }

@@ -7,7 +7,7 @@ import org.mozilla.javascript.Context;
 import org.mozilla.javascript.Scriptable;
 import org.mozilla.javascript.ScriptableObject;
 import ru.koshakmine.icstd.type.common.Position;
-import ru.koshakmine.icstd.ui.type.IOnClick;
+import ru.koshakmine.icstd.ui.type.OnClickComponent;
 
 public class WindowElement {
     protected String type;
@@ -25,7 +25,7 @@ public class WindowElement {
         this.z = z;
     }
 
-    private void setClicker(String name, IOnClick click){
+    private void setClicker(String name, OnClickComponent click){
         if(clicker == null)
             clicker = ScriptableObjectHelper.createEmpty();
         clicker.put(name, clicker, new ScriptableFunctionImpl() {
@@ -37,11 +37,11 @@ public class WindowElement {
         });
     }
 
-    public void setOnClick(IOnClick click){
+    public void setOnClick(OnClickComponent click){
         setClicker("onClick", click);
     }
 
-    public void setOnLongClick(IOnClick click){
+    public void setOnLongClick(OnClickComponent click){
         setClicker("onLongClick", click);
     }
 

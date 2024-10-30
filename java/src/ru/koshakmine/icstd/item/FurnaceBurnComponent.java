@@ -1,5 +1,5 @@
 package ru.koshakmine.icstd.item;
 
-public interface IFurnaceBurn {
+public interface FurnaceBurnComponent {
     int getFuelBurn();
 }
