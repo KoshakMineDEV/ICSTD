@@ -6,14 +6,14 @@ public class WindowElementSize extends WindowElement {
     protected int width, height;
     protected float scale = Float.MIN_VALUE;
 
-    public WindowElementSize(String type, int x, int y, int width, int height) {
+    public WindowElementSize(String type, float x, float y, int width, int height) {
         super(type, x, y);
 
         this.width = width;
         this.height = height;
     }
 
-    public WindowElementSize(String type, int x, int y, float scale){
+    public WindowElementSize(String type, float x, float y, float scale){
         super(type, x, y);
 
         this.scale = scale;

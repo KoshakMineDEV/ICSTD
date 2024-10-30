@@ -11,11 +11,11 @@ import ru.koshakmine.icstd.ui.type.OnClickComponent;
 
 public class WindowElement {
     protected String type;
-    protected int x, y;
+    protected float x, y;
     protected Integer z = null;
     protected ScriptableObject clicker = null;
 
-    public WindowElement(String type, int x, int y){
+    public WindowElement(String type, float x, float y){
         this.type = type;
         this.x = x;
         this.y = y;

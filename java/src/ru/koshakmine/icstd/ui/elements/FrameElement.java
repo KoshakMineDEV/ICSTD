@@ -9,7 +9,7 @@ public class FrameElement extends WindowElementSize {
     protected int color = Color.TRANSPARENT;
     protected ScriptableObject sides = ScriptableObjectHelper.createEmpty();
 
-    public FrameElement(String bitmap, int x, int y, int width, int height) {
+    public FrameElement(String bitmap, float x, float y, int width, int height) {
         super("frame", x, y, width, height);
         this.bitmap = bitmap;
         this.scale = 1f;

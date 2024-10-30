@@ -6,7 +6,7 @@ public class ButtonElement extends WindowElement {
     protected String bitmap1, bitmap2;
     protected float scale;
 
-    protected ButtonElement(String type, int x, int y, String bitmap, float scale) {
+    protected ButtonElement(String type, float x, float y, String bitmap, float scale) {
         super(type, x, y);
 
         this.bitmap1 = bitmap;
@@ -14,11 +14,11 @@ public class ButtonElement extends WindowElement {
         this.scale = scale;
     }
 
-    public ButtonElement(int x, int y, String bitmap, float scale){
+    public ButtonElement(float x, float y, String bitmap, float scale){
         this("button", x, y, bitmap, scale);
     }
 
-    public ButtonElement(int x, int y, String bitmap){
+    public ButtonElement(float x, float y, String bitmap){
         this("button", x, y, bitmap, 1f);
     }
 

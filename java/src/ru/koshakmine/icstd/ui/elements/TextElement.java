@@ -9,14 +9,14 @@ public class TextElement extends WindowElement {
     protected Font font;
     protected boolean multiline;
 
-    public TextElement(String text, int x, int y, int size, int shadow) {
+    public TextElement(String text, float x, float y, int size, int shadow) {
         super("text", x, y);
 
         this.text = text;
         this.font = new Font(Color.BLACK, size, shadow);
     }
 
-    public TextElement(String text, int x, int y, int size){
+    public TextElement(String text, float x, float y, int size){
         this(text, x, y, size, 0);
     }
 

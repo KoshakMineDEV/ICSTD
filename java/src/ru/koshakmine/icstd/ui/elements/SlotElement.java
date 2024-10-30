@@ -9,7 +9,7 @@ public class SlotElement extends WindowElement {
     protected boolean isDarkenAtZero = true, visual = false;
     protected ItemStack source;
 
-    public SlotElement(int x, int y, int size) {
+    public SlotElement(float x, float y, int size) {
         super("slot", x, y);
 
         this.size = size;
