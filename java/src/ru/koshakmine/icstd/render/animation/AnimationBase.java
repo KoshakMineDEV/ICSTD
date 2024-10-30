@@ -111,10 +111,15 @@ public class AnimationBase<T extends AnimationBase> {
         if(ptr != -1) {
             NativeStaticRenderer.setMesh(ptr, mesh.getPtr());
             NativeStaticRenderer.setRenderer(ptr, 0);
-            NativeStaticRenderer.setSkin(ptr, skin);
+            setSkin(skin);
             setScale(scale);
             setMaterial(material);
         }
+    }
+
+    public void setSkin(String skin){
+        this.skin = skin;
+        if(ptr != -1) NativeStaticRenderer.setSkin(ptr, skin);
     }
 
     public void setScale(float scale){

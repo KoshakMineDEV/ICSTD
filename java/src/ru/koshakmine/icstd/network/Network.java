@@ -31,7 +31,6 @@ public class Network {
 
         if(side == NetworkSide.LOCAL) {
             network.addClientPacket(namePacket, (data, meta, type) -> {
-                NativeAPI.clientMessage("Gi "+data.getClass());
                 if (data instanceof byte[]) {
                     NetworkPacket packet = builder.create();
                     packet.setBuffer(ByteBuffer.wrap((byte[]) data));

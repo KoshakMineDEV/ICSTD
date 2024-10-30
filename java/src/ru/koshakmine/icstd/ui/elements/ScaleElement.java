@@ -7,13 +7,13 @@ public class ScaleElement extends WindowElementSize {
     protected int direction = 0;
     protected boolean invert = false;
 
-    public ScaleElement(String bitmap, int x, int y, int width, int height) {
+    public ScaleElement(String bitmap, float x, float y, int width, int height) {
         super("scale", x, y, width, height);
 
         this.bitmap = bitmap;
     }
 
-    public ScaleElement(String bitmap, int x, int y, float scale) {
+    public ScaleElement(String bitmap, float x, float y, float scale) {
         super("scale", x, y, scale);
 
         this.bitmap = bitmap;
