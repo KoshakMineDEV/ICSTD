@@ -10,6 +10,8 @@ import ru.koshakmine.icstd.type.ArmorSlot;
 import ru.koshakmine.icstd.type.common.ItemStack;
 import ru.koshakmine.icstd.type.common.Position;
 import ru.koshakmine.icstd.type.entity.Effect;
+import ru.koshakmine.icstd.type.entity.LookAngle;
+import ru.koshakmine.icstd.utils.MathUtils;
 
 public class Entity {
     protected final long uid;
@@ -19,12 +21,19 @@ public class Entity {
     }
 
     public static Entity from(long uid){
+        if(uid == -1)
+            return null;
+
         final int type = NativeAPI.getEntityType(uid);
         if(type == EntityType.ITEM)
             return new EntityItem(uid);
         if(type == EntityType.PLAYER)
             return new Player(uid);
         return new Entity(uid);
+    }
+
+    public static long getUid(Entity entity) {
+        return entity != null ? entity.uid : -1;
     }
 
     public long getUid() {
@@ -181,7 +190,7 @@ public class Entity {
     }
 
     public void setTarget(Entity target){
-        NativeAPI.setTarget(uid, target.uid);
+        NativeAPI.setTarget(uid, getUid(target));
     }
 
     public int getType(){
@@ -211,7 +220,7 @@ public class Entity {
     }
 
     public void rideAnimal(Entity rider){
-        NativeAPI.rideAnimal(uid, rider.uid);
+        NativeAPI.rideAnimal(uid, getUid(rider));
     }
 
     public int getFire(){
@@ -240,5 +249,41 @@ public class Entity {
 
     public void setNameTag(String tag){
         NativeAPI.setNameTag(uid, tag);
+    }
+
+    public LookAngle getLookAngle() {
+        return new LookAngle(MathUtils.degreesToRad(-getPitch()), MathUtils.degreesToRad(getYaw()));
+    }
+
+    public Position getLookVectorByAngle(LookAngle angle) {
+        return new Position(
+                (float) (-Math.sin(angle.yaw) * Math.cos(angle.pitch)),
+                (float) Math.sin(angle.pitch),
+                (float) (Math.cos(angle.yaw) * Math.cos(angle.pitch))
+        );
+    }
+
+    public Position getLookVector() {
+        return getLookVectorByAngle(getLookAngle());
+    }
+
+    public void damage(int damage) {
+        damage(damage, 0);
+    }
+
+    public void damage(int damage, int cause) {
+        damage(damage, cause, null);
+    }
+
+    public void damage(int damage, int cause, Entity attacker) {
+        damage(damage, cause, attacker, false);
+    }
+
+    public void damage(int damage, int cause, Entity attacker, boolean bool1) {
+        damage(damage, cause, attacker, bool1, false);
+    }
+
+    public void damage(int damage, int cause, Entity attacker, boolean bool1, boolean bool2) {
+        NativeAPI.dealDamage(uid, damage, cause, getUid(attacker), bool1, bool2);
     }
 }

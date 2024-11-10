@@ -126,7 +126,7 @@ public class ItemStack {
         return NativeItem.getMaxStackForId(id, data);
     }
 
-    public int getMaxDamage(){
+    public int getMaxData(){
         return NativeItem.getMaxDamageForId(id, data);
     }
 
