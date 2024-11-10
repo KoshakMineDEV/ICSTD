@@ -1,7 +1,6 @@
 package ru.koshakmine.icstd.entity;
 
 import com.zhekasmirnov.innercore.api.NativeAPI;
-import com.zhekasmirnov.innercore.api.NativeItemInstanceExtra;
 import com.zhekasmirnov.innercore.api.commontypes.ItemInstance;
 import com.zhekasmirnov.innercore.api.constants.EntityType;
 import com.zhekasmirnov.innercore.api.mod.adaptedscript.AdaptedScriptAPI;
@@ -119,7 +118,7 @@ public class Entity {
     }
 
     public ItemStack getArmorSlot(ArmorSlot slot){
-        return new ItemStack(NativeAPI.getEntityArmor(uid, slot.ordinal()));
+        return ItemStack.fromPointer(NativeAPI.getEntityArmor(uid, slot.ordinal()));
     }
 
     public void setArmorSlot(ArmorSlot slot, ItemStack item){

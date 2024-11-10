@@ -64,7 +64,7 @@ public abstract class Item implements IBaseRegisterGameObject {
         });
 
         Event.onCall(Events.ItemUsingComplete, (args) -> {
-            final ItemStack item = new ItemStack((ItemInstance) args[0]);
+            final ItemStack item = new ItemStack((ScriptableObject) args[0]);
             final UsableItemComponent usingItem = using.get(item.id);
 
             if (usingItem != null) {
@@ -73,7 +73,7 @@ public abstract class Item implements IBaseRegisterGameObject {
         });
 
         Event.onCall(Events.ItemDispensed, (args) -> {
-            final ItemStack item = new ItemStack((ItemInstance) args[1]);
+            final ItemStack item = new ItemStack((ScriptableObject) args[1]);
             final DispenseComponent dispense = dispenses.get(item.id);
 
             if(dispense != null){
@@ -82,7 +82,7 @@ public abstract class Item implements IBaseRegisterGameObject {
         });
 
         Event.onCall(Events.ItemNameOverride, (args -> {
-            final ItemStack item = new ItemStack((ItemInstance) args[0]);
+            final ItemStack item = new ItemStack((ScriptableObject) args[0]);
             final OverrideNameComponent override = overrideName.get(item.id);
 
             if(override != null){

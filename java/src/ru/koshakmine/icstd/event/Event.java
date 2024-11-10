@@ -90,7 +90,7 @@ public class Event {
         Callback.addCallback(Events.ItemUse, new ScriptableFunctionImpl() {
             @Override
             public Object call(Context context, Scriptable scriptable, Scriptable scriptable1, Object[] objects) {
-                function.call(new BlockPosition((ScriptableObject) objects[0]), new ItemStack((ItemInstance) objects[1]), new BlockData((FullBlock) objects[2]), new Player((long) objects[4]));
+                function.call(new BlockPosition((ScriptableObject) objects[0]), new ItemStack((ScriptableObject) objects[1]), new BlockData((FullBlock) objects[2]), new Player((long) objects[4]));
                 return null;
             }
         }, priority);
@@ -104,7 +104,7 @@ public class Event {
         Callback.addCallback(Events.ItemUseNoTarget, new ScriptableFunctionImpl() {
             @Override
             public Object call(Context context, Scriptable scriptable, Scriptable scriptable1, Object[] objects) {
-                function.call(new ItemStack((ItemInstance) objects[0]), new Player((long) objects[1]));
+                function.call(new ItemStack((ScriptableObject) objects[0]), new Player((long) objects[1]));
                 return null;
             }
         }, 0);
@@ -114,7 +114,7 @@ public class Event {
         Callback.addCallback(Events.ItemUsingReleased, new ScriptableFunctionImpl() {
             @Override
             public Object call(Context context, Scriptable scriptable, Scriptable scriptable1, Object[] objects) {
-                function.call(new ItemStack((ItemInstance) objects[0]), (int) objects[1], new Player((long) objects[2]));
+                function.call(new ItemStack((ScriptableObject) objects[0]), (int) objects[1], new Player((long) objects[2]));
                 return null;
             }
         }, 0);
@@ -124,7 +124,7 @@ public class Event {
         Callback.addCallback(Events.ItemUsingComplete, new ScriptableFunctionImpl() {
             @Override
             public Object call(Context context, Scriptable scriptable, Scriptable scriptable1, Object[] objects) {
-                function.call(new ItemStack((ItemInstance) objects[0]), new Player((long) objects[1]));
+                function.call(new ItemStack((ScriptableObject) objects[0]), new Player((long) objects[1]));
                 return null;
             }
         }, 0);
@@ -244,7 +244,7 @@ public class Event {
         Callback.addCallback(Events.EntityPickUpDrop, new ScriptableFunctionImpl() {
             @Override
             public Object call(Context context, Scriptable scriptable, Scriptable scriptable1, Object[] objects) {
-                function.call(Entity.from((long) objects[0]), new EntityItem((long) objects[1]), new ItemStack((ItemInstance) objects[2]), (int) objects[3]);
+                function.call(Entity.from((long) objects[0]), new EntityItem((long) objects[1]), new ItemStack((ScriptableObject) objects[2]), (int) objects[3]);
                 return null;
             }
         }, 0);
@@ -254,7 +254,7 @@ public class Event {
         Callback.addCallback(Events.ProjectileHit, new ScriptableFunctionImpl() {
             @Override
             public Object call(Context context, Scriptable scriptable, Scriptable scriptable1, Object[] objects) {
-                function.call(new EntityProjectile((long) objects[0]), new ItemStack((ItemInstance) objects[1]), new ProjectileHitTarget((ScriptableParams) objects[2]));
+                function.call(new EntityProjectile((long) objects[0]), new ItemStack((ScriptableObject) objects[1]), new ProjectileHitTarget((ScriptableParams) objects[2]));
                 return null;
             }
         }, 0);

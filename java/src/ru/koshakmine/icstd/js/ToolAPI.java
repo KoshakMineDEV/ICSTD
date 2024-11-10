@@ -111,7 +111,7 @@ public class ToolAPI {
                         Level.getForRegion((NativeBlockSource) args[6]),
                         ((Number) args[3]).intValue(),
                         new EnchantData((Scriptable) args[4]),
-                        new ItemStack((ItemInstance) args[5])
+                        new ItemStack((ScriptableObject) args[5])
                 );
 
                 final NativeArray array = ScriptableObjectHelper.createEmptyArray();

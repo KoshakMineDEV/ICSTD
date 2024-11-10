@@ -29,12 +29,15 @@ public class ItemStack {
         this(id, 1, data);
     }
 
-    @Deprecated
-    public ItemStack(long ptr){
+    public static ItemStack fromPointer(long ptr){
+        return new ItemStack(ptr);
+    }
+
+    private ItemStack(long ptr){
         build(new NativeItemInstance(ptr));
     }
 
-    public ItemStack(ItemInstance instance) {
+    public ItemStack(ScriptableObject instance) {
         build(instance);
     }
 
