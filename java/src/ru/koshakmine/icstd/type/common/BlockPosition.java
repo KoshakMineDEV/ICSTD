@@ -1,6 +1,5 @@
 package ru.koshakmine.icstd.type.common;
 
-import com.zhekasmirnov.innercore.api.commontypes.Coords;
 import org.mozilla.javascript.ScriptableObject;
 
 public class BlockPosition extends Position {
@@ -8,7 +7,7 @@ public class BlockPosition extends Position {
     public Position vec;
     public Position relative;
 
-    public BlockPosition(Coords coords) {
+    public BlockPosition(ScriptableObject coords) {
         super(coords);
 
         this.side = (int) coords.get("side", coords);

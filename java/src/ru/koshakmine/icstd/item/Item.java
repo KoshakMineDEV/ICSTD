@@ -2,10 +2,10 @@ package ru.koshakmine.icstd.item;
 
 import com.zhekasmirnov.apparatus.mcpe.NativeBlockSource;
 import com.zhekasmirnov.innercore.api.NativeItem;
-import com.zhekasmirnov.innercore.api.commontypes.Coords;
 import com.zhekasmirnov.innercore.api.commontypes.ItemInstance;
 import com.zhekasmirnov.innercore.api.mod.adaptedscript.AdaptedScriptAPI;
 import com.zhekasmirnov.innercore.api.unlimited.IDRegistry;
+import org.mozilla.javascript.ScriptableObject;
 import ru.koshakmine.icstd.entity.Player;
 import ru.koshakmine.icstd.event.Event;
 import ru.koshakmine.icstd.event.Events;
@@ -77,7 +77,7 @@ public abstract class Item implements IBaseRegisterGameObject {
             final DispenseComponent dispense = dispenses.get(item.id);
 
             if(dispense != null){
-                dispense.onDispense(new BlockPosition((Coords) args[0]), item, Level.getForRegion((NativeBlockSource) args[2]), ((Number) args[3]).intValue());
+                dispense.onDispense(new BlockPosition((ScriptableObject) args[0]), item, Level.getForRegion((NativeBlockSource) args[2]), ((Number) args[3]).intValue());
             }
         });
 

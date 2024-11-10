@@ -119,6 +119,22 @@ public class ItemStack {
         return this;
     }
 
+    public int getMaxStack(){
+        return NativeItem.getMaxStackForId(id, data);
+    }
+
+    public int getMaxDamage(){
+        return NativeItem.getMaxDamageForId(id, data);
+    }
+
+    public int getArmorValue(){
+        return NativeItem.getArmorValue(id);
+    }
+
+    public String getName(){
+        return NativeItem.getNameForId(id, data);
+    }
+
     public NativeArray toDrop(){
         final NativeArray drop = ScriptableObjectHelper.createEmptyArray();
 

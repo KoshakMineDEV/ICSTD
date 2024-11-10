@@ -1,7 +1,7 @@
 package ru.koshakmine.icstd.type.common;
 
-import com.zhekasmirnov.innercore.api.commontypes.Coords;
 import com.zhekasmirnov.innercore.api.commontypes.ScriptableParams;
+import org.mozilla.javascript.ScriptableObject;
 import ru.koshakmine.icstd.entity.Entity;
 
 public class ProjectileHitTarget {
@@ -14,7 +14,7 @@ public class ProjectileHitTarget {
        this.y = (float) params.get("y", params);
        this.z = (float) params.get("z", params);
        this.entity = Entity.from((long) params.get("entity", params));
-       this.position = new BlockPosition((Coords) params.get("coords", params));
+       this.position = new BlockPosition((ScriptableObject) params.get("coords", params));
    }
 
     @Override
