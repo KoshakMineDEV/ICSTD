@@ -1,18 +1,18 @@
 package ru.koshakmine.icstd.type.common;
 
-import org.mozilla.javascript.ScriptableObject;
+import org.mozilla.javascript.Scriptable;
 
 public class BlockPosition extends Position {
     public int side;
     public Position vec;
     public Position relative;
 
-    public BlockPosition(ScriptableObject coords) {
+    public BlockPosition(Scriptable coords) {
         super(coords);
 
-        this.side = (int) coords.get("side", coords);
-        this.vec = new Position((ScriptableObject) coords.get("vec", coords));
-        this.relative = new Position((ScriptableObject) coords.get("relative", coords));
+        this.side = ((Number) coords.get("side", coords)).intValue();
+        this.vec = new Position((Scriptable) coords.get("vec", coords));
+        this.relative = new Position((Scriptable) coords.get("relative", coords));
     }
 
     @Override

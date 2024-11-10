@@ -4,6 +4,7 @@ import com.zhekasmirnov.apparatus.adapter.innercore.game.common.Vector3;
 import com.zhekasmirnov.innercore.api.commontypes.Coords;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.mozilla.javascript.Scriptable;
 import org.mozilla.javascript.ScriptableObject;
 
 import java.util.Objects;
@@ -11,8 +12,8 @@ import java.util.Objects;
 public class Position extends Vector3 {
     public static final Position EMPTY = new Position(0, 0, 0);
 
-    private static float getCoord(ScriptableObject coords, String name){
-        final Object value = coords.get(name);
+    private static float getCoord(Scriptable coords, String name){
+        final Object value = coords.get(name, coords);
 
         if(value instanceof Number){
             return ((Number) value).floatValue();
@@ -21,7 +22,7 @@ public class Position extends Vector3 {
         return 0;
     }
 
-    public Position(ScriptableObject coords){
+    public Position(Scriptable coords){
         super(getCoord(coords, "x"), getCoord(coords, "y"), getCoord(coords, "z"));
     }
 

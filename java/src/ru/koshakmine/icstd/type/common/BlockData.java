@@ -1,14 +1,14 @@
 package ru.koshakmine.icstd.type.common;
 
 import com.zhekasmirnov.apparatus.adapter.innercore.game.block.BlockState;
-import com.zhekasmirnov.innercore.api.commontypes.FullBlock;
+import org.mozilla.javascript.Scriptable;
 
 public class BlockData {
     public int id, data;
 
-    public BlockData(FullBlock block) {
-        this.id = block.id;
-        this.data = block.data;
+    public BlockData(Scriptable block) {
+        this.id = ((Number) block.get("id", block)).intValue();
+        this.data = ((Number) block.get("data", block)).intValue();
     }
 
     public BlockData(int id, int data){
