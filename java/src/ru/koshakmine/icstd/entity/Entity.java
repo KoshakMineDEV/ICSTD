@@ -286,4 +286,8 @@ public class Entity {
     public void damage(int damage, int cause, Entity attacker, boolean bool1, boolean bool2) {
         NativeAPI.dealDamage(uid, damage, cause, getUid(attacker), bool1, bool2);
     }
+
+    public void transferDimension(int dimension) {
+        NativeAPI.transferToDimension(uid, dimension);
+    }
 }

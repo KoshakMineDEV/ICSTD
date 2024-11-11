@@ -83,9 +83,9 @@ public abstract class BlockPlantBase extends Block implements NeighbourChangeCom
             new float[]{0.85f, 1, 0.15f, 0, 0}
     };
 
-    protected NativeICRender.Model getModel(float x_offset, float z_offset) {
+    public static NativeICRender.Model getModel(String texture, float x_offset, float z_offset) {
         final NativeRenderMesh mesh = new NativeRenderMesh();
-        mesh.setBlockTexture(getTexture(), 0);
+        mesh.setBlockTexture(texture, 0);
 
         for(int i = 0; i < 12; i++){
             final float[] poly = PLANT_VERTEX[i];
@@ -107,7 +107,7 @@ public abstract class BlockPlantBase extends Block implements NeighbourChangeCom
         shape.addEntry().addBox(7 / 8f, 1, 7 / 8f, 1 / 8f, 0, 1 / 8f);
 
         NativeBlockRenderer.setCustomCollisionShape(getNumId(), -1, shape);
-        NativeBlockRenderer.setStaticICRender(getNumId(), -1, getModel(0, 0));
+        NativeBlockRenderer.setStaticICRender(getNumId(), -1, getModel(getTexture(), 0, 0));
     }
 
     public BlockPlantBase setPlantItem(PlantBaseItem plantItem) {

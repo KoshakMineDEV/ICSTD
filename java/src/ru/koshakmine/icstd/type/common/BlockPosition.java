@@ -2,6 +2,8 @@ package ru.koshakmine.icstd.type.common;
 
 import org.mozilla.javascript.Scriptable;
 
+import java.util.Objects;
+
 public class BlockPosition extends Position {
     public int side;
     public Position vec;
@@ -25,5 +27,18 @@ public class BlockPosition extends Position {
                 ", z=" + z +
                 ", y=" + y +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        if (this == object) return true;
+        if (object == null || getClass() != object.getClass()) return false;
+        BlockPosition that = (BlockPosition) object;
+        return side == that.side && Objects.equals(vec, that.vec) && Objects.equals(relative, that.relative);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(side, vec, relative);
     }
 }

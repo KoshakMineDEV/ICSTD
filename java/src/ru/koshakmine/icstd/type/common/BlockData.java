@@ -3,6 +3,8 @@ package ru.koshakmine.icstd.type.common;
 import com.zhekasmirnov.apparatus.adapter.innercore.game.block.BlockState;
 import org.mozilla.javascript.Scriptable;
 
+import java.util.Objects;
+
 public class BlockData {
     public int id, data;
 
@@ -27,5 +29,18 @@ public class BlockData {
     @Override
     public String toString() {
         return "BlockData{id=" + id + ", data=" + data + "}";
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        if (this == object) return true;
+        if (object == null || getClass() != object.getClass()) return false;
+        BlockData blockData = (BlockData) object;
+        return id == blockData.id && data == blockData.data;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, data);
     }
 }

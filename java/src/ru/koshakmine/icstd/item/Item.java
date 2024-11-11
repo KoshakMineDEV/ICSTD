@@ -2,7 +2,6 @@ package ru.koshakmine.icstd.item;
 
 import com.zhekasmirnov.apparatus.mcpe.NativeBlockSource;
 import com.zhekasmirnov.innercore.api.NativeItem;
-import com.zhekasmirnov.innercore.api.commontypes.ItemInstance;
 import com.zhekasmirnov.innercore.api.mod.adaptedscript.AdaptedScriptAPI;
 import com.zhekasmirnov.innercore.api.unlimited.IDRegistry;
 import org.mozilla.javascript.ScriptableObject;
@@ -197,10 +196,6 @@ public abstract class Item implements IBaseRegisterGameObject {
     public static void registerEvents(IBaseRegisterGameObject self){
         final int id = self.getNumId();
 
-        if (self instanceof ClickableComponent) {
-            clickable.put(id, (ClickableComponent) self);
-        }
-
         if (self instanceof FurnaceBurnComponent) {
             RecipeRegistry.addFurnaceFuel(id, -1, ((FurnaceBurnComponent) self).getFuelBurn());
         }
@@ -227,6 +222,10 @@ public abstract class Item implements IBaseRegisterGameObject {
             item.setUseAnimation(usingItem.getType().ordinal());
 
             using.put(id, usingItem);
+        }
+
+        if (this instanceof ClickableComponent) {
+            clickable.put(id, (ClickableComponent) this);
         }
 
         registerEvents(this);
