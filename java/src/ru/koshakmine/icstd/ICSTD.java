@@ -15,7 +15,6 @@ import ru.koshakmine.icstd.runtime.PostLevelLoaded;
 /**
  * TODO LIST
  * Кеширование Player для более высокой производительности и экономии памяти
- * api для кастумных измерений
  * api для кастумных зачарований
  * api для комманд
  */
