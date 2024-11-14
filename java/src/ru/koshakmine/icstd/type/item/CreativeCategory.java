@@ -1,4 +1,4 @@
-package ru.koshakmine.icstd.type;
+package ru.koshakmine.icstd.type.item;
 
 public enum CreativeCategory {
     TOOLS,

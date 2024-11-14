@@ -99,25 +99,27 @@ public class ItemStack implements Cloneable {
         return count == 0;
     }
 
-    public void set(int id, int count, int data, NativeItemInstanceExtra extra){
+    public ItemStack set(int id, int count, int data, NativeItemInstanceExtra extra){
         this.id = id;
         this.count = count;
         this.data = data;
         this.extra = extra;
+        return this;
     }
 
-    public void reset(){
+    public ItemStack reset(){
         id = 0;
         data = 0;
         count = 0;
         extra = null;
+        return this;
     }
 
-    public void applyDamage(int damage){
+    public ItemStack applyDamage(int damage){
         data += damage;
-        if(data >= NativeItem.getMaxDamageForId(id, 0)){
+        if(data >= getMaxData())
             reset();
-        }
+        return this;
     }
 
     public ItemStack decrease(int count){

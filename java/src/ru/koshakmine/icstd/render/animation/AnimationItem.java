@@ -5,6 +5,7 @@ import ru.koshakmine.icstd.runtime.Updatable;
 
 public class AnimationItem extends AnimationStaticItem {
     private float speed = 0.03f;
+    private final Object lock = new Object();
 
     public AnimationItem(float x, float y, float z) {
         super(x, y, z);
@@ -12,8 +13,10 @@ public class AnimationItem extends AnimationStaticItem {
 
     @Override
     public void updateRender() {
-        setInterpolationEnabled(true);
-        super.updateRender();
+        synchronized (lock) {
+            setInterpolationEnabled(true);
+            super.updateRender();
+        }
     }
 
     public void setSpeed(float speed) {
@@ -33,11 +36,15 @@ public class AnimationItem extends AnimationStaticItem {
 
             @Override
             public boolean update() {
-                transform.lock();// Спаси и сохрани
-                transform.rotate(0, speed, 0);
-                transform.unlock();
-
-                return !isLoaded();
+                synchronized (lock) {
+                    if (isLoaded()) {
+                        transform.lock();
+                        transform.rotate(0, speed, 0);
+                        transform.unlock();
+                        return false;
+                    }
+                }
+                return true;
             }
         });
     }

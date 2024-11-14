@@ -34,6 +34,11 @@ public class ICSTD extends Mod {
     }
 
     @Override
+    public boolean isClient() {
+        return true;
+    }
+
+    @Override
     public void runMod(ObjectFactory factory) {
         final Config config = getConfig();
         try{

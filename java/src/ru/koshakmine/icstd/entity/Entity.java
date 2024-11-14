@@ -6,7 +6,7 @@ import com.zhekasmirnov.innercore.api.constants.EntityType;
 import com.zhekasmirnov.innercore.api.mod.adaptedscript.AdaptedScriptAPI;
 import com.zhekasmirnov.innercore.api.nbt.NativeCompoundTag;
 import ru.koshakmine.icstd.level.Level;
-import ru.koshakmine.icstd.type.ArmorSlot;
+import ru.koshakmine.icstd.type.item.ArmorSlot;
 import ru.koshakmine.icstd.type.common.ItemStack;
 import ru.koshakmine.icstd.type.common.Position;
 import ru.koshakmine.icstd.type.entity.Effect;
@@ -44,7 +44,7 @@ public class Entity {
         return NativeAPI.getEntityTypeName(uid);
     }
 
-    public Level getRegion(){
+    public Level getLevel(){
         return Level.getForActor(uid);
     }
 

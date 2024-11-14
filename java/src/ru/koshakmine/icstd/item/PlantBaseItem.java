@@ -16,8 +16,9 @@ public class PlantBaseItem extends Item implements ClickableComponent {
     private final Block plantBlock;
 
     public PlantBaseItem(Block block){
-        if(block instanceof BlockPlantBase) this.plantBlock = ((BlockPlantBase) block).setPlantItem(this);
-        else throw new RuntimeException("Not block plant");
+        this.plantBlock = block;
+        if(block instanceof BlockPlantBase)
+            ((BlockPlantBase) block).setPlantItem(this);
     }
 
     @Override
@@ -45,7 +46,7 @@ public class PlantBaseItem extends Item implements ClickableComponent {
 
     @Override
     public void onClick(BlockPosition position, ItemStack item, BlockData block, Player player) {
-        final Level region = player.getRegion();
+        final Level region = player.getLevel();
         final BlockState tile = region.getBlock(position.relative);
         final int id = region.getBlockId(position.relative.add(0, -1, 0));
 

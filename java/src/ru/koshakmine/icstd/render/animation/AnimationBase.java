@@ -154,8 +154,11 @@ public class AnimationBase<T extends AnimationBase> {
         load();
         T self = (T) this;
         Updatable.addUpdatable(NetworkSide.LOCAL, () -> {
-            update.update(self);
-            return !isLoaded();
+            if(isLoaded()) {
+                update.update(self);
+                return false;
+            }
+            return true;
         });
     }
 

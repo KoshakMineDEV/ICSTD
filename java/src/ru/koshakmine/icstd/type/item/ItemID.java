@@ -1,4 +1,4 @@
-package ru.koshakmine.icstd.type;
+package ru.koshakmine.icstd.type.item;
 
 import com.zhekasmirnov.innercore.api.unlimited.IDRegistry;
 

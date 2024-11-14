@@ -31,7 +31,7 @@ import ru.koshakmine.icstd.level.Level;
 import ru.koshakmine.icstd.modloader.IBaseRegisterGameObject;
 import ru.koshakmine.icstd.modloader.Mod;
 import ru.koshakmine.icstd.modloader.ObjectFactory;
-import ru.koshakmine.icstd.type.CreativeCategory;
+import ru.koshakmine.icstd.type.item.CreativeCategory;
 import ru.koshakmine.icstd.type.block.SoundType;
 import ru.koshakmine.icstd.type.common.BlockData;
 import ru.koshakmine.icstd.type.common.ItemStack;
@@ -176,7 +176,7 @@ public abstract class Block implements IBaseRegisterGameObject {
 
         Event.onItemUse(((position, item, block, player) -> {
             final PlaceComponent place = placed.get(item.id);
-            final Level level = player.getRegion();
+            final Level level = player.getLevel();
 
             final BlockEntityManager SERVER_MANAGER = BlockEntity.getManager();
             final BlockEntityRegistry<BlockEntityHolderComponent> SERVER_REGISTRY = BlockEntity.getRegistry();
@@ -398,7 +398,7 @@ public abstract class Block implements IBaseRegisterGameObject {
     }
 
     private int data;
-    public void addVariant(String name, String[] textures){
+    public void addVariant(String name, String[] textures, boolean inCreative) {
         if(data >= 16)
             throw new RuntimeException("Limit variant block");
 
@@ -414,6 +414,12 @@ public abstract class Block implements IBaseRegisterGameObject {
             model.setCacheKey("modded");
         }
         model.isLazyLoading = variant.isTechnical;
+
+        if(inCreative) NativeItem.addToCreative(getNumId(), 1, data - 1, null);
+    }
+
+    public void addVariant(String name, String[] textures) {
+        addVariant(name, textures, getCreativeCategory() != null);
     }
 
     public NativeBlock createBlock(){
@@ -527,7 +533,6 @@ public abstract class Block implements IBaseRegisterGameObject {
 
         final CreativeCategory category = getCreativeCategory();
         if (category != null) {
-            NativeItem.addToCreative(getNumId(), 1, 0, null);
             NativeItem.setCategoryForId(getNumId(), category.ordinal());
             final ItemGroup group = getCreativeItemGroup();
             if(group != null)

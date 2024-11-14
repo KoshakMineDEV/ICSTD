@@ -1,7 +1,7 @@
 package ru.koshakmine.icstd.recipes.workbench;
 
 import com.zhekasmirnov.innercore.api.NativeItemInstanceExtra;
-import ru.koshakmine.icstd.type.ItemID;
+import ru.koshakmine.icstd.type.item.ItemID;
 import ru.koshakmine.icstd.type.block.BlockID;
 import ru.koshakmine.icstd.type.common.ItemStack;
 

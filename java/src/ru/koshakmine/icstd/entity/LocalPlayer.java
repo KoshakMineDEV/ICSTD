@@ -10,7 +10,7 @@ public class LocalPlayer extends Player {
     }
 
     @Override
-    public Level getRegion() {
+    public Level getLevel() {
         return Level.getLocalLevel();
     }
 
