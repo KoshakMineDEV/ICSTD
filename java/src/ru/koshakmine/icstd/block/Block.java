@@ -31,9 +31,10 @@ import ru.koshakmine.icstd.level.Level;
 import ru.koshakmine.icstd.modloader.IBaseRegisterGameObject;
 import ru.koshakmine.icstd.modloader.Mod;
 import ru.koshakmine.icstd.modloader.ObjectFactory;
-import ru.koshakmine.icstd.type.CreativeCategory;
+import ru.koshakmine.icstd.type.item.CreativeCategory;
 import ru.koshakmine.icstd.type.block.SoundType;
 import ru.koshakmine.icstd.type.common.BlockData;
+import ru.koshakmine.icstd.type.common.ItemStack;
 import ru.koshakmine.icstd.type.common.Position;
 import ru.koshakmine.icstd.type.tools.BlockMaterials;
 
@@ -175,7 +176,7 @@ public abstract class Block implements IBaseRegisterGameObject {
 
         Event.onItemUse(((position, item, block, player) -> {
             final PlaceComponent place = placed.get(item.id);
-            final Level level = player.getRegion();
+            final Level level = player.getLevel();
 
             final BlockEntityManager SERVER_MANAGER = BlockEntity.getManager();
             final BlockEntityRegistry<BlockEntityHolderComponent> SERVER_REGISTRY = BlockEntity.getRegistry();
@@ -380,23 +381,45 @@ public abstract class Block implements IBaseRegisterGameObject {
         return fixedTextures;
     }
 
+    private int[] getMetaForTexture(String[] textures){
+        final int[] metas = new int[textures.length];
+
+        for(int i = 0;i < textures.length;i++) {
+            final String[] split = textures[i].split("_");
+            try {
+                metas[i] = Integer.parseInt(split[split.length - 1]);
+                textures[i] = textures[i].replace("_"+metas[i], "");
+            }catch (Exception ignore) {
+                metas[i] = 0;
+            }
+        }
+
+        return metas;
+    }
+
     private int data;
-    public void addVariant(String name, String[] textures){
+    public void addVariant(String name, String[] textures, boolean inCreative) {
         if(data >= 16)
             throw new RuntimeException("Limit variant block");
 
         textures = fixedTextures(textures);
-        final BlockVariant variant = new BlockVariant(getNumId(), data++, name, textures, new int[textures.length], false);
+        final BlockVariant variant = new BlockVariant(getNumId(), data++, name, textures, getMetaForTexture(textures), false);
         block.addVariant(name, variant.textures, variant.textureIds);
         blockVariantMap.put(new IDDataPair(variant.uid, variant.data), variant);
 
 
-    final NativeItemModel model = NativeItemModel.getFor(variant.uid, variant.data);
+        final NativeItemModel model = NativeItemModel.getFor(variant.uid, variant.data);
         model.updateForBlockVariant(variant);
         if(model.getCacheKey() == null){
             model.setCacheKey("modded");
         }
         model.isLazyLoading = variant.isTechnical;
+
+        if(inCreative) NativeItem.addToCreative(getNumId(), 1, data - 1, null);
+    }
+
+    public void addVariant(String name, String[] textures) {
+        addVariant(name, textures, getCreativeCategory() != null);
     }
 
     public NativeBlock createBlock(){
@@ -510,7 +533,6 @@ public abstract class Block implements IBaseRegisterGameObject {
 
         final CreativeCategory category = getCreativeCategory();
         if (category != null) {
-            NativeItem.addToCreative(getNumId(), 1, 0, null);
             NativeItem.setCategoryForId(getNumId(), category.ordinal());
             final ItemGroup group = getCreativeItemGroup();
             if(group != null)
@@ -528,5 +550,17 @@ public abstract class Block implements IBaseRegisterGameObject {
 
     public BlockData getBlockData(){
         return new BlockData(getNumId());
+    }
+
+    public ItemStack getStack(int count, int data) {
+        return new ItemStack(getNumId(), count, data);
+    }
+
+    public ItemStack getStack(int count) {
+        return getStack(count, 0);
+    }
+
+    public ItemStack getStack() {
+        return getStack(1, 0);
     }
 }

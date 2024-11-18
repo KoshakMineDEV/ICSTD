@@ -22,4 +22,12 @@ public class ChunkPos {
     public int hashCode() {
         return Objects.hash(x, z);
     }
+
+    @Override
+    public String toString() {
+        return "ChunkPos{" +
+                "x=" + x +
+                ", z=" + z +
+                '}';
+    }
 }

@@ -13,5 +13,13 @@ public class Texture {
         this(texture, 0);
     }
 
+    @Override
+    public String toString() {
+        return "Texture{" +
+                "texture='" + texture + '\'' +
+                ", meta=" + meta +
+                '}';
+    }
+
     public static final Texture EMPTY = new Texture("missing");
 }

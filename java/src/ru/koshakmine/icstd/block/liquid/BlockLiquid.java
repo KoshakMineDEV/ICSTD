@@ -9,7 +9,7 @@ import ru.koshakmine.icstd.entity.Player;
 import ru.koshakmine.icstd.item.event.ClickableComponent;
 import ru.koshakmine.icstd.js.LiquidRegistry;
 import ru.koshakmine.icstd.level.Level;
-import ru.koshakmine.icstd.type.ItemID;
+import ru.koshakmine.icstd.type.item.ItemID;
 import ru.koshakmine.icstd.type.common.BlockData;
 import ru.koshakmine.icstd.type.common.BlockPosition;
 import ru.koshakmine.icstd.type.common.ItemStack;
@@ -92,7 +92,7 @@ public abstract class BlockLiquid extends Block implements ClickableComponent {
     @Override
     public void onClick(BlockPosition position, ItemStack item, BlockData block, Player player) {
         if (block.data == 0 && item.id == ItemID.BUCKET && item.data == 0) {
-            Level level = player.getRegion();
+            Level level = player.getLevel();
 
             NativeAPI.preventDefault();
             level.setBlock(position, 0, 0);

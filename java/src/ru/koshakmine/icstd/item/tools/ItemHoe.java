@@ -17,7 +17,7 @@ public abstract class ItemHoe extends ItemTool implements ClickableComponent {
     @Override
     public void onClick(BlockPosition position, ItemStack item, BlockData block, Player player) {
         if ((block.id == 2 || block.id == 3) && position.side != 0) {
-            final Level region = player.getRegion();
+            final Level region = player.getLevel();
 
             if (region.getBlockId(position.add(0, 1, 0)) != 0)
                 return;

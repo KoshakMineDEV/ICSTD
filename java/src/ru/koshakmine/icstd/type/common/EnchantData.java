@@ -51,4 +51,15 @@ public class EnchantData {
 
         return self;
     }
+
+    @Override
+    public String toString() {
+        return "EnchantData{" +
+                "efficiency=" + efficiency +
+                ", experience=" + experience +
+                ", fortune=" + fortune +
+                ", silk=" + silk +
+                ", unbreaking=" + unbreaking +
+                '}';
+    }
 }

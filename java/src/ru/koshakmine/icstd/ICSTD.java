@@ -15,7 +15,6 @@ import ru.koshakmine.icstd.runtime.PostLevelLoaded;
 /**
  * TODO LIST
  * Кеширование Player для более высокой производительности и экономии памяти
- * api для кастумных измерений
  * api для кастумных зачарований
  * api для комманд
  */
@@ -32,6 +31,11 @@ public class ICSTD extends Mod {
 
     public ICSTD(String dir, LegacyInnerCoreMod mod) {
         super(dir, mod);
+    }
+
+    @Override
+    public boolean isClient() {
+        return true;
     }
 
     @Override

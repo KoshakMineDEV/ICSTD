@@ -10,42 +10,42 @@ import ru.koshakmine.icstd.type.common.Position;
 public class AnimationBase<T extends AnimationBase> {
     public class Transform {
         public Transform clear(){
-            NativeStaticRenderer.transformClear(ptr);
+            if(ptr != -1) NativeStaticRenderer.transformClear(ptr);
             return this;
         }
 
         public Transform lock(){
-            NativeStaticRenderer.transformLock(ptr);
+            if(ptr != -1) NativeStaticRenderer.transformLock(ptr);
             return this;
         }
 
         public Transform unlock(){
-            NativeStaticRenderer.transformUnlock(ptr);
+            if(ptr != -1) NativeStaticRenderer.transformUnlock(ptr);
             return this;
         }
 
         public Transform matrix(float f0, float f1, float f2, float f3, float f4, float f5, float f6, float f7, float f8, float f9, float f10, float f11, float f12, float f13, float f14, float f15){
-            NativeStaticRenderer.transformAddTransform(ptr, f0, f1, f2, f3, f4, f5, f6, f7, f8, f9, f10, f11, f12, f13, f14, f15);
+            if(ptr != -1) NativeStaticRenderer.transformAddTransform(ptr, f0, f1, f2, f3, f4, f5, f6, f7, f8, f9, f10, f11, f12, f13, f14, f15);
             return this;
         }
 
         public Transform scale(float x, float y, float z){
-            NativeStaticRenderer.transformScale(ptr, x, y, z);
+            if(ptr != -1) NativeStaticRenderer.transformScale(ptr, x, y, z);
             return this;
         }
 
         public Transform scaleLegacy(float scale){
-            NativeStaticRenderer.transformScaleLegacy(ptr, scale);
+            if(ptr != -1) NativeStaticRenderer.transformScaleLegacy(ptr, scale);
             return this;
         }
 
         public Transform rotate(double x, double y, double z){
-            NativeStaticRenderer.transformRotate(ptr, (float) x, (float) y, (float) z);
+            if(ptr != -1) NativeStaticRenderer.transformRotate(ptr, (float) x, (float) y, (float) z);
             return this;
         }
 
         public Transform translate(double x, double y, double z){
-            NativeStaticRenderer.transformTranslate(ptr, (float) x, (float) y, (float) z);
+            if(ptr != -1) NativeStaticRenderer.transformTranslate(ptr, (float) x, (float) y, (float) z);
             return this;
         }
     }
@@ -137,6 +137,7 @@ public class AnimationBase<T extends AnimationBase> {
             setMesh(this.mesh, this.skin);
         }else if(ptr != -1){
             NativeStaticRenderer.remove(ptr);
+            NativeStaticRenderer.finalizeNative(ptr);
             ptr = -1;
         }
     }
@@ -146,7 +147,7 @@ public class AnimationBase<T extends AnimationBase> {
         if(ptr != -1){
             destroy();
         }
-        ptr = NativeStaticRenderer.createStaticRenderer(-1, position.x, position.y, position.z);
+        ptr = NativeStaticRenderer.createStaticRenderer(0, position.x, position.y, position.z);
         updateRender();
     }
 
@@ -154,8 +155,11 @@ public class AnimationBase<T extends AnimationBase> {
         load();
         T self = (T) this;
         Updatable.addUpdatable(NetworkSide.LOCAL, () -> {
-            update.update(self);
-            return !isLoaded();
+            if(isLoaded()) {
+                update.update(self);
+                return false;
+            }
+            return true;
         });
     }
 
@@ -165,7 +169,9 @@ public class AnimationBase<T extends AnimationBase> {
     }
 
     public NativeShaderUniformSet getShaderUniforms(){
-        return new NativeShaderUniformSet(NativeStaticRenderer.nativeGetShaderUniformSet(ptr));
+        if(ptr != -1)
+            return new NativeShaderUniformSet(NativeStaticRenderer.nativeGetShaderUniformSet(ptr));
+        return null;
     }
 
     @Override

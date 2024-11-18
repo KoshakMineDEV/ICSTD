@@ -13,16 +13,19 @@ import ru.koshakmine.icstd.type.common.ItemStack;
 import ru.koshakmine.icstd.type.common.Texture;
 
 public class PlantBaseItem extends Item implements ClickableComponent {
-    private final BlockPlantBase plantBlock;
+    private final Block plantBlock;
 
     public PlantBaseItem(Block block){
-        if(block instanceof BlockPlantBase) this.plantBlock = ((BlockPlantBase) block).setPlantItem(this);
-        else throw new RuntimeException("Not block plant");
+        this.plantBlock = block;
+        if(block instanceof BlockPlantBase)
+            ((BlockPlantBase) block).setPlantItem(this);
     }
 
     @Override
     public Texture getTexture() {
-        return new Texture(plantBlock.getTexture());
+        if(plantBlock instanceof BlockPlantBase)
+            return new Texture(((BlockPlantBase) plantBlock).getTexture());
+        throw new RuntimeException("Not texture");
     }
 
     @Override
@@ -35,13 +38,19 @@ public class PlantBaseItem extends Item implements ClickableComponent {
         return plantBlock.getName();
     }
 
+    public boolean canPlantStand(int id) {
+        if(plantBlock instanceof BlockPlantBase)
+            return ((BlockPlantBase) plantBlock).canPlantStand(id);
+        return true;
+    }
+
     @Override
     public void onClick(BlockPosition position, ItemStack item, BlockData block, Player player) {
-        final Level region = player.getRegion();
+        final Level region = player.getLevel();
         final BlockState tile = region.getBlock(position.relative);
         final int id = region.getBlockId(position.relative.add(0, -1, 0));
 
-        if(!NativeAPI.isDefaultPrevented() && Block.canTileBeReplaced(tile.id, tile.data) && plantBlock.canPlantStand(id)) {
+        if(!NativeAPI.isDefaultPrevented() && Block.canTileBeReplaced(tile.id, tile.data) && canPlantStand(id)) {
             region.setBlock(position.relative, plantBlock.getNumId(), 0);
             player.setCarriedItem(item.decrease(1));
         }

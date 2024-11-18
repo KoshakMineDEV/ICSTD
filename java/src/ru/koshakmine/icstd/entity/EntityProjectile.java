@@ -9,6 +9,6 @@ public class EntityProjectile extends Entity {
     }
 
     public ItemStack getDroppedItem(){
-        return new ItemStack(NativeAPI.getItemFromProjectile(uid));
+        return ItemStack.fromPointer(NativeAPI.getItemFromProjectile(uid));
     }
 }

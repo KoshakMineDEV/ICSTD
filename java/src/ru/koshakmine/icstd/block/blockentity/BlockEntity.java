@@ -50,8 +50,14 @@ public class BlockEntity extends BlockEntityBase implements IRuntimeSaveObject {
                     if (level != null) {
                         try {
                             final BlockEntity blockEntity = builder.createBlockEntity(new Position(jsonObject.getJSONObject("p")), level);
-                            blockEntity.onLoad(jsonObject);
-                            SERVER_MANAGER.addBlockEntity(blockEntity);
+                            SERVER_MANAGER.addBlockEntity(blockEntity, (ent -> {
+                                try {
+                                    blockEntity.onLoad(jsonObject);
+                                } catch (JSONException e) {
+                                    throw new RuntimeException(e);
+                                }
+                                return null;
+                            }));
                         } catch (JSONException e) {
                         }
                     }

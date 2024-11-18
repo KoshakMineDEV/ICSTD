@@ -74,6 +74,9 @@ TileEntity.getTileEntity = function(x: number, y: number, z:number, region?: Blo
 }
 
 function optiTile(tileEntity){
+    if(tileEntity.___optiTile___) return;
+    tileEntity.___optiTile___ = true;
+
     tileEntity.update = function(){
         if (this.isLoaded) {
             if (!this.__initialized) {
@@ -94,7 +97,7 @@ function optiTile(tileEntity){
         tileEntity[key] = fakeTile[key];
     }
 
-    // Хрен пойми откуда rhinon получает add
+    // Хрен пойми откуда rhino получает add
     if(fakeTile.energyTick){
         tileEntity.energyTick = function(name, node){
             fakeTile.energyTick(name, node, node.add);

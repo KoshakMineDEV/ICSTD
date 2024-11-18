@@ -14,6 +14,7 @@ import ru.koshakmine.icstd.type.common.Position;
 
 import java.util.Iterator;
 import java.util.concurrent.*;
+import java.util.function.Function;
 
 public class BlockEntityManager {
     public interface IUpdateBlockEntity {
@@ -82,7 +83,9 @@ public class BlockEntityManager {
         }
     }
 
-    public boolean addBlockEntity(BlockEntityBase entity){
+    private static final  Function<BlockEntityBase, Void> EMPTY = entityBase -> null;
+
+    public boolean addBlockEntity(BlockEntityBase entity, Function<BlockEntityBase, Void> func){
         final BlockEntityBase coordsEnitty = getBlockEntity(entity.getPosition(), entity.getLevel());
 
         if(coordsEnitty == null) {
@@ -96,6 +99,7 @@ public class BlockEntityManager {
                     if(!entity.canRemove()) {
                         entity.onInit();
                         entity.fullInit = true;
+                        func.apply(entity);
                     }
                 });
             }else{
@@ -103,6 +107,7 @@ public class BlockEntityManager {
                     if(!entity.canRemove()) {
                         entity.onInit();
                         entity.fullInit = true;
+                        func.apply(entity);
                     }
                 });
             }
@@ -111,6 +116,10 @@ public class BlockEntityManager {
         }
 
         return false;
+    }
+
+    public boolean addBlockEntity(BlockEntityBase entity) {
+        return addBlockEntity(entity, EMPTY);
     }
 
     public BlockEntityBase getBlockEntity(int x, int y, int z, int dimension){
