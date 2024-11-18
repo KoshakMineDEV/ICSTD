@@ -1,6 +1,5 @@
 package ru.koshakmine.icstd.level.dimensions;
 
-import com.zhekasmirnov.horizon.runtime.logger.Logger;
 import com.zhekasmirnov.horizon.util.FileUtils;
 import com.zhekasmirnov.innercore.api.dimensions.*;
 import org.json.JSONArray;
@@ -387,10 +386,7 @@ public abstract class CustomDimension implements IBaseRegisterGameObject {
         return terrain;
     }
 
-    protected CustomDimensionGenerator onLoadGenerator(String path) throws IOException, JSONException {
-        if(path == null) return new CustomDimensionGenerator("overworld");
-
-        final JSONObject json = FileUtils.readJSON(new File(path));
+    protected CustomDimensionGenerator onLoadGenerator(JSONObject json) throws IOException, JSONException {
         final CustomDimensionGenerator generator = new CustomDimensionGenerator(json.optString("base", "overworld"));
 
         if(json.has("buildVanillaSurfaces"))
@@ -437,7 +433,7 @@ public abstract class CustomDimension implements IBaseRegisterGameObject {
         dimension.setHasSkyLight(hasSkyLight());
 
         try {
-            dimension.setGenerator(onLoadGenerator(getGeneratorPath()));
+            dimension.setGenerator(onLoadGenerator(FileUtils.readJSON(new File(getGeneratorPath()))));
         } catch (IOException | JSONException e) {
             throw new RuntimeException(e);
         }
