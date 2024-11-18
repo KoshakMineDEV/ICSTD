@@ -261,7 +261,7 @@ public abstract class CustomDimension implements IBaseRegisterGameObject {
         } else if(json instanceof JSONObject) {
             final JSONObject object = (JSONObject) json;
             return new BlockDataWidth(
-                    object.optInt("id", 0),
+                    getIdByBlock(object.optInt("id", 0)),
                     object.optInt("data", 0),
                     object.optInt("width", 1)
             );

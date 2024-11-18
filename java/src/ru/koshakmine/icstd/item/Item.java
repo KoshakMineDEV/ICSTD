@@ -166,6 +166,10 @@ public abstract class Item implements IBaseRegisterGameObject {
         return false;
     }
 
+    public boolean isAllowedInOffhand() {
+        return false;
+    }
+
     @Override
     public void onPreInit() {}
 
@@ -255,6 +259,7 @@ public abstract class Item implements IBaseRegisterGameObject {
         item.setShouldDespawn(isShouldDespawn());
         item.setFireResistant(isFireResistant());
         item.setHandEquipped(isToolRender());
+        item.setAllowedInOffhand(isAllowedInOffhand());
 
         if(this instanceof EnchantTypeComponent) {
             final EnchantTypeComponent enchantType = (EnchantTypeComponent) this;
