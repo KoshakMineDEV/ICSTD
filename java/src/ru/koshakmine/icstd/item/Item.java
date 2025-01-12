@@ -2,22 +2,20 @@ package ru.koshakmine.icstd.item;
 
 import com.zhekasmirnov.apparatus.mcpe.NativeBlockSource;
 import com.zhekasmirnov.innercore.api.NativeItem;
-import com.zhekasmirnov.innercore.api.commontypes.Coords;
-import com.zhekasmirnov.innercore.api.commontypes.ItemInstance;
 import com.zhekasmirnov.innercore.api.mod.adaptedscript.AdaptedScriptAPI;
 import com.zhekasmirnov.innercore.api.unlimited.IDRegistry;
+import org.mozilla.javascript.ScriptableObject;
+import ru.koshakmine.icstd.entity.Entity;
 import ru.koshakmine.icstd.entity.Player;
 import ru.koshakmine.icstd.event.Event;
 import ru.koshakmine.icstd.event.Events;
-import ru.koshakmine.icstd.item.event.ClickableComponent;
-import ru.koshakmine.icstd.item.event.DispenseComponent;
-import ru.koshakmine.icstd.item.event.OverrideIconComponent;
-import ru.koshakmine.icstd.item.event.OverrideNameComponent;
+import ru.koshakmine.icstd.event.function.PlayerAttackFunction;
+import ru.koshakmine.icstd.item.event.*;
 import ru.koshakmine.icstd.level.Level;
 import ru.koshakmine.icstd.modloader.Mod;
 import ru.koshakmine.icstd.modloader.ObjectFactory;
 import ru.koshakmine.icstd.recipes.RecipeRegistry;
-import ru.koshakmine.icstd.type.CreativeCategory;
+import ru.koshakmine.icstd.type.item.CreativeCategory;
 import ru.koshakmine.icstd.modloader.IBaseRegisterGameObject;
 import ru.koshakmine.icstd.type.common.BlockPosition;
 import ru.koshakmine.icstd.type.common.ItemStack;
@@ -34,6 +32,7 @@ public abstract class Item implements IBaseRegisterGameObject {
     private static final HashMap<Integer, DispenseComponent> dispenses = new HashMap<>();
     private static final HashMap<Integer, OverrideNameComponent> overrideName = new HashMap<>();
     private static final HashMap<Integer, OverrideIconComponent> overrideIcon = new HashMap<>();
+    private static final HashMap<Integer, AttackComponent> attacks = new HashMap<>();
 
     public static void registerUsing(int id, UsableItemComponent usableItem){
         using.put(id, usableItem);
@@ -55,6 +54,10 @@ public abstract class Item implements IBaseRegisterGameObject {
         overrideIcon.put(id, item);
     }
 
+    public static void registerAttack(int id, AttackComponent dispense){
+        attacks.put(id, dispense);
+    }
+
     static {
         Event.onItemUse((position, item, block, player) -> {
             final ClickableComponent clickableItem = clickable.get(item.id);
@@ -64,7 +67,7 @@ public abstract class Item implements IBaseRegisterGameObject {
         });
 
         Event.onCall(Events.ItemUsingComplete, (args) -> {
-            final ItemStack item = new ItemStack((ItemInstance) args[0]);
+            final ItemStack item = new ItemStack((ScriptableObject) args[0]);
             final UsableItemComponent usingItem = using.get(item.id);
 
             if (usingItem != null) {
@@ -73,16 +76,16 @@ public abstract class Item implements IBaseRegisterGameObject {
         });
 
         Event.onCall(Events.ItemDispensed, (args) -> {
-            final ItemStack item = new ItemStack((ItemInstance) args[1]);
+            final ItemStack item = new ItemStack((ScriptableObject) args[1]);
             final DispenseComponent dispense = dispenses.get(item.id);
 
             if(dispense != null){
-                dispense.onDispense(new BlockPosition((Coords) args[0]), item, Level.getForRegion((NativeBlockSource) args[2]), ((Number) args[3]).intValue());
+                dispense.onDispense(new BlockPosition((ScriptableObject) args[0]), item, Level.getForRegion((NativeBlockSource) args[2]), ((Number) args[3]).intValue());
             }
         });
 
         Event.onCall(Events.ItemNameOverride, (args -> {
-            final ItemStack item = new ItemStack((ItemInstance) args[0]);
+            final ItemStack item = new ItemStack((ScriptableObject) args[0]);
             final OverrideNameComponent override = overrideName.get(item.id);
 
             if(override != null){
@@ -101,6 +104,13 @@ public abstract class Item implements IBaseRegisterGameObject {
                 override.onOverrideIcon(item, (Boolean) args[1]);
             }
         }));
+
+        Event.onPlayerAttack((entity, attacker) -> {
+            final AttackComponent attackComponent = attacks.get(entity.getCarriedItem().id);
+            if (attackComponent != null) {
+                attackComponent.onAttack(entity, attacker);
+            }
+        });
     }
 
     private NativeItem item;
@@ -156,6 +166,10 @@ public abstract class Item implements IBaseRegisterGameObject {
         return false;
     }
 
+    public boolean isAllowedInOffhand() {
+        return false;
+    }
+
     @Override
     public void onPreInit() {}
 
@@ -197,10 +211,6 @@ public abstract class Item implements IBaseRegisterGameObject {
     public static void registerEvents(IBaseRegisterGameObject self){
         final int id = self.getNumId();
 
-        if (self instanceof ClickableComponent) {
-            clickable.put(id, (ClickableComponent) self);
-        }
-
         if (self instanceof FurnaceBurnComponent) {
             RecipeRegistry.addFurnaceFuel(id, -1, ((FurnaceBurnComponent) self).getFuelBurn());
         }
@@ -211,6 +221,10 @@ public abstract class Item implements IBaseRegisterGameObject {
 
         if(self instanceof OverrideIconComponent) {
             registerOverrideIcon(id, (OverrideIconComponent) self);
+        }
+
+        if(self instanceof AttackComponent) {
+            registerAttack(id, (AttackComponent) self);
         }
     }
 
@@ -229,6 +243,10 @@ public abstract class Item implements IBaseRegisterGameObject {
             using.put(id, usingItem);
         }
 
+        if (this instanceof ClickableComponent) {
+            clickable.put(id, (ClickableComponent) this);
+        }
+
         registerEvents(this);
 
         item.setGlint(isGlint());
@@ -241,6 +259,16 @@ public abstract class Item implements IBaseRegisterGameObject {
         item.setShouldDespawn(isShouldDespawn());
         item.setFireResistant(isFireResistant());
         item.setHandEquipped(isToolRender());
+        item.setAllowedInOffhand(isAllowedInOffhand());
+
+        if(this instanceof EnchantTypeComponent) {
+            final EnchantTypeComponent enchantType = (EnchantTypeComponent) this;
+            item.setEnchantability(enchantType.getEnchantType(), enchantType.getEnchantability());
+        }
+
+        if(this instanceof RepairComponent) {
+            item.addRepairItems(((RepairComponent) this).getRepairItemIds());
+        }
 
         final CreativeCategory category = getCreativeCategory();
         if (category != null) {

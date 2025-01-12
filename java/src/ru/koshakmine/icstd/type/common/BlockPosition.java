@@ -1,19 +1,20 @@
 package ru.koshakmine.icstd.type.common;
 
-import com.zhekasmirnov.innercore.api.commontypes.Coords;
-import org.mozilla.javascript.ScriptableObject;
+import org.mozilla.javascript.Scriptable;
+
+import java.util.Objects;
 
 public class BlockPosition extends Position {
     public int side;
     public Position vec;
     public Position relative;
 
-    public BlockPosition(Coords coords) {
+    public BlockPosition(Scriptable coords) {
         super(coords);
 
-        this.side = (int) coords.get("side", coords);
-        this.vec = new Position((ScriptableObject) coords.get("vec", coords));
-        this.relative = new Position((ScriptableObject) coords.get("relative", coords));
+        this.side = ((Number) coords.get("side", coords)).intValue();
+        this.vec = new Position((Scriptable) coords.get("vec", coords));
+        this.relative = new Position((Scriptable) coords.get("relative", coords));
     }
 
     @Override
@@ -26,5 +27,18 @@ public class BlockPosition extends Position {
                 ", z=" + z +
                 ", y=" + y +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        if (this == object) return true;
+        if (object == null || getClass() != object.getClass()) return false;
+        BlockPosition that = (BlockPosition) object;
+        return side == that.side && Objects.equals(vec, that.vec) && Objects.equals(relative, that.relative);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(side, vec, relative);
     }
 }

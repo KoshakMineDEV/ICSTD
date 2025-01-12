@@ -11,8 +11,8 @@ import ru.koshakmine.icstd.item.event.ClickableComponent;
 import ru.koshakmine.icstd.item.event.DispenseComponent;
 import ru.koshakmine.icstd.item.Item;
 import ru.koshakmine.icstd.level.Level;
-import ru.koshakmine.icstd.type.CreativeCategory;
-import ru.koshakmine.icstd.type.ItemID;
+import ru.koshakmine.icstd.type.item.CreativeCategory;
+import ru.koshakmine.icstd.type.item.ItemID;
 import ru.koshakmine.icstd.type.common.*;
 
 public class FullBucketItem extends Item implements ClickableComponent, DispenseComponent {
@@ -59,7 +59,7 @@ public class FullBucketItem extends Item implements ClickableComponent, Dispense
     @Override
     public void onClick(BlockPosition position, ItemStack item, BlockData block, Player player) {
         if (!player.isSneaking() && Block.doesVanillaTileHasUI(block.id)) return;
-        Level level = player.getRegion();
+        Level level = player.getLevel();
 
         Position coords = position;
 

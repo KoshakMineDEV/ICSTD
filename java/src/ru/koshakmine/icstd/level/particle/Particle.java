@@ -2,6 +2,7 @@ package ru.koshakmine.icstd.level.particle;
 
 import com.zhekasmirnov.innercore.api.constants.ParticleType;
 import com.zhekasmirnov.innercore.api.mod.ScriptableObjectHelper;
+import com.zhekasmirnov.innercore.api.mod.ScriptableObjectWrapper;
 import com.zhekasmirnov.innercore.api.particles.ParticleRegistry;
 import org.mozilla.javascript.ScriptableObject;
 import ru.koshakmine.icstd.modloader.IBaseRegisterGameObject;
@@ -138,6 +139,104 @@ public abstract class Particle implements IBaseRegisterGameObject {
 
     public float getFrictionBlock(){
         return 1;
+    }
+
+    public static abstract class ParticleAnimator {
+        public int getPeriod() {
+            return -1;
+        }
+
+        public float getStart() {
+            return 0;
+        }
+
+        public float getEnd(){
+            return 0;
+        }
+
+        public float getFadeIn() {
+            return 0;
+        }
+
+        public float getFadeOut() {
+            return 0;
+        }
+
+        private ParticleRegistry.ParticleAnimator toAnimator() {
+            return new ParticleRegistry.ParticleAnimator(
+                    getPeriod(),
+                    getFadeIn(),
+                    getStart(),
+                    getFadeOut(),
+                    getEnd()
+            );
+        }
+    }
+
+    public enum AnimatorType {
+        ALPHA,
+        SIZE,
+        ICON,
+        TEXTURE
+    }
+
+    public void setAnimator(AnimatorType type, ParticleAnimator animator){
+        getParticleType().setAnimator(type.name().toLowerCase(), animator.toAnimator());
+    }
+
+    public class SubEmitter {
+        public float getChance() {
+            return 1;
+        }
+
+        public int getCount() {
+            return 1;
+        }
+
+        public int getType() {
+            return 0;
+        }
+
+        public int getData() {
+            return 0;
+        }
+
+        public boolean canKeepVelocity() {
+            return false;
+        }
+
+        public boolean canKeepEmitter() {
+            return false;
+        }
+
+        public float getRandomize() {
+            return 0;
+        }
+
+        private ParticleRegistry.ParticleSubEmitter toSubEmitter() {
+            final ScriptableObjectWrapper wrapper = new ScriptableObjectWrapper();
+
+            wrapper.put("chance", getChance());
+            wrapper.put("count", getCount());
+            wrapper.put("type", getType());
+            wrapper.put("data", getData());
+
+            wrapper.put("keepVelocity", canKeepVelocity());
+            wrapper.put("keepEmitter", canKeepEmitter());
+            wrapper.put("randomize", getRandomize());
+
+            return new ParticleRegistry.ParticleSubEmitter(wrapper);
+        }
+    }
+
+    public enum SubEmitterType {
+        DEATH,
+        IDLE,
+        IMPACT
+    }
+
+    public void setSubEmitter(SubEmitterType type, SubEmitter emitter) {
+        getParticleType().setSubEmitter(type.name().toLowerCase(), emitter.toSubEmitter());
     }
 
     @Override

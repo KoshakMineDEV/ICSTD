@@ -5,7 +5,10 @@ import com.zhekasmirnov.apparatus.adapter.innercore.game.entity.StaticEntity;
 import com.zhekasmirnov.apparatus.mcpe.NativeBlockSource;
 import com.zhekasmirnov.apparatus.util.Java8BackComp;
 import com.zhekasmirnov.innercore.api.NativeAPI;
+import com.zhekasmirnov.innercore.api.NativeCallback;
 import com.zhekasmirnov.innercore.api.NativeTileEntity;
+import ru.koshakmine.icstd.block.BlockEntityHolderComponent;
+import ru.koshakmine.icstd.block.blockentity.BlockEntity;
 import ru.koshakmine.icstd.entity.Entity;
 import ru.koshakmine.icstd.entity.EntityItem;
 import ru.koshakmine.icstd.entity.Player;
@@ -45,8 +48,8 @@ public class Level {
             localLevel = null;
         });
 
-        Event.onEntityAdded((entity -> entity.getRegion().entities.add(entity.getUid())));
-        Event.onEntityRemoved((entity -> entity.getRegion().entities.remove(entity.getUid())));
+        Event.onEntityAdded((entity -> entity.getLevel().entities.add(entity.getUid())));
+        Event.onEntityRemoved((entity -> entity.getLevel().entities.remove(entity.getUid())));
 
         Network.registerPacket(NetworkSide.LOCAL, PlaySoundPacket::new);
         Network.registerPacket(NetworkSide.LOCAL, SpawnParticlePacket::new);
@@ -84,8 +87,16 @@ public class Level {
         return entities;
     }
 
-    public long getTime(){
+    public long getTime() {
         return NativeAPI.getTime();
+    }
+
+    public void setTime(long time) {
+        NativeAPI.setTime(time);
+    }
+
+    public long getThreadTime() {
+        return NativeCallback.getGlobalServerTickCounter();
     }
 
     public int getDimension(){
@@ -307,18 +318,18 @@ public class Level {
         }
     }
 
-    public void messageForPosition(Position position, String message, String... formats){
+    public void messageForPosition(Position position, String message, String... formats) {
         messageForRadius(position, VISUAL_RADIUS, message, formats);
     }
 
-    public void message(String message, String... formats){
+    public void message(String message, String... formats) {
         final Player[] players = Player.getPlayers();
         for (Player player : players) {
             player.message(message, formats);
         }
     }
 
-    public void spawnParticle(Particle particle, Position position, Position vector){
+    public void spawnParticle(Particle particle, Position position, Position vector) {
         final Player[] players = getPlayersForRadius(position);
         final SpawnParticlePacket packet = new SpawnParticlePacket(particle.getId(), position, vector);
 
@@ -327,7 +338,51 @@ public class Level {
         }
     }
 
-    public void spawnParticle(Particle particle, Position position){
+    public void spawnParticle(Particle particle, Position position) {
         spawnParticle(particle, position, Position.EMPTY);
+    }
+
+    public void setRainLevel(float level) {
+        region.setRainLevel(level);
+    }
+
+    public float getRainLevel() {
+        return region.getRainLevel();
+    }
+
+    public void setLightningLevel(float level) {
+        region.setLightningLevel(level);
+    }
+
+    public float getLightningLevel() {
+        return region.getLightningLevel();
+    }
+
+    public BlockEntity getBlockEntity(int x, int y, int z) {
+        return (BlockEntity) BlockEntity.getManager().getBlockEntity(x, y, z, getDimension());
+    }
+
+    public BlockEntity getBlockEntity(Position position) {
+        return getBlockEntity((int) position.x, (int) position.y, (int) position.z);
+    }
+
+    public BlockEntity addBlockEntity(int x, int y, int z) {
+        BlockEntityHolderComponent holder = BlockEntity.getRegistry().get(getBlockId(x, y, z));
+        if (holder != null) {
+            final BlockEntity blockEntity = holder.createBlockEntity(new Position(x, y, z), this);
+            BlockEntity.getManager().addBlockEntity(blockEntity);
+            return blockEntity;
+        }
+        return getBlockEntity(x, y, z);
+    }
+
+    public BlockEntity addBlockEntity(Position position) {
+        BlockEntityHolderComponent holder = BlockEntity.getRegistry().get(getBlockId(position));
+        if (holder != null) {
+            final BlockEntity blockEntity = holder.createBlockEntity(position, this);
+            BlockEntity.getManager().addBlockEntity(blockEntity);
+            return blockEntity;
+        }
+        return getBlockEntity(position);
     }
 }

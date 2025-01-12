@@ -1,6 +1,6 @@
 package ru.koshakmine.icstd.item;
 
-import ru.koshakmine.icstd.type.ArmorSlot;
+import ru.koshakmine.icstd.type.item.ArmorSlot;
 
 public interface ArmorItemComponent {
     String getArmorPlayerTexture();

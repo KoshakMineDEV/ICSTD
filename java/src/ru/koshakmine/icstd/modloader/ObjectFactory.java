@@ -7,6 +7,7 @@ import ru.koshakmine.icstd.block.Block;
 import ru.koshakmine.icstd.item.Item;
 import ru.koshakmine.icstd.item.ItemGroup;
 import ru.koshakmine.icstd.level.CustomBiome;
+import ru.koshakmine.icstd.level.dimensions.CustomDimension;
 import ru.koshakmine.icstd.level.particle.Particle;
 import ru.koshakmine.icstd.recipes.workbench.WorkbenchRecipeBase;
 
@@ -45,6 +46,10 @@ public class ObjectFactory {
     }
 
     public CustomBiome addBiome(IFactory<CustomBiome> factory){
+        return add(factory);
+    }
+
+    public CustomDimension addDimension(IFactory<CustomDimension> factory) {
         return add(factory);
     }
 

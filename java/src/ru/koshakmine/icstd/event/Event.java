@@ -10,6 +10,7 @@ import com.zhekasmirnov.innercore.api.mod.util.ScriptableFunctionImpl;
 import com.zhekasmirnov.innercore.api.runtime.Callback;
 import org.mozilla.javascript.Context;
 import org.mozilla.javascript.Scriptable;
+import org.mozilla.javascript.ScriptableObject;
 import ru.koshakmine.icstd.entity.Entity;
 import ru.koshakmine.icstd.entity.EntityItem;
 import ru.koshakmine.icstd.entity.EntityProjectile;
@@ -39,7 +40,7 @@ public class Event {
         Callback.addCallback(Events.DestroyBlock, new ScriptableFunctionImpl() {
             @Override
             public Object call(Context context, Scriptable scriptable, Scriptable scriptable1, Object[] objects) {
-                function.call(new Position((Coords) objects[0]), (BlockState) objects[1], new Player((long) objects[2]));
+                function.call(new Position((Scriptable) objects[0]), (BlockState) objects[1], new Player((long) objects[2]));
                 return null;
             }
         }, 0);
@@ -49,7 +50,7 @@ public class Event {
         Callback.addCallback(Events.DestroyBlockStart, new ScriptableFunctionImpl() {
             @Override
             public Object call(Context context, Scriptable scriptable, Scriptable scriptable1, Object[] objects) {
-                function.call(new Position((Coords) objects[0]), (BlockState) objects[1], new Player((long) objects[2]));
+                function.call(new Position((Scriptable) objects[0]), (BlockState) objects[1], new Player((long) objects[2]));
                 return null;
             }
         }, 0);
@@ -59,7 +60,7 @@ public class Event {
         Callback.addCallback(Events.DestroyBlockContinue, new ScriptableFunctionImpl() {
             @Override
             public Object call(Context context, Scriptable scriptable, Scriptable scriptable1, Object[] objects) {
-                function.call(new Position((Coords) objects[0]), (BlockState) objects[1], (long) objects[2]);
+                function.call(new Position((Scriptable) objects[0]), (BlockState) objects[1], (long) objects[2]);
                 return null;
             }
         }, 0);
@@ -69,7 +70,7 @@ public class Event {
         Callback.addCallback(Events.BuildBlock, new ScriptableFunctionImpl() {
             @Override
             public Object call(Context context, Scriptable scriptable, Scriptable scriptable1, Object[] objects) {
-                function.call(new Position((Coords) objects[0]), (BlockState) objects[1], new Player((long) objects[2]));
+                function.call(new Position((Scriptable) objects[0]), (BlockState) objects[1], new Player((long) objects[2]));
                 return null;
             }
         }, 0);
@@ -79,7 +80,7 @@ public class Event {
         Callback.addCallback(Events.BlockChanged, new ScriptableFunctionImpl() {
             @Override
             public Object call(Context context, Scriptable scriptable, Scriptable scriptable1, Object[] objects) {
-                function.call(new Position((Coords) objects[0]), new BlockData((FullBlock) objects[1]), new BlockData((FullBlock) objects[2]), Level.getForRegion((NativeBlockSource) objects[3]));
+                function.call(new Position((Scriptable) objects[0]), new BlockData((Scriptable) objects[1]), new BlockData((Scriptable) objects[2]), Level.getForRegion((NativeBlockSource) objects[3]));
                 return null;
             }
         }, 0);
@@ -89,7 +90,7 @@ public class Event {
         Callback.addCallback(Events.ItemUse, new ScriptableFunctionImpl() {
             @Override
             public Object call(Context context, Scriptable scriptable, Scriptable scriptable1, Object[] objects) {
-                function.call(new BlockPosition((Coords) objects[0]), new ItemStack((ItemInstance) objects[1]), new BlockData((FullBlock) objects[2]), new Player((long) objects[4]));
+                function.call(new BlockPosition((Scriptable) objects[0]), new ItemStack((Scriptable) objects[1]), new BlockData((Scriptable) objects[2]), new Player((long) objects[4]));
                 return null;
             }
         }, priority);
@@ -103,7 +104,7 @@ public class Event {
         Callback.addCallback(Events.ItemUseNoTarget, new ScriptableFunctionImpl() {
             @Override
             public Object call(Context context, Scriptable scriptable, Scriptable scriptable1, Object[] objects) {
-                function.call(new ItemStack((ItemInstance) objects[0]), new Player((long) objects[1]));
+                function.call(new ItemStack((Scriptable) objects[0]), new Player((long) objects[1]));
                 return null;
             }
         }, 0);
@@ -113,7 +114,7 @@ public class Event {
         Callback.addCallback(Events.ItemUsingReleased, new ScriptableFunctionImpl() {
             @Override
             public Object call(Context context, Scriptable scriptable, Scriptable scriptable1, Object[] objects) {
-                function.call(new ItemStack((ItemInstance) objects[0]), (int) objects[1], new Player((long) objects[2]));
+                function.call(new ItemStack((Scriptable) objects[0]), (int) objects[1], new Player((long) objects[2]));
                 return null;
             }
         }, 0);
@@ -123,7 +124,7 @@ public class Event {
         Callback.addCallback(Events.ItemUsingComplete, new ScriptableFunctionImpl() {
             @Override
             public Object call(Context context, Scriptable scriptable, Scriptable scriptable1, Object[] objects) {
-                function.call(new ItemStack((ItemInstance) objects[0]), new Player((long) objects[1]));
+                function.call(new ItemStack((Scriptable) objects[0]), new Player((long) objects[1]));
                 return null;
             }
         }, 0);
@@ -163,7 +164,7 @@ public class Event {
         Callback.addCallback(Events.EntityInteract, new ScriptableFunctionImpl() {
             @Override
             public Object call(Context context, Scriptable scriptable, Scriptable scriptable1, Object[] objects) {
-                function.call(Entity.from((long) objects[0]), new Player((long) objects[1]), new Position((Coords) objects[2]));
+                function.call(Entity.from((long) objects[0]), new Player((long) objects[1]), new Position((Scriptable) objects[2]));
                 return null;
             }
         }, 0);
@@ -243,7 +244,7 @@ public class Event {
         Callback.addCallback(Events.EntityPickUpDrop, new ScriptableFunctionImpl() {
             @Override
             public Object call(Context context, Scriptable scriptable, Scriptable scriptable1, Object[] objects) {
-                function.call(Entity.from((long) objects[0]), new EntityItem((long) objects[1]), new ItemStack((ItemInstance) objects[2]), (int) objects[3]);
+                function.call(Entity.from((long) objects[0]), new EntityItem((long) objects[1]), new ItemStack((Scriptable) objects[2]), (int) objects[3]);
                 return null;
             }
         }, 0);
@@ -253,7 +254,7 @@ public class Event {
         Callback.addCallback(Events.ProjectileHit, new ScriptableFunctionImpl() {
             @Override
             public Object call(Context context, Scriptable scriptable, Scriptable scriptable1, Object[] objects) {
-                function.call(new EntityProjectile((long) objects[0]), new ItemStack((ItemInstance) objects[1]), new ProjectileHitTarget((ScriptableParams) objects[2]));
+                function.call(new EntityProjectile((long) objects[0]), new ItemStack((Scriptable) objects[1]), new ProjectileHitTarget((ScriptableParams) objects[2]));
                 return null;
             }
         }, 0);
@@ -273,7 +274,7 @@ public class Event {
         Callback.addCallback(Events.BlockEventEntityInside, new ScriptableFunctionImpl() {
             @Override
             public Object call(Context context, Scriptable scriptable, Scriptable scriptable1, Object[] objects) {
-                function.call(new Position((Coords) objects[0]), new BlockData((FullBlock) objects[1]), Entity.from((long) objects[2]));
+                function.call(new Position((Scriptable) objects[0]), new BlockData((Scriptable) objects[1]), Entity.from((long) objects[2]));
                 return null;
             }
         }, 0);
@@ -283,7 +284,7 @@ public class Event {
         Callback.addCallback(Events.BlockEventEntityStepOn, new ScriptableFunctionImpl() {
             @Override
             public Object call(Context context, Scriptable scriptable, Scriptable scriptable1, Object[] objects) {
-                function.call(new Position((Coords) objects[0]), new BlockData((FullBlock) objects[1]), Entity.from((long) objects[2]));
+                function.call(new Position((Scriptable) objects[0]), new BlockData((Scriptable) objects[1]), Entity.from((long) objects[2]));
                 return null;
             }
         }, 0);
@@ -293,7 +294,7 @@ public class Event {
         Callback.addCallback(Events.BlockEventNeighbourChange, new ScriptableFunctionImpl() {
             @Override
             public Object call(Context context, Scriptable scriptable, Scriptable scriptable1, Object[] objects) {
-                function.call(new Position((Coords) objects[0]), new BlockData((FullBlock) objects[1]), new Position((Coords) objects[2]), Level.getForRegion((NativeBlockSource) objects[3]));
+                function.call(new Position((Scriptable) objects[0]), new BlockData((Scriptable) objects[1]), new Position((Scriptable) objects[2]), Level.getForRegion((NativeBlockSource) objects[3]));
                 return null;
             }
         }, 0);
