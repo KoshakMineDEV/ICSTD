@@ -39,7 +39,7 @@ public abstract class WorkbenchRecipeBase implements IBaseRegister {
         WorkbenchFieldAPI api = new WorkbenchFieldAPI(field);
         Callback.invokeCallback("CraftRecipePreProvided", this, field, player);
 
-        onCraft(api, new Player(((NativeWorkbenchContainer) field).getPlayer()));
+        onCraft(api, Player.from(((NativeWorkbenchContainer) field).getPlayer()));
 
         Callback.invokeCallback("CraftRecipeProvided", this, field, api.isPrevented(), player);
         return api.isPrevented() ? null : result;

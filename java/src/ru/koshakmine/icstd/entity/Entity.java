@@ -5,6 +5,7 @@ import com.zhekasmirnov.innercore.api.commontypes.ItemInstance;
 import com.zhekasmirnov.innercore.api.constants.EntityType;
 import com.zhekasmirnov.innercore.api.mod.adaptedscript.AdaptedScriptAPI;
 import com.zhekasmirnov.innercore.api.nbt.NativeCompoundTag;
+import ru.koshakmine.icstd.event.Event;
 import ru.koshakmine.icstd.level.Level;
 import ru.koshakmine.icstd.type.item.ArmorSlot;
 import ru.koshakmine.icstd.type.common.ItemStack;
@@ -13,11 +14,22 @@ import ru.koshakmine.icstd.type.entity.Effect;
 import ru.koshakmine.icstd.type.entity.LookAngle;
 import ru.koshakmine.icstd.utils.MathUtils;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class Entity {
     protected final long uid;
+    private static final Map<Long, Entity> entities = new HashMap<>();
+    private static final Map<Long, Player> players = new HashMap<>();
 
     protected Entity(long uid){
         this.uid = uid;
+    }
+
+    static {
+        Event.onEntityRemoved(entity -> {
+            entities.remove(entity.uid);
+        });
     }
 
     public static Entity from(long uid){
@@ -25,11 +37,38 @@ public class Entity {
             return null;
 
         final int type = NativeAPI.getEntityType(uid);
-        if(type == EntityType.ITEM)
-            return new EntityItem(uid);
-        if(type == EntityType.PLAYER)
-            return new Player(uid);
-        return new Entity(uid);
+
+        if(type == EntityType.PLAYER) {
+            return Player.from(uid);
+        }
+
+        if(type == EntityType.ITEM) {
+            if(!entities.containsKey(uid)) {
+                EntityItem entity = new EntityItem(uid);
+                entities.put(uid, entity);
+                return entity;
+            } else {
+                return entities.get(uid);
+            }
+        }
+
+        Entity entity = entities.get(uid);
+        if(entity != null) {
+            return entity;
+        }
+
+        entity = new Entity(uid);
+        entities.put(uid, entity);
+
+        return entity;
+    }
+
+    public static Map<Long, Player> getPlayers() {
+        return players;
+    }
+
+    public static Map<Long, Entity> getEntities() {
+        return entities;
     }
 
     public static long getUid(Entity entity) {

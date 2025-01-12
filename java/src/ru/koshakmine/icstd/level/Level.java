@@ -156,7 +156,7 @@ public class Level {
                 63, false);
         final Player[] players = new Player[entitys.length];
         for (int i = 0;i < players.length;i++) {
-            players[i] = new Player(entitys[i]);
+            players[i] = Player.from(entitys[i]);
         }
         return players;
     }
@@ -323,8 +323,7 @@ public class Level {
     }
 
     public void message(String message, String... formats) {
-        final Player[] players = Player.getPlayers();
-        for (Player player : players) {
+        for (Player player : Player.getPlayers().values()) {
             player.message(message, formats);
         }
     }

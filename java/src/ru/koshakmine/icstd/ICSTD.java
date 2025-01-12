@@ -14,9 +14,9 @@ import ru.koshakmine.icstd.runtime.PostLevelLoaded;
 
 /**
  * TODO LIST
- * Кеширование Player для более высокой производительности и экономии памяти
- * api для кастумных зачарований
- * api для комманд
+ * UI improvements api equivalently to Nukkit FormConstructor v2
+ * Custom Enchantment API
+ * Custom Command API
  */
 
 public class ICSTD extends Mod {

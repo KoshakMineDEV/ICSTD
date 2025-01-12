@@ -71,7 +71,7 @@ public abstract class Item implements IBaseRegisterGameObject {
             final UsableItemComponent usingItem = using.get(item.id);
 
             if (usingItem != null) {
-                usingItem.onItemUsingComplete(item, new Player((long) args[1]));
+                usingItem.onItemUsingComplete(item, Player.from((long) args[1]));
             }
         });
 

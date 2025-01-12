@@ -1,9 +1,8 @@
 package ru.koshakmine.icstd.entity;
 
 import com.zhekasmirnov.apparatus.mcpe.NativePlayer;
-import com.zhekasmirnov.apparatus.multiplayer.server.ConnectedClient;
 import com.zhekasmirnov.innercore.api.NativeAPI;
-import com.zhekasmirnov.innercore.api.NativeItemInstanceExtra;
+import com.zhekasmirnov.innercore.api.constants.EntityType;
 import ru.koshakmine.icstd.network.Network;
 import ru.koshakmine.icstd.network.NetworkClient;
 import ru.koshakmine.icstd.network.NetworkPacket;
@@ -11,8 +10,6 @@ import ru.koshakmine.icstd.network.NetworkSide;
 import ru.koshakmine.icstd.network.packets.ClientMessagePacket;
 import ru.koshakmine.icstd.type.common.ItemStack;
 import ru.koshakmine.icstd.type.common.Position;
-
-import java.util.List;
 
 public class Player extends Entity {
     private final NativePlayer player;
@@ -22,21 +19,26 @@ public class Player extends Entity {
         Network.registerPacket(NetworkSide.LOCAL, ClientMessagePacket::new);
     }
 
+    public static Player from(long uid) {
+        if(NativeAPI.getEntityType(uid) == EntityType.PLAYER) {
+            if(!getPlayers().containsKey(uid)) {
+                Player player = new Player(uid);
+                getPlayers().put(uid, player);
+                getEntities().put(uid, player);
+                return player;
+            } else {
+                return getPlayers().get(uid);
+            }
+        }
+        return null;
+    }
+
+
     public static Player getLocal() {
         return new LocalPlayer(NativeAPI.getLocalPlayer());
     }
 
-    public static Player[] getPlayers(){
-        final List<ConnectedClient> clients = com.zhekasmirnov.apparatus.multiplayer.Network.getSingleton().getServer().getConnectedClients();
-        final Player[] players = new Player[clients.size()];
-
-        for(int i = 0;i < players.length;i++)
-            players[i] = new Player(clients.get(i).getPlayerUid());
-
-        return players;
-    }
-
-    public Player(long uid) {
+    protected Player(long uid) {
         super(uid);
 
         this.player = new NativePlayer(uid);
